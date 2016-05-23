@@ -1,4 +1,4 @@
-# Twilio Contact Centre Demo
+# Twilio Contact Center Demo
 Essence of an omni-channel contact centre is to serve customers on multiple channels (voice, messaging, video, email, etc.), allow them to move seamlessly across channels and most importantly maintain context of the conversation across those channels.  
 
 The Twilio Contact Centre demo is a reference architecture for building an omni-channel contact centre.  The focus of the demo is to show how to build a Twilio platform based contact centre and the various backend and frontend components needed.  Following are example screen shots from the demo application:
@@ -50,7 +50,7 @@ Before you start the install, you’ll need the following variables from the Twi
 
 This will install the application and all the dependencies on Heroku (login required) for you. As part of the installation, the Heroku app will walk you through configuration of environment variables.  Please click on the following button to deploy the application.
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/nash-md/contact-center-omni-channel)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/nash-md/twilio-contact-center)
 
 After the installation has completed please open `https://<your_application_name>.herokuapp.com/setup` and configure the application. The demo overview will be accessible at `https://<your_application_name>.herokuapp.com`. 
 
