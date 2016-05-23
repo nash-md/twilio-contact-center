@@ -1,0 +1,167 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Twilio Omni Channel Contact Center - Call Agent Interface</title>
+
+  <link rel="stylesheet" href="/styles/default.css" type="text/css" />
+  <link rel="stylesheet" href="/styles/bootstrap.css" type="text/css" />
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"
+      type="text/css" rel="stylesheet" />
+
+</head>
+
+<body class="call-center" ng-app="callcenterApplication">
+
+  <section class="workflow-controller" ng-controller="WorkflowController" data-ng-init="init()" ng-cloak>
+
+    <div class="panel panel-default">
+
+      <div class="panel-body">
+
+        <div class="logout"><span ng-click="logout()">logout</span></div> 
+        <h2 class="name" class="page-header">{{worker.friendlyName}}&#39;s Call Agent Interface</h2>
+
+        <div>Status:&nbsp;<span ng-class="{'label-success': worker.activityName == 'Idle', 'label-danger': worker.activityName == 'Busy', 'label-default': worker.activityName == 'Offline', 'label-warning': worker.activityName == 'Reserved'}" class="label">{{worker.activityName}}</span></div>
+
+      <div class="reservations">
+
+      <!-- active reservation -->
+      <div class="panel panel-default" ng-show="reservation != null">
+        <div class="panel-heading">
+          <h3 class="panel-title">Reservation</h3>
+        </div>
+        <div class="panel-body">
+
+          <table class="agent-reservation">
+          <tr>
+            <td>
+             <div>{{reservation.task.attributes.type}} from {{reservation.task.attributes.name}}</div>
+             created {{ reservationCounter | time }} </td>
+            <td class="accept-panel"><button ng-click="acceptReservation(reservation)">Accept</button></td>
+          </tr>
+          </table>
+
+        </div>
+      </div>
+      <!-- active reservation -->
+
+      <!-- waiting for reservation -->
+      <div class="panel panel-default agent-waiting" ng-show="reservation == null && task == null">
+        <div class="panel-heading">
+          <h4 class="panel-title">Waiting for new task ...</h4>
+        </div>
+      </div>
+      <!-- waiting for reservation -->
+
+      <!-- task -->
+      <div ng-show="task != null"> 
+
+      <h4>Customer&#39;s Detail</h4>
+
+      <div class="customer-detail panel panel-default">
+        <div class="panel-body">
+          {{task.attributes.text}}
+        </div>
+      </div>
+          
+          <!-- chat -->
+        <section class="chat-controller" ng-controller="ChatController" ng-cloak>
+          
+           <div class="load-indicator" ng-show="session.isLoading">
+              <i class="fa fa-refresh fa-spin"></i>
+           </div>
+
+            <div ng-show="session.isInitialized">
+
+            <div class="chat-canvas" scroll-glue>
+
+              <ul class="message-list" >
+
+                <li class="message-template" ng-repeat="message in messages">
+                  <span class="time">{{message.timestamp | timeChat }}</span>
+                  <div class="name">{{message.author}}</div>
+                  <div class="body">
+                      <p dynamic="message.body"></p>
+                  </div>
+                </li>
+
+              </ul>
+              <div id="bottom"></div>
+
+            </div>
+
+            <div class="typing-notification"><span>{{typingNotification}}</span></div>
+
+            <form class="chat-message-form" name="chatMessageForm">
+              <input ng-model="message" ng-model-options="{ debounce: 250 }" ng-required="true" autocomplete="off" name="text" type="text" class="form-control" placeholder="say something">
+              <button ng-disabled="chatMessageForm.$invalid || chatMessageForm.$pristine" class="btn btn-default" ng-click="send()">Send</button>
+            </form>
+
+          </div>  
+
+        </section>
+        <!-- chat -->
+
+        <button ng-show="task.completed != true"  class="btn btn-primary agent-wrap-up" ng-click="wrapup()">Complete Task</button>
+
+      </div>
+      <!-- task -->
+
+      <!-- wrap up -->
+      <button class="btn btn-primary agent-wrap-up" ng-show="task != null && task.completed == true" type="button" ng-click="complete()" class="btn btn-primary">Ready for the next task ...</button>
+      <!-- wrap up -->
+
+    </div>
+     
+    <section ng-controller="PhoneController" ng-cloak class="phone-controller" >
+
+      <input ng-show="isActive == false" ng-model="phoneNumber" type="text" name="phoneNumber" placeholder="+.." />
+      <div class="phone-number" ng-if="isActive == true" />{{phoneNumber}}</div>
+
+      <div class="keypad">
+
+        <div ng-click="addDigit('1')" class="digit">1</div>
+        <div ng-click="addDigit('2')" class="digit">2</div>
+        <div ng-click="addDigit('3')" class="digit">3</div>
+
+        <div ng-click="addDigit('4')" class="digit">4</div>
+        <div ng-click="addDigit('5')" class="digit">5</div>
+        <div ng-click="addDigit('6')" class="digit">6</div>
+
+        <div ng-click="addDigit('7')" class="digit">7</div>
+        <div ng-click="addDigit('8')" class="digit">8</div>
+        <div ng-click="addDigit('9')" class="digit">9</div>
+
+        <div ng-click="addDigit('*')"class="digit">*</div>
+        <div ng-click="addDigit('0')" class="digit">0</div>
+        <div ng-click="addDigit('#')" class="digit">#</div>
+
+      </div>
+
+      <button class="button-call" ng-if="isActive == false" ng-click="call(phoneNumber)">CALL</button>
+      <button class="button-hangup" ng-if="isActive == true" ng-click="hangup()">HANGUP</button>
+      <span class="status">Status: {{status}}</span>
+
+    </section>
+
+    </div>
+
+   </div>
+
+</section>
+
+
+  <script type="text/javascript" src="//media.twiliocdn.com/sdk/js/client/v1.3/twilio.min.js"></script>
+  <script type="text/javascript" src="//media.twiliocdn.com/taskrouter/js/v1.4/taskrouter.min.js"></script>
+  <script src="//media.twiliocdn.com/sdk/rtc/js/ip-messaging/releases/0.9.6/twilio-ip-messaging.min.js"></script>
+  <script src="/scripts/angular.min.js"></script>
+  <script src="/scripts/angular-messages.min.js"></script>
+  <script src="/scripts/angular-scrollglue.js"></script>
+  <script src="/scripts/moment.min.js"></script>
+  <script src="WorkflowController.js"></script>
+  <script src="PhoneController.js"></script>
+  <script src="ChatController.js"></script>
+
+</body>
+</html>

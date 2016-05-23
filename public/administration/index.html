@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Twilio Contact Center: Administration</title>
+
+  <link rel="stylesheet" href="/styles/bootstrap.css" type="text/css" />
+  <link rel="stylesheet" href="/styles/default.css" type="text/css" />
+
+</head>
+
+<body ng-app="administrationApplication">
+
+  <section class="administration-controller" ng-controller="AdministrationController" ng-cloak data-ng-init="init()">
+
+    <h1 class="page-header">Twilio Contact Center: Administration</h1>
+
+    <ul class="nav nav-tabs">
+      <li role="presentation"  ng-click="setTab('agents')" ng-class="{active: tab == 'agents'}"><a href="#">Call Agents</a></li>
+      <li role="presentation"  ng-click="setTab('ivr')" ng-class="{active: tab == 'ivr'}"><a href="#">IVR Menu</a></li>
+    </ul>
+
+  <div class="tab-content">
+      <div class="tab-pane" ng-class="{active: tab == 'agents'}" id="home" style="margin-bottom:10px">
+
+        <table  class="table table-striped" style="width:100%">
+         <thead>
+          <tr >
+            <th>Name</th>
+            <th>Status</th>
+            <th>Channel(s)</th>
+            <th>Team</th>
+            <th>&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+         <tr ng-repeat="worker in workers track by worker.sid">
+          <td>{{worker.friendlyName}}</td>
+          <td>{{worker.activityName}}</td>
+          <td>{{worker.channelsFriendlyName}}</td>
+          <td>{{worker.team}}</td>
+
+          <td style="text-align:right"><button class="btn btn-danger btn-xs" ng-click="removeWorker(worker)" ng-show="worker.activityName == 'Offline'">remove</button></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <button style="margin-left:8px" class="btn btn-primary" ng-show="createForm == false" ng-click="expandAgentCreate()">Create Agent</button>
+
+    <div ng-show="createForm == true" style="background-color:#f9f9f9; padding:8px">
+
+      <form name="agentForm" class="form-inline" role="form">
+
+        <div class="form-group">
+
+        <input  ng-model="agent.friendlyName" name="friendlyName" type="text" class="form-control" placeholder="Name" client-name required>
+
+          <label class="checkbox-inline">
+            <input type="checkbox" checklist-model="agent.channels" value="phone">Phone
+          </label>
+          <label class="checkbox-inline">
+            <input type="checkbox" checklist-model="agent.channels" value="chat">Chat
+          </label>
+          <label class="checkbox-inline">
+            <input type="checkbox" checklist-model="agent.channels" value="video">Video
+          </label>
+          <label class="checkbox-inline">
+            <input type="checkbox" checklist-model="agent.channels" value="email">Email
+          </label>
+        </div>
+        
+        <label class="checkbox-inline" style="margin-left:10px"><b>Team</b></label>
+
+        <div class="btn-group" uib-dropdown style="margin-left:10px">
+          <button type="button" class="btn btn-default" uib-dropdown-toggle>
+           {{agent.team.friendlyName}}&nbsp;&nbsp;<span class="caret"></span>
+         </button>
+         <ul class="uib-dropdown-menu">
+           <li ng-repeat="option in configuration.ivr.options">
+            <a href="#" ng-click="setAgentTeam(option); $event.preventDefault()">{{ option.friendlyName }}</a>
+          </li>
+        </ul>
+      </div>
+
+      <input  ng-model="agent.team" name="team" type="text" hidden required>
+
+    <button class="btn btn-default" ng-disabled="agentForm.$invalid || agentForm.$pristine"  ng-click="createWorker()">Save</button></td>
+      
+    <div class="alert alert-danger" style="margin-top:10px; margin-bottom:0px" role="alert" ng-show="agentForm.friendlyName.$error.invalidCharacter">Name must be an alphanumeric string</div>
+
+    </form>
+
+  </div>
+
+</div>
+
+<div class="tab-pane"  ng-class="{active: tab == 'ivr'}"  id="profile">
+
+  <div style="padding:8px">
+    <h4>Text-to-Speech</h4>
+
+    <textarea class="form-control" rows="5" name="text" ng-model="configuration.ivr.text" style="resize:none"></textarea>
+
+    <div class="panel panel-default" style="margin-top:8px">
+    
+      <div class="panel-heading">Teams</div>
+ 
+      <ul class="list-group">
+        <li ng-repeat="option in configuration.ivr.options track by $index" class="list-group-item">
+
+          <table>
+            <tr>
+              <td style="display:none"><input ng-model="option.id" name="id"/></td>
+              <td style="padding-right:8px;"><input ng-model="option.friendlyName" class="form-control" name="friendlyName" client-name/></td>
+
+              <td style="padding-right:8px;">IVR Option: 
+
+                <div class="btn-group" uib-dropdown>
+                  <button type="button" class="btn btn-default" uib-dropdown-toggle>
+                   {{option.digit}}&nbsp;&nbsp;<span class="caret"></span>
+                 </button>
+                 <ul class="uib-dropdown-menu">
+                  <li><a href="#" ng-click="setIvrOption(option, 1); $event.preventDefault()">1</a></li>
+                  <li><a href="#" ng-click="setIvrOption(option, 2); $event.preventDefault()">2</a></li>
+                  <li><a href="#" ng-click="setIvrOption(option, 3); $event.preventDefault()">3</a></li>
+                  <li><a href="#" ng-click="setIvrOption(option, 4); $event.preventDefault()">4</a></li>
+                  <li><a href="#" ng-click="setIvrOption(option, 5); $event.preventDefault()">5</a></li>
+                </ul>
+              </div>
+
+            </td>
+            <td style="padding-right:8px;"><button class="btn btn-danger" ng-click="removeIvrOption(option, $index)">delete</button></td>
+          </tr>
+        </table>
+
+        <li  class="list-group-item">
+          <button class="btn btn-default" ng-click="createIvrOption()">add</button>
+        </li>
+
+      </ul>
+
+    </div>
+
+    <button style="margin-left:8px" class="btn btn-primary" ng-click="saveConfig()">Save IVR</button>
+
+  </div>
+
+</div>
+  
+</div>
+
+</section>
+
+<script src="/scripts/angular.min.js"></script>
+<script src="/scripts/checklist-model.js"></script>
+<script src="/scripts/ui-bootstrap-0.14.3.min.js"></script>
+<script src="AdministrationController.js"></script>
+
+</body>
+</html>

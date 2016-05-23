@@ -1,0 +1,111 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Twilio Contact Center: Setup</title>
+
+  <link rel="stylesheet" href="/styles/bootstrap.css" type="text/css" />
+  <link rel="stylesheet" href="/styles/default.css" type="text/css" />
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"
+  type="text/css" rel="stylesheet" />
+
+</head>
+
+<body ng-app="setupApplication">
+
+  <section ng-controller="SetupController"  data-ng-init="init()" style="margin: auto; width:750px;">
+
+    <h1 class="page-header">Twilio Contact Center: Setup</h1>
+
+    <h4>Workspace: {{workspace.sid}} - {{workspace.friendlyName}}</h4>
+
+    <form name="setupForm">
+
+      <h6>Worker Offline Activity:</h6>
+
+      <div class="btn-group" uib-dropdown>
+          <button type="button" class="btn btn-default" uib-dropdown-toggle>
+            {{workerOfflineActivity.friendlyName}}&nbsp;&nbsp;<span class="caret"></span>
+          </button>
+          <ul class="uib-dropdown-menu">
+           <li ng-repeat="activity in activities">
+            <a href="#" ng-click="setOfflineActivity(activity)" ng-click="$event.preventDefault();">{{activity.friendlyName}}</a>
+          </li>
+        </ul>
+      </div>
+
+      <input ng-model="workerOfflineActivity" name="workerOfflineActivity" type="text" hidden required>
+
+
+      <h6>Worker Idle Activity:</h6>
+
+      <div class="btn-group" uib-dropdown>
+          <button type="button" class="btn btn-default" uib-dropdown-toggle>
+            {{workerIdleActivity.friendlyName}}&nbsp;&nbsp;<span class="caret"></span>
+          </button>
+          <ul class="uib-dropdown-menu">
+           <li ng-repeat="activity in activities">
+            <a href="#" ng-click="setIdleActivity(activity)" ng-click="$event.preventDefault();">{{activity.friendlyName}}</a>
+          </li>
+        </ul>
+      </div>
+
+      <input ng-model="workerIdleActivity" name="workerIdleActivity" type="text" hidden required>
+
+      <h6>Worker Reservation Activity:</h6>
+
+      <div class="btn-group" uib-dropdown>
+          <button type="button" class="btn btn-default" uib-dropdown-toggle>
+            {{workerReservationActivity.friendlyName}}&nbsp;&nbsp;<span class="caret"></span>
+          </button>
+          <ul class="uib-dropdown-menu">
+           <li ng-repeat="activity in activities">
+            <a href="#" ng-click="setReservationActivity(activity)" ng-click="$event.preventDefault();">{{activity.friendlyName}}</a>
+          </li>
+        </ul>
+      </div>
+
+      <input ng-model="workerReservationActivity" name="workerReservationActivity" type="text" hidden required>
+
+      <h6>Worker Assignment Activity:</h6>
+
+      <div class="btn-group" uib-dropdown>
+          <button type="button" class="btn btn-default" uib-dropdown-toggle>
+            {{workerAssignmentActivity.friendlyName}}&nbsp;&nbsp;<span class="caret"></span>
+          </button>
+          <ul class="uib-dropdown-menu">
+           <li ng-repeat="activity in activities">
+            <a href="#" ng-click="setAssignmentActivity(activity)" ng-click="$event.preventDefault();">{{activity.friendlyName}}</a>
+          </li>
+        </ul>
+      </div>
+
+      <input ng-model="workerAssignmentActivity" name="workerAssignmentActivity" type="text" hidden required>
+
+      <h6>Phone Number (Inbound/Outbound):</h6>
+       <input style="width:350px" ng-model="configuration.twilio.callerId" name="callerId" type="text" class="form-control" placeholder="+..." required phone-number>
+
+      <div ng-messages="setupForm.callerId.$error" role="alert" style="margin-top: 10px; margin-bottom: 0px;">
+          <div ng-message="required" class="error-message alert alert-danger">Phone number is required</div>
+          <div ng-message="invalidPhone"  class="error-message alert alert-danger">Invalid phone number</div>
+      </div>
+
+      <div>
+
+        <button class="btn btn-primary" ng-disabled="setupForm.$invalid" ng-click="saveConfig()"><span style="margin-right: 10px;" ng-show="isSaving == true"><i class="fa fa-refresh fa-spin"></i></span>Save Settings</button>
+
+      </div>
+
+    </div>
+  
+  </form>
+
+</section>
+
+<script src="/scripts/angular.min.js"></script>
+<script src="/scripts/angular-messages.min.js"></script>
+<script src="/scripts/ui-bootstrap-0.14.3.min.js"></script>
+<script src="SetupController.js"></script>
+
+</body>
+</html>

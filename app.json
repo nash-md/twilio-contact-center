@@ -1,0 +1,42 @@
+{
+  "name": "Twilio Contact Center",
+  "description": "A web-based omni channel contact centre utilizing Twilio Client and TaskRouter",
+  "repository": "",
+  "logo": "http://node-js-sample.herokuapp.com/node.svg",
+  "keywords": ["node", "express", "twilio"],
+  "image": "heroku/nodejs",
+  "repository": "https://github.com/nash-md/contact-center-omni-channel",
+  "addons": ["heroku-postgresql:hobby-dev"],
+  "scripts": {
+    "postdeploy": "node setup-database.js"
+  },
+  "success_url": "/setup",
+  "env": {
+    "TWILIO_ACCOUNT_SID": {
+      "description": "Your Twilio accountSid",
+      "value": "accountSid"
+    },
+    "TWILIO_AUTH_TOKEN": {
+      "description": "Your Twilio authToken",
+      "value": "authToken"
+    },
+     "TWILIO_WORKSPACE_SID": {
+      "description": "Please create a new Taksrouter workspace and type in your workspaceSid",
+      "value": "workspaceSid"
+    },
+     "TWILIO_IPM_SERVICE_SID": {
+      "description": "IP Messaging Service Sid",
+      "value": "ipmServiceSid"
+    },
+     "TWILIO_API_KEY": {
+      "description": "IP Messaging API Key",
+      "value": "apiKey"
+    },
+     "TWILIO_API_SECRET": {
+      "description": "IP Messaging API Secret",
+      "value": "apiSecret"
+    }
+
+  }
+
+}

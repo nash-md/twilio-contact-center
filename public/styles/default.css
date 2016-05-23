@@ -1,0 +1,443 @@
+body {
+	margin:0px;
+	padding:0px;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/* prevent angularjs flicker */
+[ng\:cloak], [ng-cloak], .ng-cloak {
+  display: none !important;
+}
+
+.tab-pane{
+  background: #fff;
+  padding-top: 10px;
+  padding-bottom:10px;
+  border: 1px solid #ddd;
+  margin-top: -1px;
+}
+
+
+.call-center
+{
+	width: 700px;
+	background-color: #f4f4f4;
+}
+
+.workflow-controller
+{
+	margin-top: 10px;
+}
+
+.workflow-controller .logout
+{
+	text-align:right;
+	font-size:0.9em;
+	cursor:pointer;
+}
+
+.workflow-controller .logout
+{
+	text-align:right;
+	font-size:0.9em;
+	cursor:pointer;
+}
+
+.workflow-controller .reservations
+{
+	float: left;
+	width: 375px;
+	margin-top: 10px;
+}
+
+.workflow-controller .reservations .agent-reservation
+{
+	width:100%;
+	margin-bottom:5px;
+}
+
+.workflow-controller .reservations .agent-reservation div
+{
+	font-size:1.2em
+}
+
+.workflow-controller .reservations .agent-reservation .accept-panel
+{
+	width: 80px; text-align:right
+}
+
+.workflow-controller .reservations .agent-reservation .accept-panel button
+{
+  -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+  -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+  box-shadow:inset 0px 1px 0px 0px #ffffff;
+  background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #f6f6f6));
+  background:-moz-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+  background:-webkit-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+  background:-o-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+  background:-ms-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+  background:linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0);
+  background-color:#ffffff;
+  -moz-border-radius:4px;
+  -webkit-border-radius:4px;
+  border-radius:4px;
+  border:1px solid #dcdcdc;
+  display:inline-block;
+  cursor:pointer;
+  color:#666666;
+  font-size:15px;
+  font-weight:bold;
+  height: 34px;
+  padding-left: 12px;
+  padding-right: 12px;
+  text-decoration:none;
+  text-shadow:0px 1px 0px #ffffff;
+}
+
+.workflow-controller .reservations .agent-reservation .accept-panel button:hover {
+  background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #f6f6f6), color-stop(1, #ffffff));
+  background:-moz-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+  background:-webkit-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+  background:-o-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+  background:-ms-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+  background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f6f6f6', endColorstr='#ffffff',GradientType=0);
+  background-color:#f6f6f6;
+}
+
+.workflow-controller .reservations .agent-waiting .panel-heading
+{
+	background-color: #F2F2F2;
+}
+
+.workflow-controller .reservations .agent-waiting .panel-title
+{	
+	text-align:center;
+	font-size:1.4em;
+	color: #787878;
+}
+
+.workflow-controller .reservations .customer-detail
+{
+	margin-bottom: 0px;	
+}
+
+.phone-controller 
+{
+	float:right;
+	width:280px;
+	margin-top: 10px;
+	background-color:#F2F2F2;
+	border: 1px solid transparent;
+  	border-radius: 4px;
+  	border-color: rgb(221, 221, 221); 
+  	padding: 10px;
+}
+
+.phone-controller input
+{
+	box-sizing: border-box; 
+	width: 100%;
+	font-size: 1.8em;
+	color: #333333;
+	padding: 5px 15px 5px 15px;
+	border:0;
+}
+
+.phone-controller .phone-number
+{
+	box-sizing: border-box; 
+	width: 100%;
+	font-size: 1.8em;
+	padding: 5px 15px 5px 15px;
+	color:#333333;
+	overflow: hidden;
+}
+
+.phone-controller .keypad
+{
+	overflow: auto;
+	padding: 10px 30px 10px 30px;
+}
+
+.phone-controller .keypad .digit
+{
+	float: left;
+	width: 60px;
+	height: 60px;
+	line-height: 60px;
+	text-align: center;
+	border: 1px solid #ddd;
+	font-size: 1.6em;
+	margin-left: 5px;
+	margin-bottom: 5px;
+	font-weight: bold;
+	cursor: pointer;
+	color: #787878;
+	border-radius: 3px;
+}
+
+.phone-controller .digit:nth-child(3n +1){
+    margin-left: 5px
+}
+
+.phone-controller .digit:nth-child(1n + 10){
+    margin-bottom: 0
+}
+
+.phone-controller .digit:hover{
+	background-color: #787878;
+	color:white;
+}
+
+.phone-controller .button-call 
+{
+	width: 100%;
+	border-radius: 3px;
+	border:1px solid green;
+	font-size: 1.6em;
+	background-color: green;
+	color:white;
+}
+
+.phone-controller .button-hangup 
+{
+	width: 100%;
+	border-radius: 3px;
+	border:1px solid red;
+	font-size: 1.6em;
+	background-color: red;
+	color:white;
+}
+
+.phone-controller .status 
+{
+	font-size: 0.8em;
+	color: grey;
+	padding-top: 8px;
+	display: block
+}
+
+.agent-wrap-up
+{
+	width:100%;
+	height: 3.5em;
+	margin-top: 10px;
+}
+
+/* call center */
+.call-center
+{
+	width:700px;
+	margin:auto;
+}
+
+.call-center form[name="loginForm"] {}
+
+.call-center form[name="loginForm"] input[name="friendlyName"]
+{
+	width: 250px;
+}
+
+.call-center form[name="loginForm"] .error-message
+{
+	margin-top:10px;
+	margin-bottom:0px;
+	padding: 5px 10px 5px 10px;
+}
+
+
+/* contact */
+.contact-head
+{
+	background-color: #212121;
+	margin-bottom: 15px;
+	padding: 10px;
+	color: white;
+}
+
+.contact-head > div
+{
+	margin: auto;
+	width:900px; 
+	overflow: auto;
+	font-size: 2.6em;
+}
+
+.contact-body
+{
+	margin: auto;
+	width:900px;
+	overflow: auto;
+}
+
+.contact-body .alert
+{
+	padding: 5px 10px 5px 10px;
+	margin: 10px 0 0 0;
+}
+
+.contact-body .phone
+{
+	width:440px;
+	float: left;
+}
+
+.contact-body .chat
+{
+	width:450px;
+	float: right;
+}
+
+.contact-body .chat .typing-notification
+{
+	color: grey; 
+	height: 2em;
+	font-size: 0.8em;
+	line-height: 2em;
+}
+
+.contact-body .phone h2
+{
+	margin:0px;
+	padding:0px;
+	font-size:1.6em;
+}
+
+.contact-body .phone h2.caller-id
+{
+	font-size:2.4em;
+	margin-bottom:15px;
+}
+
+.contact-body .phone textarea
+{
+	width:100%;
+	box-sizing:border-box;
+	resize:none;
+}
+
+.contact-body .phone label
+{
+	display: block; 
+	margin-top: 10px;
+}
+
+.contact-body .phone input[name="phone"]
+{
+	width: 230px;
+}
+
+.contact-body .phone button.submit
+{
+	margin: 10px 0 0 0;
+}
+
+/* support chat */
+.chat-controller .load-indicator
+{
+	text-align: center;
+	margin-top: 10px
+	 margin-bottom: 10px;
+}
+
+.chat-controller .typing-notification
+{
+	color: grey; 
+	height: 2em;
+	font-size: 0.8em;
+	line-height: 2em;
+}
+
+.support-chat-form input[name="identity"]
+{
+	width: 250px;
+}
+
+.support-chat-form button.initiate > span
+{
+	padding-right:8px
+}
+
+.chat-canvas
+{
+	border: 1px solid #cfdae1;
+	border-radius: 4px;
+    height: 300px;
+    margin: 10px 0px 0px 0px;
+    overflow-y: scroll;
+}
+
+.chat-canvas .message-list
+{
+	list-style: none;
+	padding: 0px;
+	margin: 0px
+}
+
+.chat-canvas .message-list .message-template
+{
+	position: relative;
+}
+
+.chat-canvas .message-list .message-template, .chat-canvas .message-list .message
+{
+	list-style: none;
+	padding: 8px;
+	margin: 0px
+}
+
+.chat-canvas .message-list .message-template:nth-child(even), .chat-canvas .message-list .message:nth-child(even)
+{
+	background-color: #f5f5f5;
+}
+
+.chat-canvas .message-list .message-template .name, .chat-canvas .message-list .message .name
+{
+	font-weight: bold
+}
+
+.chat-canvas .message-list .message-template .body, .chat-canvas .message-list .message .body
+{
+	position: relative;
+	padding-right: 80px;
+}
+
+.chat-canvas .message-list .message-template .time, .chat-canvas .message-list .message .time
+{
+	display:block;
+	font-size: 0.8em;
+	position: absolute;
+	right: 5px;
+	top: 5px
+}
+
+.chat-message-form input
+{
+	width:100%;
+}
+
+.chat-message-form button
+{
+	padding-left: 15px;
+	padding-right: 15px;
+	margin-top: 5px;
+}
+
+.chat-inline-number
+{
+	color: #00AAFF;
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+/* administration */
+.administration-controller
+{
+	margin: auto;
+	width:750px;
+}
+
+
+

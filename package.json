@@ -1,0 +1,31 @@
+{
+  "name": "twilio-contact-center-omni-channel",
+  "version": "1.1.0",
+  "description": "A simple omni channel contact center using Twilio Client and Taskrouter",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "4.x",
+    "express-session": "1.x",
+    "pg": "4.x",
+    "async": "1.x",
+    "twilio": "2.9.x",
+    "body-parser": "1.x",
+    "compression": "1.6.x"
+  },
+  "engines": {
+    "node": "4.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "node",
+    "heroku",
+    "twilio"
+  ],
+  "license": "MIT"
+}
