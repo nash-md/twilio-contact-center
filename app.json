@@ -1,11 +1,11 @@
 {
   "name": "Twilio Contact Center",
-  "description": "A web-based omni channel contact centre utilizing Twilio Client and TaskRouter",
+  "description": "A web-based contact center utilizing Twilio Client, IP Messaging and TaskRouter",
   "repository": "",
   "logo": "http://node-js-sample.herokuapp.com/node.svg",
   "keywords": ["node", "express", "twilio"],
   "image": "heroku/nodejs",
-  "repository": "https://github.com/nash-md/contact-center-omni-channel",
+  "repository": "https://github.com/nash-md/twilio-contact-center",
   "addons": ["heroku-postgresql:hobby-dev"],
   "scripts": {
     "postdeploy": "node setup-database.js"

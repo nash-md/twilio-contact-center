@@ -1,9 +1,11 @@
 # Twilio Contact Center Demo
-Essence of an omni-channel contact centre is to serve customers on multiple channels (voice, messaging, video, email, etc.), allow them to move seamlessly across channels and most importantly maintain context of the conversation across those channels.  
+Essence of a modern contact center is to serve customers on multiple channels (voice, IP messaging, video, SMS, email, social media, etc.), allow them to move seamlessly across channels and most importantly maintain context of the conversations.
 
-The Twilio Contact Centre demo is a reference architecture for building an omni-channel contact centre.  The focus of the demo is to show how to build a Twilio platform based contact centre and the various backend and frontend components needed.  Following are example screen shots from the demo application:
+The Twilio Contact Center demo is reference architecture for building a modern contact center. The focus of the demo is to show how to build a Twilio platform based contact center and the various backend and frontend components needed.
 
-**Note:** We have done the basic work from an UX perspective and lot of opportunities remain to improve on it.  Application security implementation is minimal as well in the demo.
+**Note:** We have done the basic work from an UX perspective and lot of opportunities remains to improve on it. Application security implementation is minimal as well in the demo.
+
+This application is provided as-is.  Twilio does not officially support it.
 
 # Features
 * Twilio Account
@@ -26,6 +28,8 @@ Customer Fill out online web chat request form -> Customer request detected -> T
 ## Video Chat (future):
 Customer Fill out online video chat request form -> Customer request detected -> TaskRouter -> Find Available Agent -> Start video chat between Agent and Customer (Video)
 
+## Operational Analytics/Dashboard (future):
+Real-time display of operational contact center metrics (for example: average call handle time, agent productivity, call metrics, TaskRouter stats, and more etc.) 
 
 ## Pre-requisites:
 * Basic of Twilio platform - [Twilio \<Skills\>](https://twilio.radicalskills.com/), an elearning platform that provides a guided path for getting started with Twilio.
