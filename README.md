@@ -42,7 +42,7 @@ Real-time display of operational contact center metrics (for example: average ca
 
 Before you start the install, you’ll need the following variables from the Twilio Account Portal. If you haven't used Twilio before, welcome! You'll need to [Sign up for a Twilio account](https://www.twilio.com/try-twilio).
 
-**Note:** It is recommende that yo have an upgrade Twilio accont to fully experience this demo.
+**Note:** It is recommended that you have an upgraded Twilio account to fully experience this demo.
 
 * For Account SID and Auth Token please click here:  https://www.twilio.com/console
 * Buy a phone number or use an existing one (the application will configure the number for you later)
