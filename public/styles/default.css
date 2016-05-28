@@ -338,8 +338,8 @@ body {
 .chat-controller .load-indicator
 {
 	text-align: center;
-	margin-top: 10px
-	 margin-bottom: 10px;
+	margin-top: 20px;
+	margin-bottom: 10px;
 }
 
 .chat-controller .typing-notification
