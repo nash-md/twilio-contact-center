@@ -1,5 +1,5 @@
-var twilio = require('twilio')
-var async = require('async')
+var twilio  = require('twilio')
+var async   = require('async')
 
 module.exports.createCallback = function(req, res) {
 
@@ -31,11 +31,10 @@ module.exports.createChat = function(req, res) {
       })
 
       var accessToken = new twilio.AccessToken(
-          process.env.TWILIO_ACCOUNT_SID,
-          process.env.TWILIO_API_KEY,
-          process.env.TWILIO_API_SECRET,
-          3600,
-          req.body.identity
+        process.env.TWILIO_ACCOUNT_SID,
+        process.env.TWILIO_API_KEY,
+        process.env.TWILIO_API_SECRET,
+        { ttl: 3600 }
       )
 
       accessToken.addGrant(grant)
@@ -56,8 +55,8 @@ module.exports.createChat = function(req, res) {
       var service = client.services(process.env.TWILIO_IPM_SERVICE_SID)
 
           service.channels.create({
-              friendlyName: 'Chat for ' + req.body.identity,
-              uniqueName: 'support_channel_' + Math.floor(Date.now() / 1000)
+              friendlyName: 'Support Chat with ' + req.body.identity,
+              uniqueName: 'support_channel_' + Math.random().toString(36).substring(7)
           }, function(err, channel) {
           if(err) {
               callback(err)
@@ -80,8 +79,8 @@ module.exports.createChat = function(req, res) {
           if(err) {
             callback(err)
           } else {
-              payload.task = task.sid
-              callback(null, payload)
+            payload.task = task.sid
+            callback(null, payload)
           }
       })
 

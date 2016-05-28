@@ -45,13 +45,12 @@ module.exports.login = function(req, res) {
 			        process.env.TWILIO_ACCOUNT_SID,
 			        process.env.TWILIO_API_KEY,
 			        process.env.TWILIO_API_SECRET,
-			        lifetime,
-			        worker.friendlyName
-			    )
+			        { ttl: lifetime }
+				)
 
 			    accessToken.addGrant(grant)
 			    accessToken.identity = worker.friendlyName
-
+			 
 				var tokens =  { worker: workerCapability.generate(lifetime), 
 								phone: phoneCapability.generate(lifetime),
 								chat:  accessToken.toJwt()}
