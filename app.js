@@ -26,8 +26,7 @@ app.use(bodyParser.urlencoded({
 app.use(function (req, res, next) {
   util.getConfiguration(function(error, configuration){
   	if(error){
-  		console.log(error)
-  		res.status(500).end()
+  		res.status(500).json({stack: error.stack, message: error.message })
   	} else {
   		req.configuration = configuration
   		next()
