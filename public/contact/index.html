@@ -1,142 +1,146 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Twilio Contact Center: Contact Form</title>
+	<meta charset="utf-8">
+	<title>Twilio Contact Center: Contact Form</title>
 
-  <link rel="stylesheet" href="/styles/bootstrap.min.css" type="text/css" />
-  <link rel="stylesheet" href="/styles/default.css" type="text/css" />
-  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"
-  type="text/css" rel="stylesheet" />
+	<link rel="stylesheet" href="/styles/bootstrap.min.css" type="text/css" />
+	<link rel="stylesheet" href="/styles/default.css" type="text/css" />
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"
+	type="text/css" rel="stylesheet" />
 
 </head>
 
 <body  ng-app="supportApplication">
 
-  <section class="contact-head">
-    <div>Twilio Contact Center: Contact Form</div>
-  </section>
+	<section class="contact-head">
+		<div>Twilio Contact Center: Contact Form</div>
+	</section>
 
-  <section class="contact-body" ng-cloak>
+	<section class="contact-body" ng-cloak>
 
-    <div class="phone panel panel-default">
+		<div class="phone panel panel-default">
 
-      <section  class="panel-body" ng-controller="ContactController" data-ng-init="init()">
+			<section  class="panel-body" ng-controller="ContactController" data-ng-init="init()">
 
-        <div>
-          <h2>Call us:</h2>
-          <h2 class="caller-id">{{configuration.twilio.callerId}}</h2>
-          <h2>... or let us call you</h2>
-        </div>
+				<div>
+					<h2>Call us:</h2>
+					<h2 class="caller-id">{{configuration.twilio.callerId}}</h2>
+					<h2>... or let us call you</h2>
+				</div>
 
-        <form name="supportForm">
+				<form name="supportForm">
 
-          <label>Department</label>
-          <div class="btn-group" uib-dropdown>
-            <button type="button" class="btn btn-default" uib-dropdown-toggle>
-              {{question.team.friendlyName}}&nbsp;&nbsp;<span class="caret"></span>
-            </button>
-            <ul class="uib-dropdown-menu">
-             <li ng-repeat="option in configuration.ivr.options">
-              <a href="#" ng-click="setQuestionTeam(option)" ng-click="$event.preventDefault();">{{ option.friendlyName }}</a>
-            </li>
-          </ul>
-        </div>
+					<label>Department</label>
+					<div class="btn-group" uib-dropdown>
+						<button type="button" class="btn btn-default" uib-dropdown-toggle>
+							{{question.team.friendlyName}}&nbsp;&nbsp;<span class="caret"></span>
+						</button>
+						<ul class="uib-dropdown-menu">
+						 <li ng-repeat="option in configuration.ivr.options">
+							<a href="#" ng-click="setQuestionTeam(option)" ng-click="$event.preventDefault();">{{ option.friendlyName }}</a>
+						</li>
+					</ul>
+				</div>
 
-        <input ng-model="question.team" name="team" type="text" hidden required>
+				<input ng-model="question.team" name="team" type="text" hidden required>
 
-        <label>What question do you have?</label>
-        <textarea ng-model-options="{ debounce: 1000 }" name="text" ng-model="question.text" class="form-control" rows="4"></textarea>
+				<label>What question do you have?</label>
+				<textarea ng-model-options="{ debounce: 1000 }" name="text" ng-model="question.text" class="form-control" rows="4"></textarea>
 
-        <label>Your name and phone number?</label>
+				<label>Your name and phone number?</label>
 
-        <div class="form-inline">
+				<div class="form-inline">
 
-        <input type="text" placeholder="Name" name="name" ng-model="question.name" class="form-control" required>
+				<input type="text" placeholder="Name" name="name" ng-model="question.name" class="form-control" required>
 
-        <input ng-model-options="{ debounce: 1000 }" type="text" placeholder="+..." name="phone" ng-model="question.phone" class="form-control" required phone-number>
+				<input ng-model-options="{ debounce: 1000 }" type="text" placeholder="+..." name="phone" ng-model="question.phone" class="form-control" required phone-number>
 
-        </div>
+				</div>
 
-      </select>
+			</select>
 
-      <div ng-messages="supportForm.phone.$error" role="alert">
-          <div ng-message="required"ng-show="supportForm.phone.$touched" class="error-message alert alert-danger">Phone number is required</div>
-          <div ng-message="invalidPhone"  class="error-message alert alert-danger">Invalid phone number</div>
-      </div>
+			<div ng-messages="supportForm.phone.$error" role="alert">
+					<div ng-message="required"ng-show="supportForm.phone.$touched" class="error-message alert alert-danger">Phone number is required</div>
+					<div ng-message="invalidPhone"  class="error-message alert alert-danger">Invalid phone number</div>
+			</div>
 
-      <button  ng-click="submit()" ng-disabled="supportForm.$invalid" class="submit btn btn-primary">Submit</button>
+			<button  ng-click="submit()" ng-disabled="supportForm.$invalid" class="submit btn btn-primary">Submit</button>
 
-      <div ng-show="submitted == true" class="alert alert-success" role="alert">Thanks, we call you as soon as possible.</div>
+			<div ng-show="submitted == true" class="alert alert-success" role="alert">Thanks, we call you as soon as possible.</div>
 
-    </form>
+		</form>
 
-  </div>
+	</div>
 
-  <div class="chat panel panel-default">
+	<div class="chat panel panel-default">
 
-    <div class="panel-heading"><h4>Chat with Support</h4></div>
+		<div class="panel-heading"><h4>Chat with Support</h4></div>
 
-    <section class="panel-body" ng-controller="ChatController">
+		<section class="panel-body" ng-controller="ChatController">
 
-      <form name="supportChatForm" class="support-chat-form form-inline" ng-hide="session.isInitialized">
-        
-        <div class="form-group">
-          <input ng-model="user.identity" name="identity" ng-minlength="3" ng-maxlength="20" ng-required="true" type="text" class="form-control" ng-disabled="session.isLoading" placeholder="Your Name">
-          <button type="submit" ng-disabled="session.isLoading || supportChatForm.$invalid || supportChatForm.$pristine" class="initiate btn btn-default" ng-click="init()" ><span ng-show="session.isLoading == true"><i class="fa fa-refresh fa-spin"></i></span>Go</button>
+			<form name="supportChatForm" class="support-chat-form form-inline" ng-hide="session.isInitialized">
+				
+				<div class="form-group">
+					<input ng-model="user.identity" name="identity" ng-minlength="3" ng-maxlength="20" ng-required="true" type="text" class="form-control" ng-disabled="session.isLoading" placeholder="Your Name">
+					<button type="submit" ng-disabled="session.isLoading || supportChatForm.$invalid || supportChatForm.$pristine" class="initiate btn btn-default" ng-click="init()" ><span ng-show="session.isLoading == true"><i class="fa fa-refresh fa-spin"></i></span>Go</button>
 
-          <div ng-messages="supportChatForm.identity.$error" role="alert">
-            <div ng-message="minlength"  class="alert alert-danger">Name is too short</div>
-            <div ng-message="maxlength" class="alert alert-danger">Name is too long</div>
-            <div ng-message="required" ng-show="supportChatForm.identity.$touched" class="alert alert-danger">Name is required</div>
-          </div>
+					<div ng-messages="supportChatForm.identity.$error" role="alert">
+						<div ng-message="minlength"  class="alert alert-danger">Name is too short</div>
+						<div ng-message="maxlength" class="alert alert-danger">Name is too long</div>
+						<div ng-message="required" ng-show="supportChatForm.identity.$touched" class="alert alert-danger">Name is required</div>
+					</div>
 
-        </div>
+				</div>
 
-      </form>
+			</form>
 
-        <div ng-show="session.isInitialized">
+				<div ng-show="session.isInitialized">
 
-          <div class="chat-canvas" scroll-glue>
+					<div ng-show="session.expired" class="alert alert-danger" style="margin: 0px">Session expired, please reload page</div>
 
-            <ul class="message-list" >
+					<div class="chat-canvas" scroll-glue>
 
-              <li class="message-template" ng-repeat="message in messages">
-                <span class="time">{{message.timestamp | time}}</span>
-                <div class="name">{{message.author}}</div>
-                <div class="body">
-                  <p>{{message.body}}</p>
-                </div>
-              </li>
+						<ul class="message-list" >
 
-            </ul>
-            <div id="bottom"></div>
+							<li class="message-template" ng-repeat="message in messages">
+								<span class="time">{{message.timestamp | time}}</span>
+								<div class="name">{{message.author}}</div>
+								<div class="body">
+									<p>{{message.body}}</p>
+								</div>
+							</li>
 
-          </div>
+						</ul>
+						<div id="bottom"></div>
 
-          <div class="typing-notification"><span>{{typingNotification}}</span></div>
+					</div>
 
-          <form class="chat-message-form" name="chatMessageForm">
-            <input ng-model="message" ng-model-options="{ debounce: 250 }" ng-required="true" autocomplete="off" ng-focus="focused()" name="text" type="text" class="form-control" placeholder="say something">
-            <button ng-disabled="chatMessageForm.$invalid || chatMessageForm.$pristine" class="btn btn-default" ng-click="send()">Send</button>
-          </form>
+					<div class="typing-notification"><span>{{typingNotification}}</span></div>
 
-        </div>  
+					<form class="chat-message-form" name="chatMessageForm" ng-hide="session.expired">
+						<input ng-model="message" ng-model-options="{ debounce: 250 }" ng-required="true" autocomplete="off" ng-focus="focused()" name="text" type="text" class="form-control" placeholder="say something">
+						<button ng-disabled="chatMessageForm.$invalid || chatMessageForm.$pristine" class="btn btn-default" ng-click="send()">Send</button>
+					</form>
 
-      </section>
+				</div>  
 
-    </div>
+			</section>
 
-  </section>
+		</div>
 
-  <script src="/scripts/angular.min.js"></script>
-  <script src="/scripts/angular-messages.min.js"></script>
-  <script src="/scripts/angular-scrollglue.js"></script>
-  <script src="/scripts/ui-bootstrap-0.14.3.min.js"></script>
-  <script src="/scripts/moment.min.js"></script>
-  <script src="ContactController.js"></script>
-  <script src="ChatController.js"></script>
-  <script src="//media.twiliocdn.com/sdk/rtc/js/ip-messaging/releases/0.9.6/twilio-ip-messaging.min.js"></script>
+	</section>
+
+	<script src="/scripts/angular.min.js"></script>
+	<script src="/scripts/angular-messages.min.js"></script>
+	<script src="/scripts/angular-scrollglue.js"></script>
+	<script src="/scripts/ui-bootstrap-0.14.3.min.js"></script>
+	<script src="/scripts/moment.min.js"></script>
+	<script src="ContactController.js"></script>
+	<script src="ChatController.js"></script>
+	<script src="https://media.twiliocdn.com/sdk/js/common/v0.1/twilio-common.min.js"></script>
+	<script src="https://media.twiliocdn.com/sdk/rtc/js/ip-messaging/v0.10/twilio-ip-messaging.min.js"></script>
+
 
 </body>
 </html>

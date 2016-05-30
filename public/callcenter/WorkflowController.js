@@ -183,7 +183,6 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
             return;
           }
 
-          $scope.chatIsVisible = true;
           $scope.$broadcast('ActivateChat', { channelSid: reservation.task.attributes.channelSid });
 
         });
@@ -215,17 +214,11 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
     }
   };
 
-  $scope.wrapup = function (reservation) {
-
-    $scope.task.completed = true;
+  $scope.complete = function (reservation) {
 
     if($scope.task.attributes.channel == 'chat'){
       $scope.$broadcast('DestroyChat');
     }
-
-  }
-
-  $scope.complete = function (reservation) {
 
     $scope.workerJS.update("ActivitySid", $scope.configuration.twilio.workerIdleActivitySid, function(err, worker) {
 

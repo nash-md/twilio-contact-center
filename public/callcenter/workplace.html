@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Twilio Contact Center - Call Agent Interface</title>
+<title>Twilio Omni Channel Contact Center - Call Agent Interface</title>
 
   <link rel="stylesheet" href="/styles/default.css" type="text/css" />
   <link rel="stylesheet" href="/styles/bootstrap.css" type="text/css" />
@@ -103,14 +103,10 @@
         </section>
         <!-- chat -->
 
-        <button ng-show="task.completed != true"  class="btn btn-primary agent-wrap-up" ng-click="wrapup()">Complete Task</button>
+        <button ng-show="task != null"  class="btn btn-primary agent-wrap-up" ng-click="complete()">Complete Task</button>
 
       </div>
       <!-- task -->
-
-      <!-- wrap up -->
-      <button class="btn btn-primary agent-wrap-up" ng-show="task != null && task.completed == true" type="button" ng-click="complete()" class="btn btn-primary">Ready for the next task ...</button>
-      <!-- wrap up -->
 
     </div>
      
@@ -142,7 +138,7 @@
       <button class="button-call" ng-if="isActive == false" ng-click="call(phoneNumber)">CALL</button>
       <button class="button-hangup" ng-if="isActive == true" ng-click="hangup()">HANGUP</button>
       <span class="status">Status: {{status}}</span>
-
+      <span ng-if="error != null" class="status">Error: {{error}}</span>
     </section>
 
     </div>
@@ -154,7 +150,8 @@
 
   <script type="text/javascript" src="//media.twiliocdn.com/sdk/js/client/v1.3/twilio.min.js"></script>
   <script type="text/javascript" src="//media.twiliocdn.com/taskrouter/js/v1.4/taskrouter.min.js"></script>
-  <script src="//media.twiliocdn.com/sdk/rtc/js/ip-messaging/releases/0.9.6/twilio-ip-messaging.min.js"></script>
+  <script src="https://media.twiliocdn.com/sdk/js/common/v0.1/twilio-common.min.js"></script>
+<script src="https://media.twiliocdn.com/sdk/rtc/js/ip-messaging/v0.10/twilio-ip-messaging.min.js"></script>
   <script src="/scripts/angular.min.js"></script>
   <script src="/scripts/angular-messages.min.js"></script>
   <script src="/scripts/angular-scrollglue.js"></script>

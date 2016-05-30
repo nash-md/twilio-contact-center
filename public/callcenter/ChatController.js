@@ -11,6 +11,7 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
     
     $scope.message = null;
     $scope.channel.leave();
+    $scope.messages = [];
     $scope.session.isInitialized = false;
 
   });
@@ -47,6 +48,20 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 
     console.log('setup channel: ' + channelSid);
     accessManager = new Twilio.AccessManager($scope.session.token); 
+
+    /**
+     * you'll want to be sure to listen to the tokenExpired event either update 
+     * the token via accessManager.updateToken(<token>) or let your page tell the user
+     * the chat is not active anymore 
+    **/
+    accessManager.on('tokenExpired', function(){
+      console.error('live chat token expired')
+    }); 
+
+    accessManager.on('error', function(){
+      console.error('An error occurred')
+    });   
+
     messagingClient = new Twilio.IPMessaging.Client(accessManager);
 
     var promise = messagingClient.getChannelBySid(channelSid);
@@ -54,6 +69,9 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
     promise.then(function(channel) {
       console.log('channel is: ' + channel.uniqueName);
       $scope.setupChannel(channel);
+    }, function(reason) {
+      /* client could not access the channel */
+      console.error(reason)
     });
 
   }
@@ -61,6 +79,14 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
   $scope.setupChannel = function(channel){
 
     channel.join().then(function(member) {
+
+      /* first we read the history of this channel, afterwards we join */
+      channel.getMessages().then(function(messages) {
+        for (i = 0; i < messages.length; i++) {
+          var message = messages[i];
+          $scope.addMessage(message);
+        }
+        console.log('Total Messages in Channel:' + messages.length);
 
         $scope.messages.push({
           body: 'You are now connected to the customer',
@@ -72,20 +98,14 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
         $scope.session.isLoading = false;
 
         $scope.$apply();
+
+      });
+
     });
 
     channel.on('messageAdded', function(message) {
 
-        var pattern = /(.*)(\+[0-9]{8,20})(.*)$/;
-
-        var m = message.body;
-
-        if (pattern.test(message.body) == true) {
-          var m = message.body.replace(pattern, "<p>$1<span class=\"chat-inline-number\" ng-click=\"callInlineNumber($2)\">$2</span>$3</p>");
-        } 
-
-        $scope.messages.push({body: m, author: message.author, timestamp: message.timestamp});
-        $scope.$apply();
+      $scope.addMessage(message);
 
     });
 
@@ -125,9 +145,9 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 
   }
 
+  /* if the message input changes the user is typing */
   $scope.$watch('message', function(newValue, oldValue) {
     if($scope.channel){
-      console.log('send typing notification to channel');
       $scope.channel.typing();
     }    
   });
@@ -139,7 +159,22 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 
   $scope.callInlineNumber = function(phone){
     console.log('call inline number ' + phone)
-     $rootScope.$broadcast('CallPhoneNumber', { phoneNumber: phone });
+    $rootScope.$broadcast('CallPhoneNumber', { phoneNumber: phone });
+  }
+
+  $scope.addMessage = function(message){
+
+    var pattern = /(.*)(\+[0-9]{8,20})(.*)$/;
+
+    var m = message.body;
+
+    if (pattern.test(message.body) == true) {
+      var m = message.body.replace(pattern, "<p>$1<span class=\"chat-inline-number\" ng-click=\"callInlineNumber('$2')\">$2</span>$3</p>");
+    }  
+
+    $scope.messages.push({body: m, author: message.author, timestamp: message.timestamp});
+    $scope.$apply();
+
   }
 
 });
