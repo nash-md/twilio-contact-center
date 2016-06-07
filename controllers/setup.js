@@ -49,7 +49,7 @@ module.exports.update = function(req, res) {
 			}
 			
 			var workflow = { sid: configuration.twilio.workflowSid,
-				friendlyName: 'Omni Channel Demo Workflow',
+				friendlyName: 'Twilio Contact Center Workflow',
 				assignmentCallbackUrl: req.protocol + '://' + req.hostname + '/api/taskrouter/assignment',
 				taskReservationTimeout: '1200',
 				configuration: JSON.stringify(workflowConfiguration)
