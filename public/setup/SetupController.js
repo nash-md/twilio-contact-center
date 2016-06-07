@@ -95,6 +95,8 @@ app.controller('SetupController', function ($scope, $http) {
 
         $scope.isSaving = false;
 
+        alert('Error: ' +  response.data.message);
+
       });
 
   }

@@ -49,7 +49,7 @@ module.exports.update = function(req, res) {
 			}
 			
 			var workflow = { sid: configuration.twilio.workflowSid,
-				friendlyName: 'Twilio Contact Center Workflow',
+				friendlyName: 'Omni Channel Demo Workflow',
 				assignmentCallbackUrl: req.protocol + '://' + req.hostname + '/api/taskrouter/assignment',
 				taskReservationTimeout: '1200',
 				configuration: JSON.stringify(workflowConfiguration)
@@ -81,7 +81,7 @@ module.exports.update = function(req, res) {
 
 		}, function(configuration, callback){
 
-			module.exports.updateInboundPhoneNumber(req, function(err){	
+			module.exports.updateInboundPhoneNumber(req, configuration, function(err){	
 				
 				if (err){ 
 					callback(err)
@@ -104,7 +104,7 @@ module.exports.update = function(req, res) {
 		}], function (err){
 			
 			if(err){
-				res.status(500).json(err)
+				res.status(500).json({stack: err.stack, message: err.message })
 				return
 			}
 
@@ -245,34 +245,42 @@ module.exports.createOrUpdateApplication = function (req, callback) {
 	}
 }
 
-module.exports.updateInboundPhoneNumber = function (req, callback) {
+module.exports.updateInboundPhoneNumber = function (req, configuration, callback) {
 
 	var client = new require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
 
-	client.incomingPhoneNumbers.list({ PhoneNumber: req.configuration.twilio.callerId}, function(err, data) {
+	client.incomingPhoneNumbers.list({ PhoneNumber: configuration.twilio.callerId}, function(err, data) {
 
-		data.incomingPhoneNumbers.forEach(function(number) {
+		/* we did not find the phone number provided */
+		if(data.incomingPhoneNumbers.length == 0){
+			return callback(new Error(configuration.twilio.callerId + ' not found'))
+		}
+
+		/* the query returned more than one number, something went wrong */
+		if(data.incomingPhoneNumbers.length != 1){
+			return callback(new Error('query for ' + configuration.twilio.callerId + ' returned more than one phone number'))
+		} 
+
+		var sid = data.incomingPhoneNumbers[0].sid
+
+		console.log('configure phone number ' + sid + ' (' +  data.incomingPhoneNumbers[0].PhoneNumber + ')')
+
+		var url =  req.protocol + '://' + req.hostname + '/api/ivr/welcome'
+
+		client.incomingPhoneNumbers(sid).update({
+			voiceUrl: url,
+			voiceMethod: 'GET'
+		}, function(err, number) {
 			
-			console.log('update phone number with sid:' + number.sid);
+			if (err){ 
+				callback(err)
+			} else {
+				callback(null)		
+			}
 
-			var url =  req.protocol + '://' + req.hostname + '/api/ivr/welcome'
+		})
 
-			client.incomingPhoneNumbers(number.sid).update({
-				voiceUrl: url,
-				voiceMethod: 'GET'
-			}, function(err, number) {
-				
-				if (err){ 
-					callback(err)
-				} else {
-					callback(null)		
-				}
-
-			});
-
-		});
-
-	});
+	})
 
 }
 
@@ -282,7 +290,7 @@ module.exports.getWorkspace = function(req, res) {
 
 	client.workspaces.list(function(err, data) {
 		if(err) {
-			res.status(500).json(err)
+			res.status(500).json({stack: err.stack, message: err.message })
 		} else {
 
 			for (i = 0; i < data.workspaces.length; i++) {
@@ -304,7 +312,7 @@ module.exports.getActivities = function(req, res) {
 	
 	client.workspace.activities.list(function(err, data) {
 		if(err) {
-			res.status(500).json(err)
+			res.status(500).json({stack: err.stack, message: err.message })
 		} else {
 			res.status(200).json(data.activities)
 		}

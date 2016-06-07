@@ -83,7 +83,7 @@
       <input ng-model="workerAssignmentActivity" name="workerAssignmentActivity" type="text" hidden required>
 
       <h6>Phone Number (Inbound/Outbound):</h6>
-       <input style="width:350px" ng-model="configuration.twilio.callerId" name="callerId" type="text" class="form-control" placeholder="+..." required phone-number>
+       <input style="width:350px" ng-model="configuration.twilio.callerId" data-ng-trim="false" name="callerId" type="text" class="form-control" placeholder="+..." required phone-number>
 
       <div ng-messages="setupForm.callerId.$error" role="alert" style="margin-top: 10px; margin-bottom: 0px;">
           <div ng-message="required" class="error-message alert alert-danger">Phone number is required</div>
