@@ -1,0 +1,15 @@
+{
+  "env": {
+    "browser": true
+  },
+  "extends": "eslint:recommended",
+  "rules": {
+    "strict": 0,
+    "curly": [2, "all"],
+    "quotes": [2, "single"],
+    "max-len": [2, 80],
+    "no-empty": 2,
+    "default-case": 2,
+    "semi": 1
+  }
+}
