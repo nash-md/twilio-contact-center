@@ -40,6 +40,7 @@ var setup = require('./controllers/setup.js')
 
 router.route('/setup').get(setup.get)
 router.route('/setup').post(setup.update)
+router.route('/setup/validate').get(setup.validate)
 router.route('/setup/workspace').get(setup.getWorkspace)
 router.route('/setup/activities').get(setup.getActivities)
 
