@@ -9,44 +9,51 @@
 
 </head>
 
-<body class="call-center" ng-app="callcenterApplication" ng-cloak>
-  <h2>Twilio Contact Center: Call Agent Login</h2>
-  
-  <section ng-controller="LoginController">
+<body class="container" ng-app="callcenterApplication" ng-cloak>
 
-    <div class="panel panel-default">
+  <div class="row">
 
-      <div class="panel-body">
+    <div class=" col-lg-4 col-md-offset-4">
+      <h2>Welcome Agent</h2>
+      <p class="lead">Please log in with your agent name</p>
+    </div>
 
-        <form ng-submit="login()" class="form-inline" name="loginForm">
+    <div ng-controller="LoginController" class="well bs-component col-lg-4 col-md-offset-4">
 
-          <div class="form-group">
- 
-            <input ng-focus="reset()" type="text" name="friendlyName" placeholder="Name" ng-model="worker.friendlyName" class="form-control" required>
-            <button ng-disabled="loginForm.friendlyName.$invalid" ng-click="login()" type="submit" class="btn btn-default">Sign in</button>
+      <form ng-submit="login()" class="form-horizontal" name="loginForm">
 
-          </div> 
-
-          <div ng-messages="loginForm.friendlyName.$error" role="alert">
-            <div ng-message="required" ng-show="loginForm.friendlyName.$touched" class="error-message alert alert-danger">Name is required</div>
+        <div class="form-group">
+          <div class="col-lg-12">
+            <input class="form-control" ng-focus="reset()" type="text" name="friendlyName" placeholder="Name" ng-model="worker.friendlyName" required>
           </div>
+        </div>
 
-          <div ng-messages="loginForm.$error" role="alert">
-            <div ng-message="notFound"  class="error-message alert alert-danger">Worker does not exist</div>
-            <div ng-message="serverError" class="error-message alert alert-danger">An error occured, please check JavaScript console for details</div>
+        <div class="form-group">
+          <div class="col-lg-12">
+            <button ng-disabled="loginForm.friendlyName.$invalid" ng-click="login()" type="submit" class="btn btn-primary">Log In</button>
           </div>
-          
+        </div>
+
+        <div ng-messages="loginForm.friendlyName.$error" role="alert">
+          <div ng-message="required" ng-show="loginForm.friendlyName.$touched" class="alert alert-danger">Name is required</div>
+        </div>
+
+        <div ng-messages="loginForm.$error" role="alert">
+          <div ng-message="notFound"  class="alert alert-danger">Worker does not exist</div>
+          <div ng-message="serverError" class="alert alert-danger">
+            <strong>Oh snap!</strong> An error occured, please check JavaScript console for details
+          </div>
+        </div>
+
       </form>
-      
+
     </div>
 
   </div>
 
-</section>
+  <script src="/scripts/angular.min.js"></script>
+  <script src="/scripts/angular-messages.min.js"></script>
+  <script src="LoginController.js"></script>
 
-<script src="/scripts/angular.min.js"></script>
-<script src="/scripts/angular-messages.min.js"></script>
-<script src="LoginController.js"></script>
-
-</body>
-</html>
+  </body>
+  </html>
