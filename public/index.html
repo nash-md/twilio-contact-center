@@ -11,29 +11,64 @@
 
 </head>
 
-<body>
+<body ng-app="indexApplication">
+	<div class="container" style="max-width:960px">
 
-	<section class="contact-head">
-		<div>Twilio Contact Center Demo</div>
-	</section>
+		<div class="row">
+			<div class="page-header col-lg-12">
+				<h1>Twilio Contact Center</h1>
+			</div>
+		</div>
 
-	<section class="contact-body">
+		<div class="row" ng-controller="IndexController" ng-init="validateSetup()">
 
-		<div style="margin: auto; width:900px; overflow: auto">
+			<div class="col-lg-4 col-lg-push-8">
 
-			<h2>Call Center Administration</h2>
-			<span>A basic administration interface to create and delete new call centre agents.</span>
-			<div><a href="/administration/index.html">Open</a></div>
+				<div ng-if="setup == 'VALID'" class="alert alert-dismissible alert-success">
+					<strong>Well done!</strong><br />You sucessfully setup the demo.
+				</div>
 
-			<h2>Call Agent Login</h2>
-			<span>The working environment for agents. Agents need to open this page and log in.</span>
-			<div><a href="/callcenter/index.html">Open</a></div>
+				<div ng-if="setup == 'INVALID'" class="alert alert-dismissible alert-danger">
+					<strong>Oh snap!</strong><br />
+					
+					<span ng-if="code == 'TWILIO_ACCOUNT_SID_INVALID'">The environment variable TWILIO_ACCOUNT_SID is not set or incorrect. If you are on Heroku please update your application settings.</span>
+					
+					<span ng-if="code == 'TWILIO_AUTH_TOKEN_INVALID'">The environment variable TWILIO_AUTH_TOKEN is not set or incorrect. If you are on Heroku please update your application settings.</span>
+					
+					<span ng-if="code == 'TWILIO_WORKSPACE_SID_INVALID'">The environment variable TWILIO_WORKSPACE_SID is not set or incorrect. If you are on Heroku please update your application settings.</span>
+					
+					<span ng-if="code == 'TWILIO_ACCOUNT_NOT_ACCESSIBLE'">The application could not access the Twilio API with the provided credentials. Please verify Account Sid and Auth Token.</span>
+					
+					<span ng-if="code == 'TWILIO_WORKSPACE_NOT_ACCESSIBLE'">The application could not access the your Twilio Taskrouter workspace please verify the Workspace Sid.</span>
+				
+				</div>
 
-			<h2>Company's Website</h2>
-			<span>Page for customers who want to talk to an agent. Users can request a callback, call the agents via phone call or chat with an agent</span>
-			<div><a href="/contact/index.html">Open</a></div>
+			</div>
 
-		</section>
+			<div class="col-lg-8 col-lg-pull-4">
 
-	</body>
+				<h3>Call Center Administration</h3>
+				<span>A basic administration interface to create and delete new call centre agents.</span><br><br>
+				<div><a href="/administration/index.html" class="btn btn-primary">Open</a></div>
+
+				<h3>Call Agent Login</h3>
+				<span>The working environment for agents. Agents need to open this page and log in.</span>
+				<br><br>
+				<div><a href="/callcenter/index.html" class="btn btn-primary">Open</a></div>
+
+				<h3>Company's Website</h3>
+				<span>Page for customers who want to talk to an agent. Users can request a callback, call the agents via phone call or chat with an agent</span>
+				<br><br>
+				<div><a href="/contact/index.html" class="btn btn-primary">Open</a></div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<script src="/scripts/angular.min.js"></script>
+	<script src="IndexController.js"></script>
+
+</body>
 </html>
