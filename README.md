@@ -86,6 +86,27 @@ Before you can use the demo please open `http://<your_application_name>/setup` a
 
 **Note:** On Google Chrome a secure HTTPS connection is required to do phone calls via WebRTC. Use a tunnel that supports HTTPS such as ngrok, which can forward the traffic to your webserver.
 
+# Contributions
+
+Contributions are welcome and generally accepted. For not trivial amendments it is a good idea to submit an issue explaining the proposed changes before a PR. This allows the maintainers to give guidance and avoid you doing duplicated work.
+
+Your changes must adhere a common project code style.
+
+```
+# please run this before "git commit"
+npm run lint
+```
+
+To make life easier for other contributors and reviewer please rebase your commit in the same PR
+
+```
+git rebase -i HEAD^^^^^^
+# then squash or fixup your shards
+# and force push into your fork
+git push origin [YOUR BRANCH] -f
+```
+
+
 # License
 
 MIT

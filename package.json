@@ -1,31 +1,49 @@
 {
   "name": "twilio-contact-center-omni-channel",
-  "version": "1.1.0",
   "description": "A simple omni channel contact center using Twilio Client and Taskrouter",
+  "version": "1.2.0",
+  "author": "Matthias Damm",
+  "contributors": [],
+  "license": "MIT",
+  "repository": "nash-md/twilio-contact-center",
   "main": "app.js",
-  "scripts": {
-    "start": "node app.js"
-  },
-  "dependencies": {
-    "express": "4.x",
-    "express-session": "1.x",
-    "pg": "4.x",
-    "async": "1.x",
-    "twilio": "2.9.x",
-    "body-parser": "1.x",
-    "compression": "1.6.x"
-  },
-  "engines": {
-    "node": "4.x"
-  },
-  "repository": {
-    "type": "git",
-    "url": ""
-  },
+  "bugs": "https://github.com/nash-md/twilio-contact-center/issues",
+  "private": false,
   "keywords": [
+    "twilio",
+    "Twilio TaskRouter",
+    "Twilio Client",
+    "Twilio IP Messaging",
+    "twilio voice calling",
+    "twilio chat",
+    "twilio video chat",
+    "demo",
     "node",
     "heroku",
-    "twilio"
+    "contact center",
+    "contact centre"
   ],
-  "license": "MIT"
+  "dependencies": {
+    "async": "^1.5.2",
+    "body-parser": "^1.15.1",
+    "compression": "^1.6.2",
+    "express": "^4.13.4",
+    "express-session": "^1.13.0",
+    "pg": "^4.5.6",
+    "twilio": "^2.9.0"
+  },
+  "devDependencies": {
+    "eslint": "^2.11.1"
+  },
+  "engines": {
+    "node": "~4.4.5"
+  },
+  "files": [
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "start": "node app.js",
+    "lint": "./node_modules/.bin/eslint ."
+  }
 }
