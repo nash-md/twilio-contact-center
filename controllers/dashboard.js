@@ -1,6 +1,4 @@
-var twilio = require('twilio')
-
-module.exports.pushEvent = function(req, res) {
+module.exports.pushEvent = function (req, res) {
 
 	console.log('Event: ' + req.body.EventType)
 	console.log('Task: ' + req.body.TaskSid)

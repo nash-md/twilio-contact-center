@@ -95,6 +95,9 @@ Your changes must adhere a common project code style.
 ```
 # please run this before "git commit"
 npm run lint
+# try automatic fix
+./node_modules/.bin/eslint controllers --fix
+./node_modules/.bin/eslint public --fix
 ```
 
 To make life easier for other contributors and reviewer please rebase your commit in the same PR
