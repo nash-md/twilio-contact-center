@@ -1,9 +1,3 @@
-body {
-	margin:0px;
-	padding:0px;
-	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
 /* prevent angularjs flicker */
 [ng\:cloak], [ng-cloak], .ng-cloak {
   display: none !important;
@@ -15,13 +9,6 @@ body {
   padding-bottom:10px;
   border: 1px solid #ddd;
   margin-top: -1px;
-}
-
-
-.call-center
-{
-	width: 700px;
-	background-color: #f4f4f4;
 }
 
 .workflow-controller
@@ -219,78 +206,8 @@ body {
 	display: block
 }
 
-.agent-wrap-up
-{
-	width:100%;
-	height: 3.5em;
-	margin-top: 10px;
-}
-
-/* call center */
-.call-center
-{
-	width:700px;
-	margin:auto;
-}
-
-.call-center form[name="loginForm"] {}
-
-.call-center form[name="loginForm"] input[name="friendlyName"]
-{
-	width: 250px;
-}
-
-.call-center form[name="loginForm"] .error-message
-{
-	margin-top:10px;
-	margin-bottom:0px;
-	padding: 5px 10px 5px 10px;
-}
-
-
-/* contact */
-.contact-head
-{
-	background-color: #212121;
-	margin-bottom: 15px;
-	padding: 10px;
-	color: white;
-}
-
-.contact-head > div
-{
-	margin: auto;
-	width:900px; 
-	overflow: auto;
-	font-size: 2.6em;
-}
-
-.contact-body
-{
-	margin: auto;
-	width:900px;
-	overflow: auto;
-}
-
-.contact-body .alert
-{
-	padding: 5px 10px 5px 10px;
-	margin: 10px 0 0 0;
-}
-
-.contact-body .phone
-{
-	width:440px;
-	float: left;
-}
-
-.contact-body .chat
-{
-	width:450px;
-	float: right;
-}
-
-.contact-body .chat .typing-notification
+/* support chat */
+.typing-notification
 {
 	color: grey; 
 	height: 2em;
@@ -298,43 +215,6 @@ body {
 	line-height: 2em;
 }
 
-.contact-body .phone h2
-{
-	margin:0px;
-	padding:0px;
-	font-size:1.6em;
-}
-
-.contact-body .phone h2.caller-id
-{
-	font-size:2.4em;
-	margin-bottom:15px;
-}
-
-.contact-body .phone textarea
-{
-	width:100%;
-	box-sizing:border-box;
-	resize:none;
-}
-
-.contact-body .phone label
-{
-	display: block; 
-	margin-top: 10px;
-}
-
-.contact-body .phone input[name="phone"]
-{
-	width: 230px;
-}
-
-.contact-body .phone button.submit
-{
-	margin: 10px 0 0 0;
-}
-
-/* support chat */
 .chat-controller .load-indicator
 {
 	text-align: center;
@@ -364,7 +244,7 @@ body {
 {
 	border: 1px solid #cfdae1;
 	border-radius: 4px;
-    height: 300px;
+    height: 400px;
     margin: 10px 0px 0px 0px;
     overflow-y: scroll;
 }
@@ -431,13 +311,3 @@ body {
 	cursor: pointer;
 	text-decoration: underline;
 }
-
-/* administration */
-.administration-controller
-{
-	margin: auto;
-	width:750px;
-}
-
-
-
