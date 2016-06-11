@@ -29,7 +29,7 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout)
     Twilio.Device.connect(function (conn) {
 
       $scope.connection = conn;
-      $scope.status = "successfully established call";
+      $scope.status = 'successfully established call';
       $scope.isActive = true;
 
       $timeout(function(){
@@ -39,7 +39,7 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout)
     });
 
     Twilio.Device.disconnect(function (conn) {
-      $scope.status = "call disconnected";
+      $scope.status = 'call disconnected';
       $scope.isActive = false;
       $scope.connection = null;
 
@@ -50,7 +50,7 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout)
     });
 
     Twilio.Device.offline(function (device) {
-      $scope.status = "offline";
+      $scope.status = 'offline';
       $scope.isActive = false;
 
       $timeout(function(){
@@ -60,13 +60,13 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout)
     });
 
     Twilio.Device.incoming(function (conn) {
-      $scope.status = "incoming connection from " + conn.parameters.From;
+      $scope.status = 'incoming connection from ' + conn.parameters.From;
       $scope.isActive = true;
 
       conn.accept();
 
       conn.disconnect(function(conn) {
-        $scope.status = "call has ended";
+        $scope.status = 'call has ended';
         $scope.isActive = false;
         $scope.$apply();
       });
@@ -101,7 +101,7 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout)
     $scope.connection.sendDigits(digit);
   }
 
-}
+};
 
 $scope.$on('CallPhoneNumber', function(event, data) { 
 
