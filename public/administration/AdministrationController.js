@@ -1,6 +1,6 @@
-var administrationController = angular.module('administrationApplication', ['ui.bootstrap','checklist-model']);
+var administrationController = angular.module('administrationApplication', ['checklist-model']);
 
-administrationController.controller('AdministrationController', function ($scope, $http) {
+administrationController.controller('AdministrationController', function ($scope, $http, $log) {
 
   $scope.init = function(){
 
@@ -10,7 +10,7 @@ administrationController.controller('AdministrationController', function ($scope
       phone: 'Phone',
       chat: 'Chat',
       video: 'Video',
-      email: 'Email',
+      email: 'Email'
     };
 
     $scope.createForm = false;
@@ -30,7 +30,7 @@ administrationController.controller('AdministrationController', function ($scope
 
       });
 
-  }
+  };
 
   $scope.listWorkers = function(){
 
@@ -46,7 +46,7 @@ administrationController.controller('AdministrationController', function ($scope
 
         worker.attributes = attributes;
 
-        for (i = 0; i < $scope.configuration.ivr.options.length; i++) {
+        for (var i = 0; i < $scope.configuration.ivr.options.length; i++) {
 
           if($scope.configuration.ivr.options[i].id == worker.attributes.team){
             worker.team = $scope.configuration.ivr.options[i].friendlyName;
@@ -61,36 +61,35 @@ administrationController.controller('AdministrationController', function ($scope
           worker.channelsFriendlyName += $scope.channels[worker.attributes.channels[i]];
           
           if(i < (worker.attributes.channels.length -1)){
-            worker.channelsFriendlyName += ', '
+            worker.channelsFriendlyName += ', ';
           }
 
         }    
     
         $scope.workers.push(worker);
 
-      })
+      });
       
     }, function onError(response) { 
 
-      console.log(response);
       alert(response.data);
 
     });
 
-  }
+  };
 
   $scope.expandAgentCreate = function(){
 
     $scope.createForm = true;
 
-  }
+  };
 
   $scope.createWorker = function(){
 
     var attributes = { 
       contact_uri: 'client:' + $scope.agent.friendlyName.toLowerCase(), 
       channels: $scope.agent.channels, 
-      team: $scope.agent.team.id
+      team: $scope.agent.team
     };
 
     var worker =  {friendlyName:  $scope.agent.friendlyName, attributes: JSON.stringify(attributes) } ;
@@ -99,7 +98,7 @@ administrationController.controller('AdministrationController', function ($scope
 
       .then(function onSuccess(response) {
 
-        console.log(response.data);
+        $log.log(response.data);
 
         $scope.createForm = false;
         $scope.agent = { channels: []};
@@ -108,18 +107,16 @@ administrationController.controller('AdministrationController', function ($scope
         
       }, function onError(response) { 
 
-        console.log(response);
+        $log.error(response);
         alert(response.data);
 
       });
 
-  }
+  };
 
   $scope.removeWorker = function(worker){
 
-    console.log("delete worker");
-
-    for (i = 0; i < $scope.workers.length; i++) {
+    for (var i = 0; i < $scope.workers.length; i++) {
 
       if($scope.workers[i].sid == worker.sid){            
         $scope.workers.splice(i, 1);    
@@ -130,31 +127,19 @@ administrationController.controller('AdministrationController', function ($scope
 
     $http.delete('/api/workers/' + worker.sid);
 
-  }
-
-  $scope.setAgentTeam = function (option) {
-
-    $scope.agent.team =  option;
-
-  }
-
-  $scope.setIvrOption = function (option, digit) {
-
-    option.digit = digit;
-
-  }
+  };
 
   $scope.setTab = function (tab) {
 
-    $scope.tab = tab
+    $scope.tab = tab;
 
-  }
+  };
 
   $scope.removeIvrOption = function(array, index) {
 
     $scope.configuration.ivr.options.splice(index, 1);
 
-  }
+  };
 
   $scope.createIvrOption = function(){
 
@@ -163,31 +148,27 @@ administrationController.controller('AdministrationController', function ($scope
     $scope.configuration.ivr.options.push(option);
     $scope.createForm = false;
 
-  }
+  };
 
   $scope.saveConfig = function(){
 
-    console.log('save');
-
-    for (i = 0; i < $scope.configuration.ivr.options.length; i++) {
+    for (var i = 0; i < $scope.configuration.ivr.options.length; i++) {
 
       var tmpId = $scope.configuration.ivr.options[i].friendlyName.toLowerCase();
 
-      tmpId = tmpId.replace(/[^a-z0-9 ]/g, "");
-      tmpId = tmpId.replace(/[ ]/g, "_");
+      tmpId = tmpId.replace(/[^a-z0-9 ]/g, '');
+      tmpId = tmpId.replace(/[ ]/g, '_');
 
       $scope.configuration.ivr.options[i].id = tmpId;
 
-    } 
-
-    console.log(JSON.stringify({ configuration: $scope.configuration }));
+    };
 
     $http.post('/api/setup', { configuration: $scope.configuration })
 
       .then(function onSuccess(response) {
 
-        console.log('setup saved');
-        console.log(response.data);
+        $log.log('setup saved');
+        $log.log(response.data);
         
       }, function onError(response) { 
 
@@ -195,7 +176,7 @@ administrationController.controller('AdministrationController', function ($scope
 
       });
 
-  }
+  };
 
 });  
 
