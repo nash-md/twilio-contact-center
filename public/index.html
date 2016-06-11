@@ -15,14 +15,14 @@
 	<div class="container" style="max-width:960px">
 
 		<div class="row">
-			<div class="page-header col-lg-12">
+			<div class="page-header col-md-12">
 				<h1>Twilio Contact Center</h1>
 			</div>
 		</div>
 
 		<div class="row" ng-controller="IndexController" ng-init="validateSetup()">
 
-			<div class="col-lg-4 col-lg-push-8">
+			<div class="col-md-4 col-md-push-8">
 
 				<div ng-if="setup == 'VALID'" class="alert alert-dismissible alert-success">
 					<strong>Well done!</strong><br />You sucessfully setup the demo.
@@ -45,7 +45,7 @@
 
 			</div>
 
-			<div class="col-lg-8 col-lg-pull-4">
+			<div class="col-md-8 col-md-pull-4">
 
 				<h3>Call Center Administration</h3>
 				<span>A basic administration interface to create and delete new call centre agents.</span><br><br>
@@ -59,7 +59,10 @@
 				<h3>Company's Website</h3>
 				<span>Page for customers who want to talk to an agent. Users can request a callback, call the agents via phone call or chat with an agent</span>
 				<br><br>
-				<div><a href="/contact/index.html" class="btn btn-primary">Open</a></div>
+				<div>
+					<a href="/contact/index.html" class="btn btn-primary">Inbound &amp; Callback Request</a>
+					<a href="/contact/chat.html" class="btn btn-primary">Live Chat</a>
+				</div>
 
 			</div>
 
