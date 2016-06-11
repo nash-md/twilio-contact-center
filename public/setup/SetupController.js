@@ -21,7 +21,7 @@ app.controller('SetupController', function ($scope, $http) {
         $scope.activities = data;
         
         // FIXME
-        for (i = 0; i < $scope.activities.length; i++) {
+        for (var i = 0; i < $scope.activities.length; i++) {
           
           if($scope.activities[i].sid == $scope.configuration.twilio.workerIdleActivitySid){
             $scope.workerIdleActivity = $scope.activities[i];
@@ -35,7 +35,7 @@ app.controller('SetupController', function ($scope, $http) {
             $scope.workerReservationActivity = $scope.activities[i];
           }
 
-           if($scope.activities[i].sid == $scope.configuration.twilio.workerAssignmentActivitySid){
+          if($scope.activities[i].sid == $scope.configuration.twilio.workerAssignmentActivitySid){
             $scope.workerAssignmentActivity = $scope.activities[i];
           }
 
@@ -51,35 +51,35 @@ app.controller('SetupController', function ($scope, $http) {
 
     });
 
-  }
+  };
   
   $scope.setOfflineActivity = function (activity) {
 
     $scope.workerOfflineActivity = activity;
     $scope.configuration.twilio.workerOfflineActivitySid = activity.sid;
 
-  }
+  };
 
   $scope.setIdleActivity = function (activity) {
 
     $scope.workerIdleActivity = activity;
     $scope.configuration.twilio.workerIdleActivitySid = activity.sid;
 
-  }
+  };
 
   $scope.setReservationActivity = function (activity) {
 
     $scope.workerReservationActivity = activity;
     $scope.configuration.twilio.workerReservationActivitySid = activity.sid;
 
-  }
+  };
 
   $scope.setAssignmentActivity = function (activity) {
 
     $scope.workerAssignmentActivity = activity;
     $scope.configuration.twilio.workerAssignmentActivitySid = activity.sid;
 
-  }
+  };
 
   $scope.saveConfig = function(){
 
@@ -99,7 +99,7 @@ app.controller('SetupController', function ($scope, $http) {
 
       });
 
-  }
+  };
 
 });  
 
