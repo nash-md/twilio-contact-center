@@ -11,7 +11,9 @@
 
 </head>
 
-<body class="call-center" ng-app="callcenterApplication">
+<body ng-app="callcenterApplication">
+
+<div class="container" style="width:800px">
 
   <section class="workflow-controller" ng-controller="WorkflowController" data-ng-init="init()" ng-cloak>
 
@@ -22,9 +24,9 @@
         <div class="logout"><span ng-click="logout()">logout</span></div> 
         <h2 class="name" class="page-header">{{worker.friendlyName}}&#39;s Call Agent Interface</h2>
 
-        <div>Status:&nbsp;<span ng-class="{'label-success': worker.activityName == 'Idle', 'label-danger': worker.activityName == 'Busy', 'label-default': worker.activityName == 'Offline', 'label-warning': worker.activityName == 'Reserved'}" class="label">{{worker.activityName}}</span></div>
+        <div>Status:&nbsp;<span style="font-size:1em" ng-class="{'label-success': worker.activityName == 'Idle', 'label-danger': worker.activityName == 'Busy', 'label-default': worker.activityName == 'Offline', 'label-warning': worker.activityName == 'Reserved'}" class="label">{{worker.activityName}}</span></div>
 
-      <div class="reservations">
+      <div class="reservations" style="width:450px">
 
       <!-- active reservation -->
       <div class="panel panel-default" ng-show="reservation != null">
@@ -74,7 +76,7 @@
 
             <div ng-show="session.isInitialized">
 
-            <div class="chat-canvas" scroll-glue>
+            <div class="chat-canvas" scroll-glue style="height:340px">
 
               <ul class="message-list" >
 
@@ -93,9 +95,16 @@
 
             <div class="typing-notification"><span>{{typingNotification}}</span></div>
 
-            <form class="chat-message-form" name="chatMessageForm">
-              <input ng-model="message" ng-model-options="{ debounce: 250 }" ng-required="true" autocomplete="off" name="text" type="text" class="form-control" placeholder="say something">
-              <button ng-disabled="chatMessageForm.$invalid || chatMessageForm.$pristine" class="btn btn-default" ng-click="send()">Send</button>
+            <form class="chat-message-form form-horizontal" name="chatMessageForm" style="margin-top:5px">
+          
+              <div class="form-group">
+                <div class="col-xs-8">
+                  <input ng-model="message" ng-model-options="{ debounce: 250 }" ng-required="true" autocomplete="off" ng-focus="focused()" name="text" type="text" class="form-control" placeholder="say something">
+                </div>
+                <div class="col-xs-4">
+                  <button ng-disabled="chatMessageForm.$invalid || chatMessageForm.$pristine" class="btn btn-default" ng-click="send()">Send</button>
+                </div>
+              </div>
             </form>
 
           </div>  
@@ -103,7 +112,7 @@
         </section>
         <!-- chat -->
 
-        <button ng-show="task != null"  class="btn btn-primary agent-wrap-up" ng-click="complete()">Complete Task</button>
+        <button ng-show="task != null"  class="btn btn-primary agent-wrap-up" ng-click="complete()" style="width:100%">Complete Task</button>
 
       </div>
       <!-- task -->
@@ -112,8 +121,8 @@
      
     <section ng-controller="PhoneController" ng-cloak class="phone-controller" >
 
-      <input ng-show="isActive == false" ng-model="phoneNumber" type="text" name="phoneNumber" placeholder="+.." />
-      <div class="phone-number" ng-if="isActive == true" />{{phoneNumber}}</div>
+      <input style="font-size:2em; padding-left:10px;" ng-show="isActive == false" ng-model="phoneNumber" type="text" name="phoneNumber" placeholder="+.." />
+      <div class="phone-number" style="font-size:2em; padding-left:10px" ng-if="isActive == true" />{{phoneNumber}}</div>
 
       <div class="keypad">
 
@@ -147,6 +156,7 @@
 
 </section>
 
+</div>
 
   <script type="text/javascript" src="//media.twiliocdn.com/sdk/js/client/v1.3/twilio.min.js"></script>
   <script type="text/javascript" src="//media.twiliocdn.com/taskrouter/js/v1.4/taskrouter.min.js"></script>
@@ -159,6 +169,7 @@
   <script src="WorkflowController.js"></script>
   <script src="PhoneController.js"></script>
   <script src="ChatController.js"></script>
+
 
 </body>
 </html>
