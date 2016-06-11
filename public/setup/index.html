@@ -92,7 +92,7 @@
 
       <div>
 
-        <button class="btn btn-primary" ng-disabled="setupForm.$invalid" ng-click="saveConfig()"><span style="margin-right: 10px;" ng-show="isSaving == true"><i class="fa fa-refresh fa-spin"></i></span>Save Settings</button>
+        <button class="btn btn-primary" ng-disabled="setupForm.$invalid || setupForm.$pristine" ng-click="saveConfig()"><span style="margin-right: 10px;" ng-show="isSaving == true"><i class="fa fa-refresh fa-spin"></i></span>Save Settings</button>
 
       </div>
 
