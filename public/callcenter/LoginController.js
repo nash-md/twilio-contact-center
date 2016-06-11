@@ -5,7 +5,7 @@ loginController.controller('LoginController', function ($scope, $http) {
   $scope.reset = function(){
     $scope.loginForm.$setValidity('notFound', true);
     $scope.loginForm.$setValidity('serverError', true);
-  }
+  };
 
   $scope.login = function(){
 
@@ -27,6 +27,6 @@ loginController.controller('LoginController', function ($scope, $http) {
 
       });
 
-   }
+   };
 
 });
