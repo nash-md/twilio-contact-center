@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Twilio Contact Center: Live Chat</title>
+
+	<link rel="stylesheet" href="/styles/bootstrap.min.css" type="text/css" />
+	<link rel="stylesheet" href="/styles/default.css" type="text/css" />
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"
+	type="text/css" rel="stylesheet" />
+
+</head>
+
+<body ng-app="supportApplication">
+
+	<div class="container" style="max-width:960px">
+
+		<div class="row">
+			<div class="page-header col-md-12">
+				<h2>Twilio Contact Center: Live Chat</h2>
+			</div>
+		</div>
+
+		<section class="row" ng-controller="ChatController" ng-init="init()" ng-cloak>
+
+			<div class="col-md-8">
+
+				<section>
+
+					<form name="supportChatForm" class="support-chat-form form-inline" ng-hide="session.isInitialized">
+
+						<div class="form-group">
+							<input ng-model="user.identity" name="identity" ng-minlength="3" ng-maxlength="20" ng-required="true" type="text" class="form-control" ng-disabled="session.isLoading" placeholder="Your Name">
+							<button type="submit" ng-disabled="session.isLoading || supportChatForm.$invalid || supportChatForm.$pristine" class="initiate btn btn-primary" ng-click="initChat()" ><span ng-show="session.isLoading == true"><i class="fa fa-refresh fa-spin"></i></span>Go</button>
+
+							<div ng-messages="supportChatForm.identity.$error" role="alert">
+								<div ng-message="minlength"  class="alert alert-danger">Name is too short</div>
+								<div ng-message="maxlength" class="alert alert-danger">Name is too long</div>
+								<div ng-message="required" ng-show="supportChatForm.identity.$touched" class="alert alert-danger">Name is required</div>
+							</div>
+
+						</div>
+
+					</form>
+
+					<div ng-show="session.isInitialized">
+
+						<div ng-show="session.expired" class="alert alert-danger" style="margin: 0px">Session expired, please reload page</div>
+
+						<div class="chat-canvas" scroll-glue>
+
+							<ul class="message-list" >
+
+								<li class="message-template" ng-repeat="message in messages">
+									<span class="time">{{message.timestamp | time}}</span>
+									<div class="name">{{message.author}}</div>
+									<div class="body">
+										<p>{{message.body}}</p>
+									</div>
+								</li>
+
+							</ul>
+							<div id="bottom"></div>
+
+						</div>
+
+						<div class="typing-notification"><span>{{typingNotification}}</span></div>
+
+						<form class="chat-message-form form-horizontal" name="chatMessageForm" ng-hide="session.expired" style="margin-top:5px">
+
+							<div class="form-group">
+								<div class="col-xs-8">
+									<input ng-model="message" ng-model-options="{ debounce: 250 }" ng-required="true" autocomplete="off" ng-focus="focused()" name="text" type="text" class="form-control" placeholder="say something">
+								</div>
+								<div class="col-xs-4">
+									<button ng-disabled="chatMessageForm.$invalid || chatMessageForm.$pristine" class="btn btn-default" ng-click="send()">Send</button>
+								</div>
+							</div>
+						</form>
+
+					</div>  
+
+				</section>
+
+			</div>
+
+			<div class="col-md-4">
+				<h4 style="margin:0px">Call us:</h4>
+				<h3 class="caller-id" style="margin:0px">{{configuration.twilio.callerId}}</h3>
+
+				<h4>Request a callback?</h4>
+				<a href="index.html">click here</a>
+
+			</div>
+
+		</section>
+
+	</div>
+
+	<script src="/scripts/angular.min.js"></script>
+	<script src="/scripts/angular-messages.min.js"></script>
+	<script src="/scripts/angular-scrollglue.js"></script>
+	<script src="ChatController.js"></script>
+	<script src="/scripts/moment.min.js"></script>
+	<script src="https://media.twiliocdn.com/sdk/js/common/v0.1/twilio-common.min.js"></script>
+	<script src="https://media.twiliocdn.com/sdk/rtc/js/ip-messaging/v0.10/twilio-ip-messaging.min.js"></script>
+
+</body>
+</html>

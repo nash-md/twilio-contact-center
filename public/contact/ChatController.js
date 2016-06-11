@@ -1,14 +1,34 @@
+var app = angular.module('supportApplication', ['ngMessages', 'glue.directives']);
+
 app.controller('ChatController', function ($scope, $http, $timeout) {
 
+	$scope.configuration;
 	$scope.channel;
 	$scope.messages = [];
 	$scope.session = { token: null, identity: null, isInitialized: false, isLoading: false, expired: false };
 
 	$scope.init = function(){
 
+		$http.get('/api/setup')
+
+			.then(function onSuccess(response) {
+
+				$scope.configuration = response.data;
+				
+			}, function onError(response) { 
+
+				console.log('error loading configuration');
+				console.log(response);
+
+			});
+
+	};     
+
+	$scope.initChat = function(){
+
 		/* clean up  */
-		$scope.channel = null
-		$scope.messages = []
+		$scope.channel = null;
+		$scope.messages = [];
 		$scope.session = { token: null, identity: null, isInitialized: false, isLoading: false, expired: false };
 
 		$scope.session.isLoading = true;
@@ -38,7 +58,7 @@ app.controller('ChatController', function ($scope, $http, $timeout) {
 	$scope.setupClient = function(channelSid){
 
 		console.log('setup channel: ' + channelSid);
-		accessManager = new Twilio.AccessManager($scope.session.token); 
+		var accessManager = new Twilio.AccessManager($scope.session.token); 
 
 		/**
 		 * you'll want to be sure to listen to the tokenExpired event either update 
@@ -73,15 +93,15 @@ app.controller('ChatController', function ($scope, $http, $timeout) {
 
 		channel.join().then(function(member) {
 
-				$scope.messages.push({
-					body: 'An agent will be available shortly',
-					author: 'System'
-				});
-				
-				/* use now joined the channel, display canvas */
-				$scope.session.isInitialized = true;
-				$scope.session.isLoading = false;
-				$scope.$apply();
+			$scope.messages.push({
+				body: 'An agent will be available shortly',
+				author: 'System'
+			});
+			
+			/* use now joined the channel, display canvas */
+			$scope.session.isInitialized = true;
+			$scope.session.isLoading = false;
+			$scope.$apply();
 
 		});
 

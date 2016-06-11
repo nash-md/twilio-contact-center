@@ -1,6 +1,6 @@
-var app = angular.module('supportApplication', ['ui.bootstrap', 'ngMessages', 'glue.directives']);
+var app = angular.module('supportApplication', ['ngMessages']);
 
-app.controller('ContactController', function ($scope, $http, $timeout) {
+app.controller('ContactController', function ($scope, $http, $timeout, $log) {
 
 	$scope.submitted = false;
 	$scope.question = { 
@@ -22,8 +22,8 @@ app.controller('ContactController', function ($scope, $http, $timeout) {
 				
 			}, function onError(response) { 
 
-				console.log('error loading configuration');
-				console.log(response);
+				$log.error('error loading configuration');
+				$log.error(response);
 
 			});
 
@@ -36,7 +36,7 @@ app.controller('ContactController', function ($scope, $http, $timeout) {
 			phone: $scope.question.phone,
 			name: $scope.question.name, 
 			text: $scope.question.text, 
-			team: $scope.question.team.id,
+			team: $scope.question.team,
 			type: 'Callback request'
 		};
 
@@ -62,18 +62,12 @@ app.controller('ContactController', function ($scope, $http, $timeout) {
 				
 			}, function onError(response) { 
 
-				console.log('error creating task');
-				console.log(response);
+				$log('error creating task');
+				$log(response);
 
-			})
+			});
 
-	}
-
-	$scope.setQuestionTeam = function (team) {
-
-		$scope.question.team = team;
-
-	}
+	};
 
 });
 
