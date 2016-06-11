@@ -23,8 +23,8 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 
     /* clean up  */
     $scope.message = null;
-    $scope.channel = null
-    $scope.messages = []
+    $scope.channel = null;
+    $scope.messages = [];
     $scope.session = { token: null, identity: null, isInitialized: false, isLoading: false };
 
     $scope.session.token = data.token;
@@ -47,7 +47,7 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
   $scope.setupClient = function(channelSid){
 
     console.log('setup channel: ' + channelSid);
-    accessManager = new Twilio.AccessManager($scope.session.token); 
+    var accessManager = new Twilio.AccessManager($scope.session.token); 
 
     /**
      * you'll want to be sure to listen to the tokenExpired event either update 
@@ -82,7 +82,7 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 
       /* first we read the history of this channel, afterwards we join */
       channel.getMessages().then(function(messages) {
-        for (i = 0; i < messages.length; i++) {
+        for (var i = 0; i < messages.length; i++) {
           var message = messages[i];
           $scope.addMessage(message);
         }
@@ -148,6 +148,7 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
   /* if the message input changes the user is typing */
   $scope.$watch('message', function(newValue, oldValue) {
     if($scope.channel){
+      console.log('send typing notification to channel');
       $scope.channel.typing();
     }    
   });
