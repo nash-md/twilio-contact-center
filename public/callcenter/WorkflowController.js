@@ -7,21 +7,21 @@ app.filter('time', function() {
     var minutes = Math.floor(value / 60);
     var seconds = value - (minutes * 60);
 
-    if(minutes < 10){
+    if (minutes < 10){
       minutes = '0' + minutes;
     }
 
-    if(seconds < 10){
+    if (seconds < 10){
       seconds = '0' + seconds;
     }
 
     return minutes + ':' + seconds;
 
-  }
+  };
 
 });
 
-app.controller('WorkflowController', function ($scope, $rootScope, $http, $interval) {
+app.controller('WorkflowController', function ($scope, $rootScope, $http, $interval, $log) {
 
   /* misc configuration data, for instance callerId for outbound calls */
   $scope.configuration;
@@ -58,33 +58,33 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
     }, function onError(response) { 
       
       /* session is not valid anymore */
-      if(response.status = 403){
+      if(response.status == 403){
          window.location.replace('/callcenter/');
       } else {
-        alert(JSON.stringify(response))
+        alert(JSON.stringify(response));
       }
 
     });
 
-  }
+  };
 
   $scope.initWorker = function(token) {
 
     /* create TaskRouter Worker */
     $scope.workerJS = new Twilio.TaskRouter.Worker(token, true, $scope.configuration.twilio.workerIdleActivitySid, $scope.configuration.twilio.workerOfflineActivitySid);
 
-    $scope.workerJS.on("ready", function(worker) {
+    $scope.workerJS.on('ready', function(worker) {
 
-      console.log('TaskRouter Worker: ready');
+      $log.log('TaskRouter Worker: ready');
 
       $scope.worker = worker;
 
     });
 
-    $scope.workerJS.on("reservation.created", function(reservation) {
+    $scope.workerJS.on('reservation.created', function(reservation) {
 
-      console.log('TaskRouter Worker: reservation.created');
-      console.log(reservation);
+      $log.log('TaskRouter Worker: reservation.created');
+      $log.log(reservation);
 
       $scope.reservation = reservation;
       $scope.$apply();
@@ -93,10 +93,10 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 
     });
 
-    $scope.workerJS.on("reservation.accepted", function(reservation) {
+    $scope.workerJS.on('reservation.accepted', function(reservation) {
 
-      console.log('TaskRouter Worker: reservation.accepted');
-      console.log(reservation);
+      $log.log('TaskRouter Worker: reservation.accepted');
+      $log.log(reservation);
 
       $scope.task = reservation.task;
       $scope.task.completed = false;
@@ -107,22 +107,10 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 
     });
 
-    $scope.workerJS.on("reservation.timeout", function(reservation) {
+    $scope.workerJS.on('reservation.timeout', function(reservation) {
 
-      console.log('TaskRouter Worker: reservation.timeout');
-      console.log(reservation);
-
-      /* reset all data */
-      $scope.reservation = null;
-      $scope.task = null;
-      $scope.$apply();
-
-    });
-
-    $scope.workerJS.on("reservation.rescinded", function(reservation) {
-
-      console.log('TaskRouter Worker: reservation.rescinded');
-      console.log(reservation);
+      $log.log('TaskRouter Worker: reservation.timeout');
+      $log.log(reservation);
 
       /* reset all data */
       $scope.reservation = null;
@@ -131,10 +119,22 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 
     });
 
-    $scope.workerJS.on("reservation.canceled", function(reservation) {
+    $scope.workerJS.on('reservation.rescinded', function(reservation) {
 
-      console.log('TaskRouter Worker: reservation.cancelled');
-      console.log(reservation);
+      $log.log('TaskRouter Worker: reservation.rescinded');
+      $log.log(reservation);
+
+      /* reset all data */
+      $scope.reservation = null;
+      $scope.task = null;
+      $scope.$apply();
+
+    });
+
+    $scope.workerJS.on('reservation.canceled', function(reservation) {
+
+      $log.log('TaskRouter Worker: reservation.cancelled');
+      $log.log(reservation);
 
       $scope.reservation = null;
       $scope.task = null;
@@ -142,19 +142,19 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 
     });
 
-    $scope.workerJS.on("activity.update", function(worker) {
+    $scope.workerJS.on('activity.update', function(worker) {
 
-      console.log('TaskRouter Worker: activity.update');
-      console.log(worker);
+      $log.log('TaskRouter Worker: activity.update');
+      $log.log(worker);
 
       $scope.worker = worker;
       $scope.$apply();
 
     });
 
-    $scope.workerJS.on("token.expired", function() {
+    $scope.workerJS.on('token.expired', function() {
 
-      console.log('TaskRouter Worker: token.expired');
+      $log.log('TaskRouter Worker: token.expired');
 
       $scope.reservation = null;
       $scope.task = null;
@@ -165,11 +165,11 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 
     });
 
-  } 
+  };
 
   $scope.acceptReservation = function (reservation) {
 
-    console.log('accept reservation with TaskRouter Worker JavaScript SDK');
+    $log.log('accept reservation with TaskRouter Worker JavaScript SDK');
 
     /* depending on the typ of taks that was created we handle the reservation differently */
     if(reservation.task.attributes.channel == 'chat'){
@@ -179,7 +179,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
         function(err, reservation) {
 
           if(err) {
-            console.log(err);
+            $log.error(err);
             return;
           }
 
@@ -191,7 +191,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 
     if(reservation.task.attributes.channel == 'phone' && reservation.task.attributes.type == 'Inbound call'){
 
-      console.log('dequeue reservation with  callerId: ' + $scope.configuration.twilio.callerId);
+      $log.log('dequeue reservation with  callerId: ' + $scope.configuration.twilio.callerId);
       reservation.dequeue($scope.configuration.twilio.callerId);
 
     }
@@ -204,7 +204,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
         function(err, reservation) {
 
           if(err) {
-            console.log(error);
+            $log.error(err);
             return;
           }  
 
@@ -220,10 +220,10 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
       $scope.$broadcast('DestroyChat');
     }
 
-    $scope.workerJS.update("ActivitySid", $scope.configuration.twilio.workerIdleActivitySid, function(err, worker) {
+    $scope.workerJS.update('ActivitySid', $scope.configuration.twilio.workerIdleActivitySid, function(err, worker) {
 
       if(err) {
-        console.log(err);
+        $log.error(err);
         return;
       } 
 
@@ -241,23 +241,23 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 
      .then(function onSuccess(response) {
 
-      window.location.replace("/callcenter/index.html");
+      window.location.replace('/callcenter/index.html');
 
     }, function onError(response) { 
 
-      console.log(data);
+      $log.error(response);
 
-    })
+    });
 
   };
 
   $scope.startReservationCounter = function() {
 
-    console.log('start reservation counter');
+    $log.log('start reservation counter');
     $scope.reservationCounter = $scope.reservation.task.age;
 
     $scope.reservationInterval = $interval(function() {
-     $scope.reservationCounter++;
+      $scope.reservationCounter++;
     }, 1000);
 
   };
