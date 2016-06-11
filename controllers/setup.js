@@ -18,18 +18,43 @@ module.exports.get = function (req, res) {
 
 module.exports.update = function (req, res) {
 
-	var configuration = req.body.configuration
+	var config = req.body.configuration
 
 	async.waterfall([
 
 		function (callback) {
 
-			module.exports.syncQueues(configuration, function (err) {
+			module.exports.createOrUpdateApplication(config, req, function (err, application) {
 
 				if (err) {
 					callback(err)
 				} else {
-					callback(null, configuration)
+					config.twilio.applicationSid = application.sid
+					callback(null, config)
+				}
+
+			})
+
+		}, function (config, callback) {
+
+			module.exports.updateInboundPhoneNumber(req, config, function (err) {
+
+				if (err) {
+					callback(err)
+				} else {
+					callback(null, config)
+				}
+
+			})
+
+		}, function (config, callback) {
+
+			module.exports.syncQueues(config, function (err) {
+
+				if (err) {
+					callback(err)
+				} else {
+					callback(null, config)
 				}
 
 			})
@@ -69,31 +94,6 @@ module.exports.update = function (req, res) {
 					callback(err)
 				} else {
 					config.twilio.workflowSid = workflow.sid
-					callback(null, config)
-				}
-
-			})
-
-		}, function (config, callback) {
-
-			module.exports.createOrUpdateApplication(req, function (err, application) {
-
-				if (err) {
-					callback(err)
-				} else {
-					config.twilio.applicationSid = application.sid
-					callback(null, config)
-				}
-
-			})
-
-		}, function (config, callback) {
-
-			module.exports.updateInboundPhoneNumber(req, config, function (err) {
-
-				if (err) {
-					callback(err)
-				} else {
 					callback(null, config)
 				}
 
@@ -228,7 +228,7 @@ module.exports.createOrUpdateWorkflow = function (workflow, callback) {
 	}
 }
 
-module.exports.createOrUpdateApplication = function (req, callback) {
+module.exports.createOrUpdateApplication = function (configuration, req, callback) {
 
 	var client = new require('twilio')(
 		process.env.TWILIO_ACCOUNT_SID,
@@ -237,9 +237,9 @@ module.exports.createOrUpdateApplication = function (req, callback) {
 
 	var url =  req.protocol + '://' + req.hostname + '/api/agents/call'
 
-	if (req.configuration.twilio.applicationSid) {
+	if (configuration.twilio.applicationSid) {
 
-		client.applications(req.configuration.twilio.applicationSid).update({
+		client.applications(configuration.twilio.applicationSid).update({
 			friendlyName: 'Twilio Contact Center Demo',
 			voiceUrl: url,
 			voiceMethod: 'GET'
@@ -293,7 +293,7 @@ module.exports.updateInboundPhoneNumber = function (req, config, callback) {
 
 		var sid = data.incomingPhoneNumbers[0].sid
 
-		console.log('configure phone number ' + sid + ' (' +  data.incomingPhoneNumbers[0].PhoneNumber + ')')
+		console.log('configure phone number ' + sid + ' (' +  data.incomingPhoneNumbers[0].phoneNumber + ')')
 
 		var url =  req.protocol + '://' + req.hostname + '/api/ivr/welcome'
 
@@ -377,10 +377,10 @@ module.exports.validate = function(req, res) {
 	module.exports.verifyAccount().then(function(result){	
 		/* try to access the taskrouter workspace */
 		return module.exports.verifyWorkspace()
-	}).then(function(result){
+	}).then(function(result) {
 		res.status(200).end()
 		return
-	}).catch(function(reason){
+	}).catch(function(reason) {
 		res.status(500).json({ code: reason})
 		return
 	})
@@ -394,7 +394,7 @@ module.exports.verifyAccount = function() {
 			var client = new twilio(process.env.TWILIO_ACCOUNT_SID , process.env.TWILIO_AUTH_TOKEN)
 
 			client.accounts(process.env.TWILIO_ACCOUNT_SID).get(function(err, account) {
-				if(err){
+				if (err){
 					reject('TWILIO_ACCOUNT_NOT_ACCESSIBLE')
 				} else {
 					resolve()
@@ -418,11 +418,11 @@ module.exports.verifyWorkspace = function(callback) {
 			)
 			
 			client.workspaces.list(function(err, data) {
-				if(err){
+				if (err){
 					reject('TWILIO_WORKSPACE_NOT_ACCESSIBLE')
 				} else {
-					for (i = 0; i < data.workspaces.length; i++) {
-						if(data.workspaces[i].sid == process.env.TWILIO_WORKSPACE_SID){
+					for (var i = 0; i < data.workspaces.length; i++) {
+						if (data.workspaces[i].sid === process.env.TWILIO_WORKSPACE_SID){
 							resolve()
 						}
 					}
