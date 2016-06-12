@@ -1,4 +1,4 @@
-app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout) {
+app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout, $log) {
 
   $scope.status = null;
   $scope.isActive = false;
@@ -8,7 +8,7 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout)
 
   $scope.$on('InitializePhone', function(event, data) { 
 
-    console.log('InitializePhone event received');
+    $log.log('InitializePhone event received');
 
     Twilio.Device.setup(data.token, {debug: true}); 
 
@@ -94,7 +94,7 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout)
 
   $scope.addDigit = function(digit){
 
-   console.log('send digit: ' + digit);
+   $log.log('send digit: ' + digit);
    $scope.phoneNumber = $scope.phoneNumber + digit;
 
    if($scope.connection){
@@ -105,8 +105,7 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout)
 
 $scope.$on('CallPhoneNumber', function(event, data) { 
 
-  console.log('call: ' + data.phoneNumber);
-
+  $log.log('call: ' + data.phoneNumber);
   $scope.phoneNumber = data.phoneNumber;
 
   Twilio.Device.connect({'phone': data.phoneNumber});

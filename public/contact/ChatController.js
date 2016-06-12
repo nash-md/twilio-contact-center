@@ -1,11 +1,17 @@
 var app = angular.module('supportApplication', ['ngMessages', 'glue.directives']);
 
-app.controller('ChatController', function ($scope, $http, $timeout) {
+app.controller('ChatController', function ($scope, $http, $timeout, $log) {
 
 	$scope.configuration;
 	$scope.channel;
 	$scope.messages = [];
-	$scope.session = { token: null, identity: null, isInitialized: false, isLoading: false, expired: false };
+	$scope.session = { 
+		token: null, 
+		identity: null, 
+		isInitialized: false, 
+		isLoading: false, 
+		expired: false 
+	};
 
 	$scope.init = function(){
 
@@ -17,8 +23,8 @@ app.controller('ChatController', function ($scope, $http, $timeout) {
 				
 			}, function onError(response) { 
 
-				console.log('error loading configuration');
-				console.log(response);
+				$log.error('error loading configuration');
+				$log.error(response);
 
 			});
 
@@ -29,7 +35,13 @@ app.controller('ChatController', function ($scope, $http, $timeout) {
 		/* clean up  */
 		$scope.channel = null;
 		$scope.messages = [];
-		$scope.session = { token: null, identity: null, isInitialized: false, isLoading: false, expired: false };
+		$scope.session = { 
+			token: null, 
+			identity: null, 
+			isInitialized: false, 
+			isLoading: false, 
+			expired: false 
+		};
 
 		$scope.session.isLoading = true;
 
@@ -44,20 +56,21 @@ app.controller('ChatController', function ($scope, $http, $timeout) {
 
 				$scope.session.token = response.data.token;
 				$scope.session.identity = response.data.identity;
-				$scope.setupClient(response.data.channelSid)
+				$scope.setupClient(response.data.channelSid);
 				
 			}, function onError(response) { 
 
 				$scope.session.isLoading = false;
-				alert('server returned error: ' + status);
+				$log.error('server returned error');
+				$log.error(response);
 
-			})
+			});
 
 	};       
 
 	$scope.setupClient = function(channelSid){
 
-		console.log('setup channel: ' + channelSid);
+		$log.log('setup channel: ' + channelSid);
 		var accessManager = new Twilio.AccessManager($scope.session.token); 
 
 		/**
@@ -66,33 +79,34 @@ app.controller('ChatController', function ($scope, $http, $timeout) {
 		 * the chat is not active anymore 
 		**/
 		accessManager.on('tokenExpired', function(){
-			console.log('token expired')
+			$log.warn('token expired');
 			$scope.session.expired = true;
 			$scope.$apply();
 		}); 
 
-		accessManager.on('error', function(){
-			console.error('An error occurred')
+		accessManager.on('error', function(err){
+			$log.error('An error occurred');
+			$log.error(err);
 		});   
 
-		messagingClient = new Twilio.IPMessaging.Client(accessManager);
+		var messagingClient = new Twilio.IPMessaging.Client(accessManager);
 
 		var promise = messagingClient.getChannelBySid(channelSid);
 
 		promise.then(function(channel) {
-			console.log('channel is: ' + channel.uniqueName);
+			$log.log('channel is: ' + channel.uniqueName);
 			$scope.setupChannel(channel);
 		}, function(reason) {
 			/* client could not access the channel */
-			console.error(reason)
+			$log.error('could not access channel');
+			$log.error(reason);
 		});
 
-	}
+	};
 
 	$scope.setupChannel = function(channel){
 
 		channel.join().then(function(member) {
-
 			$scope.messages.push({
 				body: 'An agent will be available shortly',
 				author: 'System'
@@ -102,69 +116,64 @@ app.controller('ChatController', function ($scope, $http, $timeout) {
 			$scope.session.isInitialized = true;
 			$scope.session.isLoading = false;
 			$scope.$apply();
-
 		});
 
 		channel.on('messageAdded', function(message) {
-				console.log('new message....');
-				$scope.messages.push(message);
-				$scope.$apply();
+			$scope.messages.push(message);
+			$scope.$apply();
 		});
 
 		channel.on('memberJoined', function(member) {
-
-			console.log(member.identity + ' has joined the channel.');
-
+			$log.log(member.identity + ' has joined the channel.');
 			$scope.messages.push({
-					body: member.identity + ' has joined the channel.',
-					author: 'System'
-				});
-				$scope.$apply();
-
+				body: member.identity + ' has joined the channel.',
+				author: 'System'
+			});
+			$scope.$apply();
 		});
 
 		channel.on('memberLeft', function(member) {
-			 $scope.messages.push({
-					body: member.identity + ' has left the channel.',
-					author: 'System'
-				});
-				$scope.$apply();
+			$scope.messages.push({
+				body: member.identity + ' has left the channel.',
+				author: 'System'
+			});
+			$scope.$apply();
 		});
 
 		channel.on('typingStarted', function(member) {
-			 console.log(member.identity + ' started typing');
-			 $scope.typingNotification = member.identity + ' is typing ...';
-			 $scope.$apply();
+			$log.log(member.identity + ' started typing');
+			$scope.typingNotification = member.identity + ' is typing ...';
+			$scope.$apply();
 		});
 
 		channel.on('typingEnded', function(member) {
-			console.log(member.identity + ' stopped typing');
+			$log.log(member.identity + ' stopped typing');
 			$scope.typingNotification = '';
 			$scope.$apply();
 		});
 
 		$scope.channel = channel;
 
-	}
+	};
 
 	$scope.$watch('message', function(newValue, oldValue) {
 		if($scope.channel){
-			console.log('send typing notification to channel');
+			$log.log('send typing notification to channel');
 			$scope.channel.typing();
 		}    
 	});
 
 	$scope.send = function(){
-		$scope.channel.sendMessage($scope.message)
+		$scope.channel.sendMessage($scope.message);
 		$scope.message = '';
-	}
+	};
 
 });
 
 app.filter('time', function() {
 
 	return function(value) {
-		return moment(value).format('LTS')
-	}
+		return moment(value).format('LTS');
+	};
 
 });

@@ -1,10 +1,16 @@
-app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $compile) {
+app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $compile, $log) {
 
   $scope.message = null;
   $scope.channel;
   $scope.messages = [];
-  $scope.session = { token: null, identity: null, isInitialized: false, isLoading: false };
-  
+  $scope.session = { 
+    token: null, 
+    identity: null, 
+    isInitialized: false, 
+    isLoading: false, 
+    expired: false 
+  };
+
   $scope.$on('DestroyChat', function(event) { 
 
     console.log('DestroyChat event received');
@@ -18,14 +24,20 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 
   $scope.$on('InitializeChat', function(event, data) { 
 
-    console.log('InitializeChat event received');
-    console.log(data);
+    $log.log('InitializeChat event received');
+    $log.log(data);
 
     /* clean up  */
     $scope.message = null;
     $scope.channel = null;
     $scope.messages = [];
-    $scope.session = { token: null, identity: null, isInitialized: false, isLoading: false };
+    $scope.session = { 
+      token: null, 
+      identity: null, 
+      isInitialized: false, 
+      isLoading: false, 
+      expired: false 
+    };
 
     $scope.session.token = data.token;
     $scope.session.identity = data.identity;
@@ -34,8 +46,8 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 
   $scope.$on('ActivateChat', function(event, data) { 
 
-    console.log('ActivateChat event received');
-    console.log(data);
+    $log.log('ActivateChat event received');
+    $log.log(data);
 
     $scope.session.channelSid = data.channelSid;
 
@@ -46,7 +58,7 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 
   $scope.setupClient = function(channelSid){
 
-    console.log('setup channel: ' + channelSid);
+    $log.log('setup channel: ' + channelSid);
     var accessManager = new Twilio.AccessManager($scope.session.token); 
 
     /**
@@ -55,26 +67,26 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
      * the chat is not active anymore 
     **/
     accessManager.on('tokenExpired', function(){
-      console.error('live chat token expired')
+      $log.error('live chat token expired');
     }); 
 
     accessManager.on('error', function(){
-      console.error('An error occurred')
+      $log.error('An error occurred');
     });   
 
-    messagingClient = new Twilio.IPMessaging.Client(accessManager);
+    var messagingClient = new Twilio.IPMessaging.Client(accessManager);
 
     var promise = messagingClient.getChannelBySid(channelSid);
 
     promise.then(function(channel) {
-      console.log('channel is: ' + channel.uniqueName);
+      $log.log('channel is: ' + channel.uniqueName);
       $scope.setupChannel(channel);
     }, function(reason) {
       /* client could not access the channel */
-      console.error(reason)
+      $log.error(reason);
     });
 
-  }
+  };
 
   $scope.setupChannel = function(channel){
 
@@ -86,7 +98,7 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
           var message = messages[i];
           $scope.addMessage(message);
         }
-        console.log('Total Messages in Channel:' + messages.length);
+        $log.log('Total Messages in Channel:' + messages.length);
 
         $scope.messages.push({
           body: 'You are now connected to the customer',
@@ -104,13 +116,10 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
     });
 
     channel.on('messageAdded', function(message) {
-
       $scope.addMessage(message);
-
     });
 
     channel.on('memberJoined', function(member) {
-
       $scope.messages.push({
           body: member.identity + ' has joined the channel.',
           author: 'System'
@@ -120,63 +129,62 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
     });
 
     channel.on('memberLeft', function(member) {
-
        $scope.messages.push({
           body: member.identity + ' has left the channel.',
           author: 'System'
         });
         $scope.$apply();
-
     });
 
     channel.on('typingStarted', function(member) {
-       console.log(member.identity + ' started typing');
+       $log.log(member.identity + ' started typing');
        $scope.typingNotification = member.identity + ' is typing ...';
        $scope.$apply();
     });
 
     channel.on('typingEnded', function(member) {
-      console.log(member.identity + ' stopped typing');
+      $log.log(member.identity + ' stopped typing');
       $scope.typingNotification = '';
       $scope.$apply();
     });
 
     $scope.channel = channel;
 
-  }
+  };
 
   /* if the message input changes the user is typing */
   $scope.$watch('message', function(newValue, oldValue) {
     if($scope.channel){
-      console.log('send typing notification to channel');
+      $log.log('send typing notification to channel');
       $scope.channel.typing();
     }    
   });
 
   $scope.send = function(){
-    $scope.channel.sendMessage($scope.message)
+    $scope.channel.sendMessage($scope.message);
     $scope.message = '';
-  }
+  };
 
   $scope.callInlineNumber = function(phone){
-    console.log('call inline number ' + phone)
+    $log.log('call inline number ' + phone);
     $rootScope.$broadcast('CallPhoneNumber', { phoneNumber: phone });
-  }
+  };
 
   $scope.addMessage = function(message){
 
     var pattern = /(.*)(\+[0-9]{8,20})(.*)$/;
 
     var m = message.body;
+    var template = '<p>$1<span class="chat-inline-number" ng-click="callInlineNumber(\'$2\')">$2</span>$3</p>';
 
     if (pattern.test(message.body) == true) {
-      var m = message.body.replace(pattern, "<p>$1<span class=\"chat-inline-number\" ng-click=\"callInlineNumber('$2')\">$2</span>$3</p>");
+      m = message.body.replace(pattern, template);
     }  
 
     $scope.messages.push({body: m, author: message.author, timestamp: message.timestamp});
     $scope.$apply();
 
-  }
+  };
 
 });
 
@@ -199,8 +207,8 @@ app.directive('dynamic', function ($compile) {
 app.filter('timeChat', function() {
 
   return function(value) {
-    return moment(value).format('LTS')
-  }
+    return moment(value).format('LTS');
+  };
 
 });
 

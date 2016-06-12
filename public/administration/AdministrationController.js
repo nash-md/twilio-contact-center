@@ -92,7 +92,10 @@ administrationController.controller('AdministrationController', function ($scope
       team: $scope.agent.team
     };
 
-    var worker =  {friendlyName:  $scope.agent.friendlyName, attributes: JSON.stringify(attributes) } ;
+    var worker =  { 
+      friendlyName:  $scope.agent.friendlyName, 
+      attributes: JSON.stringify(attributes) 
+    } ;
 
     $http.post('/api/workers', worker)
 
@@ -161,7 +164,7 @@ administrationController.controller('AdministrationController', function ($scope
 
       $scope.configuration.ivr.options[i].id = tmpId;
 
-    };
+    }
 
     $http.post('/api/setup', { configuration: $scope.configuration })
 
