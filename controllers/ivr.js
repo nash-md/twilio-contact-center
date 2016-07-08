@@ -23,8 +23,7 @@ module.exports.selectTeam = function (req, res) {
 	var team = null
 
 	for (var i = 0; i < req.configuration.ivr.options.length; i++) {
-
-		if (req.query.Digits === req.configuration.ivr.options[i].digit) {
+		if (parseInt(req.query.Digits) === req.configuration.ivr.options[i].digit) {
 			team = req.configuration.ivr.options[i]
 		}
 
