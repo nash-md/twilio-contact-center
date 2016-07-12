@@ -109,8 +109,8 @@
               <div class="form-group">
                 <input ng-model="option.friendlyName" class="form-control" name="friendlyName" client-name/>&nbsp;&nbsp;&nbsp;</div>
                 <div class="form-group">
-                  <label for="exampleInputEmail2">IVR Option&nbsp;&nbsp;&nbsp;</label>
-                  <select ng-model="option.digit" class="form-control">
+                  <label>IVR Option&nbsp;&nbsp;&nbsp;</label>
+                  <select ng-model="option.digit" class="form-control" convert-to-number>
                     <option value="1" ng-selected="option.digit == 1">1</option>
                     <option value="2" ng-selected="option.digit == 2">2</option>
                     <option value="3" ng-selected="option.digit == 3">3</option>
