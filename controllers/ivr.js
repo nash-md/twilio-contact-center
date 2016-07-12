@@ -35,11 +35,11 @@ module.exports.selectTeam = function (req, res) {
 	if (team === null) {
 		// redirect the call to the previous twiml
 		twiml.say('Your selection was not valid, please try again')
-		twiml.pause({length: 5})
-		twiml.redirect({ method: 'GET' }, 'select-team')
+		twiml.pause({length: 2})
+		twiml.redirect({ method: 'GET' }, 'welcome')
 	} else {
 		twiml.gather({
-			action: 'create-task?teamId=' + team.id + '&teamFriendlyName=' + team.friendlyName,
+			action: 'create-task?teamId=' + team.id + '&teamFriendlyName=' +  encodeURIComponent(team.friendlyName),
 			method: 'GET',
 			numDigits: 1,
 			timeout: 5
