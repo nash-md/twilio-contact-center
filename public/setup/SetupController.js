@@ -1,86 +1,64 @@
-var app = angular.module('setupApplication', ['ui.bootstrap', 'ngMessages']);
+var app = angular.module('setupApplication', ['ngMessages']);
 
-app.controller('SetupController', function ($scope, $http) {
+app.controller('SetupController', function ($scope, $http, $q) {
 
   $scope.isSaving = false;
+  $scope.configuration = null;
+  $scope.workspace = null;
+  $scope.activities = [];
 
   $scope.init = function(){
 
-    $scope.workspace;
-    $scope.activities;
+    var retrieveSetup = function() {
 
-    $scope.workerOfflineActivity;
-    $scope.workerIdleActivity;
+      var deferred = $q.defer();
 
-    $http.get('/api/setup', null).success(function(data, status){
+      $http.get('/api/setup').then(function(response){
+        $scope.configuration = response.data;
+        deferred.resolve();
+      }, function(response) {
+        deferred.reject('The application could not access the configuration');
+      });
+      return deferred.promise;
 
-      $scope.configuration = data;
+    };
 
-      $http.get('/api/setup/activities', null).success(function(data, status){
+    var retrieveActivities = function() {
 
-        $scope.activities = data;
-        
-        // FIXME
-        for (var i = 0; i < $scope.activities.length; i++) {
-          
-          if($scope.activities[i].sid == $scope.configuration.twilio.workerIdleActivitySid){
-            $scope.workerIdleActivity = $scope.activities[i];
-          }
+      var deferred = $q.defer();
 
-          if($scope.activities[i].sid == $scope.configuration.twilio.workerOfflineActivitySid){
-            $scope.workerOfflineActivity = $scope.activities[i];
-          }
+      $http.get('/api/setup/activities').then(function(response){
+        $scope.activities = response.data;
+        deferred.resolve();
+      }, function(response) {
+        deferred.reject('The application could not access the your Twilio Taskrouter workspace activities please verify the Workspace Sid.');
+      });
+      return deferred.promise;
 
-          if($scope.activities[i].sid == $scope.configuration.twilio.workerReservationActivitySid){
-            $scope.workerReservationActivity = $scope.activities[i];
-          }
+    };
 
-          if($scope.activities[i].sid == $scope.configuration.twilio.workerAssignmentActivitySid){
-            $scope.workerAssignmentActivity = $scope.activities[i];
-          }
+    var retrieveWorkspace = function() {
 
-        }
+      var deferred = $q.defer();
 
-      });  
+      $http.get('/api/setup/workspace').then(function(response){
+        $scope.workspace = response.data;
+        deferred.resolve();
+      }, function(response) {
+        deferred.reject('The application could not access the your Twilio Taskrouter workspace please verify the Workspace Sid.');
+      });
+      return deferred.promise;
 
-    });
+    };
 
-    $http.get('/api/setup/workspace', null).success(function(data, status){
-
-      $scope.workspace = data;
-
-    });
+    $q.all([retrieveSetup(), retrieveActivities(), retrieveWorkspace()])
+      .then(function(data) {})
+      .catch(function(err) {
+        alert(err);
+      });
 
   };
   
-  $scope.setOfflineActivity = function (activity) {
-
-    $scope.workerOfflineActivity = activity;
-    $scope.configuration.twilio.workerOfflineActivitySid = activity.sid;
-
-  };
-
-  $scope.setIdleActivity = function (activity) {
-
-    $scope.workerIdleActivity = activity;
-    $scope.configuration.twilio.workerIdleActivitySid = activity.sid;
-
-  };
-
-  $scope.setReservationActivity = function (activity) {
-
-    $scope.workerReservationActivity = activity;
-    $scope.configuration.twilio.workerReservationActivitySid = activity.sid;
-
-  };
-
-  $scope.setAssignmentActivity = function (activity) {
-
-    $scope.workerAssignmentActivity = activity;
-    $scope.configuration.twilio.workerAssignmentActivitySid = activity.sid;
-
-  };
-
   $scope.saveConfig = function(){
 
     $scope.isSaving = true;
@@ -88,15 +66,10 @@ app.controller('SetupController', function ($scope, $http) {
     $http.post('/api/setup', { configuration: $scope.configuration })
 
       .then(function onSuccess(response) {
-
         $scope.isSaving = false;
- 
       }, function onError(response) { 
-
         $scope.isSaving = false;
-
         alert('Error: ' +  response.data.message);
-
       });
 
   };
