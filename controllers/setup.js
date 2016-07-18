@@ -292,8 +292,9 @@ module.exports.updateInboundPhoneNumber = function (req, config, callback) {
 		}
 
 		var sid = data.incomingPhoneNumbers[0].sid
+		var phoneNumber = data.incomingPhoneNumbers[0].phoneNumber
 
-		console.log('configure phone number ' + sid + ' (' +  data.incomingPhoneNumbers[0].phoneNumber + ')')
+		console.log('configure phone number ' + sid + ' (' +  phoneNumber + ')')
 
 		var url =  req.protocol + '://' + req.hostname + '/api/ivr/welcome'
 
@@ -320,18 +321,10 @@ module.exports.getWorkspace = function (req, res) {
 		process.env.TWILIO_WORKSPACE_SID
 	)
 
-	client.workspaces.list(function (err, data) {
+	client.workspace.get(function (err, workspace) {
 		if (err) {
 			res.status(500).json({stack: err.stack, message: err.message })
 		} else {
-
-			for (var i = 0; i < data.workspaces.length; i++) {
-
-				if (data.workspaces[i].sid === process.env.TWILIO_WORKSPACE_SID) {
-					var workspace = data.workspaces[i]
-				}
-
-			}
 			res.status(200).json(workspace)
 		}
 	})
@@ -356,56 +349,56 @@ module.exports.getActivities = function (req, res) {
 
 }
 
-module.exports.validate = function(req, res) {
-	
-	if(!process.env.TWILIO_ACCOUNT_SID || process.env.TWILIO_ACCOUNT_SID.length !== 34){
+module.exports.validate = function (req, res) {
+
+	if (!process.env.TWILIO_ACCOUNT_SID || process.env.TWILIO_ACCOUNT_SID.length !== 34) {
 		res.status(500).json({ code: 'TWILIO_ACCOUNT_SID_INVALID'})
 		return
 	}
 
-	if(!process.env.TWILIO_AUTH_TOKEN || process.env.TWILIO_AUTH_TOKEN.length !== 32){
+	if (!process.env.TWILIO_AUTH_TOKEN || process.env.TWILIO_AUTH_TOKEN.length !== 32) {
 		res.status(500).json({ code: 'TWILIO_AUTH_TOKEN_INVALID'})
 		return
 	}
 
-	if(!process.env.TWILIO_WORKSPACE_SID || process.env.TWILIO_WORKSPACE_SID.length !== 34){
+	if (!process.env.TWILIO_WORKSPACE_SID || process.env.TWILIO_WORKSPACE_SID.length !== 34) {
 		res.status(500).json({ code: 'TWILIO_WORKSPACE_SID_INVALID'})
 		return
 	}
 
 	/* try to access the twilio account */
-	module.exports.verifyAccount().then(function(result){	
+	module.exports.verifyAccount().then(function (result) {
 		/* try to access the taskrouter workspace */
 		return module.exports.verifyWorkspace()
-	}).then(function(result) {
+	}).then(function (result) {
 		res.status(200).end()
 		return
-	}).catch(function(reason) {
+	}).catch(function (reason) {
 		res.status(500).json({ code: reason})
 		return
 	})
 
 }
 
-module.exports.verifyAccount = function() {
+module.exports.verifyAccount = function () {
 
 	return new Promise(function (resolve, reject) {
 
-			var client = new twilio(process.env.TWILIO_ACCOUNT_SID , process.env.TWILIO_AUTH_TOKEN)
+		var client = new twilio(process.env.TWILIO_ACCOUNT_SID , process.env.TWILIO_AUTH_TOKEN)
 
-			client.accounts(process.env.TWILIO_ACCOUNT_SID).get(function(err, account) {
-				if (err){
-					reject('TWILIO_ACCOUNT_NOT_ACCESSIBLE')
-				} else {
-					resolve()
-				} 
-			})
-
+		client.accounts(process.env.TWILIO_ACCOUNT_SID).get(function (err, account) {
+			if (err) {
+				reject('TWILIO_ACCOUNT_NOT_ACCESSIBLE')
+			} else {
+				resolve()
+			}
 		})
+
+	})
 
 }
 
-module.exports.verifyWorkspace = function(callback) {
+module.exports.verifyWorkspace = function (callback) {
 
 	return new Promise(
 
@@ -416,18 +409,13 @@ module.exports.verifyWorkspace = function(callback) {
 				process.env.TWILIO_AUTH_TOKEN,
 				process.env.TWILIO_WORKSPACE_SID
 			)
-			
-			client.workspaces.list(function(err, data) {
-				if (err){
+
+			client.workspace.get(function (err, workspace) {
+				if (err) {
 					reject('TWILIO_WORKSPACE_NOT_ACCESSIBLE')
 				} else {
-					for (var i = 0; i < data.workspaces.length; i++) {
-						if (data.workspaces[i].sid === process.env.TWILIO_WORKSPACE_SID){
-							resolve()
-						}
-					}
-					reject('TWILIO_WORKSPACE_NOT_ACCESSIBLE')
-				} 
+					resolve()
+				}
 			})
 
 		})
