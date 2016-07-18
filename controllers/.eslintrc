@@ -8,9 +8,9 @@
     "indent": [2, "tab"],
     "curly": [2, "all"],
     "quotes": [2, "single"],
-    "max-len": [1, 80],
+    "max-len": [1, 100],
     "prefer-const": 0,
-    "no-console": 1,
+    "no-console": ["error", { allow: ["warn", "error", "log"] }],
     "no-mixed-spaces-and-tabs": 2,
     "no-multiple-empty-lines": [1, {"max": 1}],
     "no-new-object": 2,
@@ -31,6 +31,7 @@
     "space-before-function-paren": [2, "always"],
     "space-before-blocks": [2, "always"],
     "eqeqeq": 2,
-    "semi": [1, "never"]
+    "semi": [1, "never"],
+    "no-unused-vars": ["error", { "args": "none" }]
   }
 }
