@@ -1,6 +1,6 @@
 var app = angular.module('callcenterApplication', ['ngMessages', 'glue.directives']);
 
-app.filter('time', function() {
+app.filter('counter', function() {
 
   return function(value) {
 

@@ -51,12 +51,19 @@
 
 							<ul class="message-list" >
 
-								<li class="message-template" ng-repeat="message in messages">
-									<span class="time">{{message.timestamp | time}}</span>
-									<div class="name">{{message.author}}</div>
-									<div class="body">
-										<p>{{message.body}}</p>
-									</div>
+								<li ng-class="{'me': message.author == user.identity}" class="message" ng-repeat="message in messages">
+
+									<div>
+										<div class="body">
+											<div class="needle"></div>
+											<p>{{message.body}}</p>
+										</div>
+										<div class="footer">
+											<div class="author">{{message.author}}</div>
+											<div class="time"><i class="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{{message.timestamp | time}}</div>
+									 	</div>
+								 	</div>
+
 								</li>
 
 							</ul>
@@ -67,13 +74,12 @@
 						<div class="typing-notification"><span>{{typingNotification}}</span></div>
 
 						<form class="chat-message-form form-horizontal" name="chatMessageForm" ng-hide="session.expired" style="margin-top:5px">
-
 							<div class="form-group">
 								<div class="col-xs-8">
 									<input ng-model="message" ng-model-options="{ debounce: 250 }" ng-required="true" autocomplete="off" ng-focus="focused()" name="text" type="text" class="form-control" placeholder="say something">
 								</div>
 								<div class="col-xs-4">
-									<button ng-disabled="chatMessageForm.$invalid || chatMessageForm.$pristine" class="btn btn-default" ng-click="send()">Send</button>
+									<button ng-disabled="chatMessageForm.$invalid || chatMessageForm.$pristine" class="btn btn-primary" ng-click="send()">Send</button>
 								</div>
 							</div>
 						</form>
@@ -102,8 +108,8 @@
 	<script src="/scripts/angular-scrollglue.js"></script>
 	<script src="ChatController.js"></script>
 	<script src="/scripts/moment.min.js"></script>
-	<script src="https://media.twiliocdn.com/sdk/js/common/v0.1/twilio-common.min.js"></script>
-	<script src="https://media.twiliocdn.com/sdk/rtc/js/ip-messaging/v0.10/twilio-ip-messaging.min.js"></script>
+  <script src="https://media.twiliocdn.com/sdk/js/common/v0.1/twilio-common.js"></script>
+  <script src="https://media.twiliocdn.com/sdk/rtc/js/ip-messaging/v0.10/twilio-ip-messaging.js"></script>
 
 </body>
 </html>

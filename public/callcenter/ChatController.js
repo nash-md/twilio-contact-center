@@ -1,6 +1,5 @@
 app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $compile, $log) {
 
-  $scope.message = null;
   $scope.channel;
   $scope.messages = [];
   $scope.session = { 
@@ -13,10 +12,13 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 
   $scope.$on('DestroyChat', function(event) { 
 
-    console.log('DestroyChat event received');
+    $log.log('DestroyChat event received');
     
     $scope.message = null;
-    $scope.channel.leave();
+    $scope.channel.leave().then(function() {
+      delete scope.channel;
+    });
+
     $scope.messages = [];
     $scope.session.isInitialized = false;
 
@@ -204,11 +206,9 @@ app.directive('dynamic', function ($compile) {
   };
 });
 
-app.filter('timeChat', function() {
-
+app.filter('time', function() {
   return function(value) {
-    return moment(value).format('LTS');
+    return moment(value).format('HH:mm');
   };
-
 });
 

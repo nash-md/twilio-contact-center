@@ -23,34 +23,36 @@
 	cursor:pointer;
 }
 
-.workflow-controller .logout
+.workflow-controller .name
 {
-	text-align:right;
-	font-size:0.9em;
-	cursor:pointer;
+	margin-top: 15px;
 }
 
 .workflow-controller .reservations
 {
 	float: left;
-	width: 375px;
+	width:505px;
 	margin-top: 10px;
 }
 
 .workflow-controller .reservations .agent-reservation
 {
-	width:100%;
-	margin-bottom:5px;
+	border: 1px solid transparent;
+	border-radius: 4px;
+	border-color: rgb(221, 221, 221);
+	box-shadow: none;
 }
 
-.workflow-controller .reservations .agent-reservation div
+.workflow-controller .reservations .agent-reservation table
 {
-	font-size:1.2em
+	width:100%;
+	font-size: 1.2em;
 }
 
 .workflow-controller .reservations .agent-reservation .accept-panel
 {
-	width: 80px; text-align:right
+	width: 80px;
+	text-align:right;
 }
 
 .workflow-controller .reservations .agent-reservation .accept-panel button
@@ -93,9 +95,22 @@
   background-color:#f6f6f6;
 }
 
-.workflow-controller .reservations .agent-waiting .panel-heading
+.workflow-controller .reservations .agent-reservation .timer
 {
-	background-color: #F2F2F2;
+	font-size: 0.8em
+}
+
+.workflow-controller .reservations .agent-reservation .title
+{
+	font-weight: bold;
+}
+
+.workflow-controller .reservations .agent-waiting
+{
+	border: 1px solid transparent;
+	border-radius: 4px;
+	border-color: rgb(221, 221, 221);
+	box-shadow: none;
 }
 
 .workflow-controller .reservations .agent-waiting .panel-title
@@ -105,9 +120,28 @@
 	color: #787878;
 }
 
-.workflow-controller .reservations .customer-detail
+.workflow-controller .reservations .agent-task
 {
-	margin-bottom: 0px;	
+	border: 1px solid transparent;
+	border-radius: 4px;
+	border-color: rgb(221, 221, 221);
+	box-shadow: none;
+}
+
+.workflow-controller .reservations .agent-task .description
+{
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+.workflow-controller .reservations .agent-task .panel-heading
+{
+	overflow: auto;
+}
+
+.workflow-controller .reservations .agent-task button.complete-task
+{
+	float: right;
 }
 
 .phone-controller 
@@ -115,11 +149,11 @@
 	float:right;
 	width:280px;
 	margin-top: 10px;
-	background-color:#F2F2F2;
+	background-color:#f5f5f5;
 	border: 1px solid transparent;
-  	border-radius: 4px;
-  	border-color: rgb(221, 221, 221); 
-  	padding: 10px;
+	border-radius: 4px;
+	border-color: rgb(221, 221, 221); 
+	padding: 10px;
 }
 
 .phone-controller input
@@ -201,7 +235,7 @@
 .phone-controller .status 
 {
 	font-size: 0.8em;
-	color: grey;
+	color: #808080;
 	padding-top: 8px;
 	display: block
 }
@@ -209,22 +243,23 @@
 /* support chat */
 .typing-notification
 {
-	color: grey; 
+	color: #808080; 
 	height: 2em;
 	font-size: 0.8em;
 	line-height: 2em;
+	padding-left: 10px;
 }
 
 .chat-controller .load-indicator
 {
 	text-align: center;
-	margin-top: 20px;
-	margin-bottom: 10px;
+	margin-top: 10px;
+	margin-bottom: 20px;
 }
 
 .chat-controller .typing-notification
 {
-	color: grey; 
+	color: #808080; 
 	height: 2em;
 	font-size: 0.8em;
 	line-height: 2em;
@@ -235,62 +270,154 @@
 	width: 250px;
 }
 
-.support-chat-form button.initiate > span
+.support-chat-form .initiate > span
 {
-	padding-right:8px
+	padding-right:8px;
+}
+
+.chat-controller
+{
+	border-top: 1px solid #ddd;
+	padding-top: 10px;
 }
 
 .chat-canvas
 {
-	border: 1px solid #cfdae1;
-	border-radius: 4px;
     height: 400px;
-    margin: 10px 0px 0px 0px;
+    margin: 0;
     overflow-y: scroll;
 }
 
 .chat-canvas .message-list
 {
 	list-style: none;
-	padding: 0px;
-	margin: 0px
+	padding-left: 10px;
+	margin-right: 10px;
 }
 
-.chat-canvas .message-list .message-template
-{
-	position: relative;
-}
-
-.chat-canvas .message-list .message-template, .chat-canvas .message-list .message
+.chat-canvas .message-list .message
 {
 	list-style: none;
-	padding: 8px;
-	margin: 0px
+	overflow: auto;
+	clear:both;
+	padding: 0 8px 8px 8px;
 }
 
-.chat-canvas .message-list .message-template:nth-child(even), .chat-canvas .message-list .message:nth-child(even)
+.message > div
 {
-	background-color: #f5f5f5;
+	float: left;
 }
 
-.chat-canvas .message-list .message-template .name, .chat-canvas .message-list .message .name
+.message .body
 {
-	font-weight: bold
+  color: #fff;
+  background-color: #00b0ff;
+  font-size: 16px;
+  position: relative;
+  display: inline-block;
+  clear: both;
+  padding: 8px 14px 8px 14px;
+  vertical-align: top;
+  border-radius: 5px;
+  z-index: 1;
 }
 
-.chat-canvas .message-list .message-template .body, .chat-canvas .message-list .message .body
+.message .body .needle
 {
-	position: relative;
-	padding-right: 80px;
-}
-
-.chat-canvas .message-list .message-template .time, .chat-canvas .message-list .message .time
-{
-	display:block;
-	font-size: 0.8em;
 	position: absolute;
-	right: 5px;
-	top: 5px
+	top: 0;
+	left: 0;
+}
+
+.message .body .needle:after
+{
+	font-family: FontAwesome;
+	color: #00b0ff;
+	position: absolute;
+	z-index: -1;
+  top: 10px;
+  left:12px;
+  display: block;
+  width: 8px;
+  height: 6px;
+  content: '\f04d';
+  -webkit-transform: rotate(29deg) skew(-35deg);
+  transform: rotate(29deg) skew(-35deg);
+}
+
+.message .body p
+{
+	margin:0;
+	font-size: 14px;
+}
+
+.message.me > div
+{
+	float: right;
+}
+
+.message.me .body
+{
+  color: #1a1a1a;
+  background-color: #eceff1;
+  -webkit-align-self: flex-end;
+  -ms-flex-item-align: end;
+  float: right;
+}
+
+.message.me .body .needle
+{
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: auto;
+}
+
+.message.me .body .needle:after
+{
+	color: #eceff1;
+  right: -10px;
+  left:auto;
+}
+
+.message .author .footer
+{
+	overflow:auto;
+	clear: both;
+}
+
+.message .footer .author
+{
+	font-size: 0.9em;
+	float:left;
+	padding-right: 8px;
+}
+
+.message.me .footer .author
+{
+	float:right;
+	padding-left: 8px;
+	padding-right: 0;
+}
+
+.message .footer .time
+{
+	font-size: 0.9em;
+}
+
+.message .footer .time
+{
+    float: right;
+}
+
+.message.me .footer .time
+{
+    float: left;
+}
+
+.chat-message-form
+{
+	padding-left: 10px;
 }
 
 .chat-message-form input
@@ -307,7 +434,18 @@
 
 .chat-inline-number
 {
-	color: #00AAFF;
+	color: white;
 	cursor: pointer;
 	text-decoration: underline;
+}
+
+/* task overview */
+.task-list
+{
+	width: 100%;
+}
+
+.task-list .label
+{
+	font-size:1em;
 }

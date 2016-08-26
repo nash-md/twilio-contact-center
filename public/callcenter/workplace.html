@@ -13,7 +13,7 @@
 
 <body ng-app="callcenterApplication">
 
-<div class="container" style="width:800px">
+<div class="container" style="width:860px">
 
   <section class="workflow-controller" ng-controller="WorkflowController" data-ng-init="init()" ng-cloak>
 
@@ -22,53 +22,57 @@
       <div class="panel-body">
 
         <div class="logout"><span ng-click="logout()">logout</span></div> 
-        <h2 class="name" class="page-header">{{worker.friendlyName}}&#39;s Call Agent Interface</h2>
+        <h3 class="name" class="page-header">{{worker.friendlyName}}&#39;s Call Agent Interface</h3>
 
         <div>Status:&nbsp;<span style="font-size:1em" ng-class="{'label-success': worker.activityName == 'Idle', 'label-danger': worker.activityName == 'Busy', 'label-default': worker.activityName == 'Offline', 'label-warning': worker.activityName == 'Reserved'}" class="label">{{worker.activityName}}</span></div>
 
-      <div class="reservations" style="width:450px">
+      <div class="reservations">
 
-      <!-- active reservation -->
-      <div class="panel panel-default" ng-show="reservation != null">
+      <!-- reservation is waiting for acceptance -->
+      <div class="panel panel-default agent-reservation" ng-show="reservation != null">
         <div class="panel-heading">
           <h3 class="panel-title">Reservation</h3>
         </div>
         <div class="panel-body">
 
-          <table class="agent-reservation">
+          <table>
           <tr>
             <td>
-             <div>{{reservation.task.attributes.type}} from {{reservation.task.attributes.name}}</div>
-             created {{ reservationCounter | time }} </td>
+             <div class="title">{{reservation.task.attributes.type}} from {{reservation.task.attributes.name}}</div>
+             <div class="timer">created {{ reservationCounter | counter }} ago</div>
+             </td>
             <td class="accept-panel"><button ng-click="acceptReservation(reservation)">Accept</button></td>
           </tr>
           </table>
 
         </div>
       </div>
-      <!-- active reservation -->
+      <!-- reservation is waiting for acceptance -->
 
-      <!-- waiting for reservation -->
+      <!-- agent is waiting for new reservation -->
       <div class="panel panel-default agent-waiting" ng-show="reservation == null && task == null">
         <div class="panel-heading">
           <h4 class="panel-title">Waiting for new task ...</h4>
         </div>
       </div>
-      <!-- waiting for reservation -->
+      <!-- agent is waiting for new reservation -->
 
-      <!-- task -->
-      <div ng-show="task != null"> 
+      <!-- agent is working on a task -->
+      <div class="panel panel-default agent-task" ng-show="task != null"> 
 
-      <h4>Customer&#39;s Detail</h4>
+        <div class="panel-heading">
 
-      <div class="customer-detail panel panel-default">
-        <div class="panel-body">
-          {{task.attributes.text}}
+          <button ng-show="task != null"  class="btn btn-primary complete-task" ng-click="complete()">Complete Task</button>
+
         </div>
-      </div>
-          
-          <!-- chat -->
-        <section class="chat-controller" ng-controller="ChatController" ng-cloak>
+
+        <div class="panel-body">
+            <div class="description">{{task.attributes.type}} from {{task.attributes.name}}</div>
+            {{task.attributes.text}}
+        </div>
+
+        <!-- chat -->
+        <section ng-show="channel !== undefined" class="chat-controller" ng-controller="ChatController" ng-cloak>
           
            <div class="load-indicator" ng-show="session.isLoading">
               <i class="fa fa-refresh fa-spin"></i>
@@ -76,16 +80,25 @@
 
             <div ng-show="session.isInitialized">
 
-            <div class="chat-canvas" scroll-glue style="height:340px">
+            <div class="chat-canvas" scroll-glue>
 
               <ul class="message-list" >
 
-                <li class="message-template" ng-repeat="message in messages">
-                  <span class="time">{{message.timestamp | timeChat }}</span>
-                  <div class="name">{{message.author}}</div>
-                  <div class="body">
-                      <p dynamic="message.body"></p>
+                <li ng-class="{'me': message.author == session.identity}" class="message" ng-repeat="message in messages">
+
+                  <div>
+
+                    <div class="body">
+                      <div class="needle"></div>
+                      <p dynamic="message.body">{{message.body}}</p>
+                    </div>
+                    <div class="footer">
+                      <div class="author">{{message.author}}</div>
+                      <div class="time"><i class="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{{message.timestamp | time}}</div>
+                    </div>
+
                   </div>
+
                 </li>
 
               </ul>
@@ -95,14 +108,13 @@
 
             <div class="typing-notification"><span>{{typingNotification}}</span></div>
 
-            <form class="chat-message-form form-horizontal" name="chatMessageForm" style="margin-top:5px">
-          
+            <form class="chat-message-form form-horizontal" name="chatMessageForm">
               <div class="form-group">
                 <div class="col-xs-8">
                   <input ng-model="message" ng-model-options="{ debounce: 250 }" ng-required="true" autocomplete="off" ng-focus="focused()" name="text" type="text" class="form-control" placeholder="say something">
                 </div>
                 <div class="col-xs-4">
-                  <button ng-disabled="chatMessageForm.$invalid || chatMessageForm.$pristine" class="btn btn-default" ng-click="send()">Send</button>
+                  <button ng-disabled="chatMessageForm.$invalid || chatMessageForm.$pristine" class="btn btn-primary" ng-click="send()">Send</button>
                 </div>
               </div>
             </form>
@@ -112,10 +124,8 @@
         </section>
         <!-- chat -->
 
-        <button ng-show="task != null"  class="btn btn-primary agent-wrap-up" ng-click="complete()" style="width:100%">Complete Task</button>
-
       </div>
-      <!-- task -->
+      <!-- agent is working on a task -->
 
     </div>
      
@@ -159,9 +169,9 @@
 </div>
 
   <script type="text/javascript" src="//media.twiliocdn.com/sdk/js/client/v1.3/twilio.min.js"></script>
-  <script type="text/javascript" src="//media.twiliocdn.com/taskrouter/js/v1.4/taskrouter.min.js"></script>
-  <script src="https://media.twiliocdn.com/sdk/js/common/v0.1/twilio-common.min.js"></script>
-<script src="https://media.twiliocdn.com/sdk/rtc/js/ip-messaging/v0.10/twilio-ip-messaging.min.js"></script>
+  <script type="text/javascript" src="//media.twiliocdn.com/taskrouter/js/v1.7/taskrouter.min.js"></script>
+  <script src="https://media.twiliocdn.com/sdk/js/common/v0.1/twilio-common.js"></script>
+  <script src="https://media.twiliocdn.com/sdk/rtc/js/ip-messaging/v0.10/twilio-ip-messaging.js"></script>
   <script src="/scripts/angular.min.js"></script>
   <script src="/scripts/angular-messages.min.js"></script>
   <script src="/scripts/angular-scrollglue.js"></script>

@@ -173,7 +173,7 @@ app.controller('ChatController', function ($scope, $http, $timeout, $log) {
 app.filter('time', function() {
 
 	return function(value) {
-		return moment(value).format('LTS');
+		return moment(value).format('HH:mm');
 	};
 
 });
