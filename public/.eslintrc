@@ -7,9 +7,13 @@
     "strict": 0,
     "curly": [2, "all"],
     "quotes": [2, "single"],
-    "max-len": [2, 80],
+    "max-len": [2, 100],
     "no-empty": 2,
     "default-case": 2,
     "semi": 1
+  },
+  "globals": {
+    "angular": false,
+    "Twilio": false
   }
 }
