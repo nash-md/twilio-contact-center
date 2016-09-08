@@ -1,5 +1,5 @@
-var twilio = require('twilio')
-var async = require('async')
+var twilio 	= require('twilio')
+var async 	= require('async')
 
 /* check if the application runs on heroku */
 var util
@@ -11,13 +11,10 @@ if (process.env.DYNO) {
 }
 
 module.exports.get = function (req, res) {
-
 	res.status(200).json(req.configuration)
-
 }
 
 module.exports.update = function (req, res) {
-
 	var config = req.body.configuration
 
 	async.waterfall([
@@ -25,38 +22,32 @@ module.exports.update = function (req, res) {
 		function (callback) {
 
 			module.exports.createOrUpdateApplication(config, req, function (err, application) {
-
 				if (err) {
 					callback(err)
 				} else {
 					config.twilio.applicationSid = application.sid
 					callback(null, config)
 				}
-
 			})
 
 		}, function (config, callback) {
 
 			module.exports.updateInboundPhoneNumber(req, config, function (err) {
-
 				if (err) {
 					callback(err)
 				} else {
 					callback(null, config)
 				}
-
 			})
 
 		}, function (config, callback) {
 
 			module.exports.syncQueues(config, function (err) {
-
 				if (err) {
 					callback(err)
 				} else {
 					callback(null, config)
 				}
-
 			})
 
 		}, function (config, callback) {
@@ -64,7 +55,6 @@ module.exports.update = function (req, res) {
 			var workflowConfiguration = { task_routing: { filters: [] }}
 
 			for (var i = 0; i < config.queues.length; i++) {
-
 				var target = {
 					targets: [{
 						queue: config.queues[i].taskQueueSid,
@@ -72,6 +62,7 @@ module.exports.update = function (req, res) {
 					}],
 					expression: config.queues[i].expression
 				}
+
 				workflowConfiguration.task_routing.filters.push(target)
 			}
 
@@ -89,14 +80,13 @@ module.exports.update = function (req, res) {
 			}
 
 			module.exports.createOrUpdateWorkflow(workflow, function (err, workflow) {
-
 				if (err) {
 					callback(err)
 				} else {
 					config.twilio.workflowSid = workflow.sid
+
 					callback(null, config)
 				}
-
 			})
 
 		}, function (config, callback) {
@@ -111,12 +101,12 @@ module.exports.update = function (req, res) {
 
 		}
 	], function (err) {
-
 		if (err) {
 			res.status(500).json({
 				stack: err.stack,
 				message: err.message
 			})
+
 			return
 		}
 
@@ -127,12 +117,10 @@ module.exports.update = function (req, res) {
 }
 
 module.exports.syncQueues = function (config, callback) {
-
 	var queues = config.queues
 
 	/* create queues */
 	async.eachSeries(queues, function (queue, next) {
-
 		var queueForSync = {
 			sid: queue.taskQueueSid,
 			friendlyName: queue.friendlyName,
@@ -142,24 +130,20 @@ module.exports.syncQueues = function (config, callback) {
 		}
 
 		module.exports.createOrUpdateQueue(queueForSync, function (err, queueFromApi) {
-
 			if (err) {
 				callback(err)
 			} else {
 				queue.taskQueueSid = queueFromApi.sid
+
 				next()
 			}
-
 		})
 	}, function () {
-
 		callback(null, config)
-
 	})
 }
 
 module.exports.createOrUpdateQueue = function (queue, callback) {
-
 	var client = new twilio.TaskRouterClient(
 		process.env.TWILIO_ACCOUNT_SID,
 		process.env.TWILIO_AUTH_TOKEN,
@@ -169,32 +153,28 @@ module.exports.createOrUpdateQueue = function (queue, callback) {
 	if (queue.sid) {
 
 		client.workspace.taskQueues(queue.sid).update(queue, function (err) {
-
 			if (err) {
 				callback(err)
 			} else {
 				callback(null, queue)
 			}
-
 		})
 
 	} else  {
 
 		client.workspace.taskQueues.create(queue, function (err, queueFromApi) {
-
 			if (err) {
 				callback(err)
 			} else {
 				queue.sid = queueFromApi.sid
+
 				callback(null, queue)
 			}
-
 		})
 	}
 }
 
 module.exports.createOrUpdateWorkflow = function (workflow, callback) {
-
 	var client = new twilio.TaskRouterClient(
 		process.env.TWILIO_ACCOUNT_SID,
 		process.env.TWILIO_AUTH_TOKEN,
@@ -202,34 +182,27 @@ module.exports.createOrUpdateWorkflow = function (workflow, callback) {
 	)
 
 	if (workflow.sid) {
-
 		client.workspace.workflows(workflow.sid).update(workflow, function (err) {
-
 			if (err) {
 				callback(err)
 			} else {
 				callback(null, workflow)
 			}
-
 		})
-
 	} else  {
-
 		client.workspace.workflows.create(workflow, function (err, workflowFromApi) {
-
 			if (err) {
 				callback(err)
 			} else {
 				workflow.sid = workflowFromApi.sid
+
 				callback(null, workflow)
 			}
-
 		})
 	}
 }
 
 module.exports.createOrUpdateApplication = function (configuration, req, callback) {
-
 	var client = new require('twilio')(
 		process.env.TWILIO_ACCOUNT_SID,
 		process.env.TWILIO_AUTH_TOKEN
@@ -252,7 +225,6 @@ module.exports.createOrUpdateApplication = function (configuration, req, callbac
 		})
 
 	} else  {
-
 		client.applications.create({
 			friendlyName: 'Twilio Contact Center Demo',
 			voiceUrl: url,
@@ -264,12 +236,10 @@ module.exports.createOrUpdateApplication = function (configuration, req, callbac
 				callback(null, application)
 			}
 		})
-
 	}
 }
 
 module.exports.updateInboundPhoneNumber = function (req, config, callback) {
-
 	var client = new require('twilio')(
 		process.env.TWILIO_ACCOUNT_SID,
 		process.env.TWILIO_AUTH_TOKEN
@@ -280,7 +250,6 @@ module.exports.updateInboundPhoneNumber = function (req, config, callback) {
 	}
 
 	client.incomingPhoneNumbers.list(params, function (err, data) {
-
 		/* we did not find the phone number provided */
 		if (data.incomingPhoneNumbers.length === 0) {
 			return callback(new Error(config.twilio.callerId + ' not found'))
@@ -296,10 +265,10 @@ module.exports.updateInboundPhoneNumber = function (req, config, callback) {
 
 		console.log('configure phone number ' + sid + ' (' +  phoneNumber + ')')
 
-		var url =  req.protocol + '://' + req.hostname + '/api/ivr/welcome'
-
+		var voiceUrl =  req.protocol + '://' + req.hostname + '/api/ivr/welcome'
+	
 		client.incomingPhoneNumbers(sid).update({
-			voiceUrl: url,
+			voiceUrl: voiceUrl,
 			voiceMethod: 'GET'
 		}, function (err) {
 			if (err) {
@@ -314,7 +283,6 @@ module.exports.updateInboundPhoneNumber = function (req, config, callback) {
 }
 
 module.exports.getWorkspace = function (req, res) {
-
 	var client = new twilio.TaskRouterClient(
 		process.env.TWILIO_ACCOUNT_SID,
 		process.env.TWILIO_AUTH_TOKEN,
@@ -332,7 +300,6 @@ module.exports.getWorkspace = function (req, res) {
 }
 
 module.exports.getActivities = function (req, res) {
-
 	var client = new twilio.TaskRouterClient(
 		process.env.TWILIO_ACCOUNT_SID,
 		process.env.TWILIO_AUTH_TOKEN,
@@ -350,7 +317,6 @@ module.exports.getActivities = function (req, res) {
 }
 
 module.exports.validate = function (req, res) {
-
 	if (!process.env.TWILIO_ACCOUNT_SID || process.env.TWILIO_ACCOUNT_SID.length !== 34) {
 		res.status(500).json({ code: 'TWILIO_ACCOUNT_SID_INVALID'})
 		return
@@ -366,24 +332,73 @@ module.exports.validate = function (req, res) {
 		return
 	}
 
-	/* try to access the twilio account */
-	module.exports.verifyAccount().then(function (result) {
-		/* try to access the taskrouter workspace */
-		return module.exports.verifyWorkspace()
-	}).then(function (result) {
+	async.waterfall([
+
+		function (callback) {
+
+			/* try to access the twilio account */
+			module.exports.verifyAccount().then(function (result) {
+				callback(null)
+			}).catch(function (reason) {
+				callback(reason)
+			})
+
+		}, function (callback) {
+
+			/* try to access the twilio workspace */
+			module.exports.verifyWorkspace().then(function (result) {
+				callback(null)
+			}).catch(function (reason) {
+				callback(reason)
+			})
+
+		}, function (callback) {
+
+			if (req.configuration.twilio.applicationSid) {
+				callback()
+			} else {
+				callback('TWILIO_APPLICATION_SID_INVALID')
+			}
+
+		},  function (callback) {
+
+			/* try to access the twilio application */
+			module.exports.verifyApplication(req.configuration.twilio.applicationSid).then(function (result) {
+				callback(null)
+			}).catch(function (reason) {
+				callback(reason)
+			})
+
+		}
+	], function (err) {
+		if (err) {
+			res.status(500).json({ code: err})
+			return
+		}
+
 		res.status(200).end()
-		return
-	}).catch(function (reason) {
-		res.status(500).json({ code: reason})
-		return
+	})
+
+}
+
+module.exports.verifyApplication = function (applicationSid) {
+	return new Promise(function (resolve, reject) {
+		var client = new twilio(process.env.TWILIO_ACCOUNT_SID , process.env.TWILIO_AUTH_TOKEN)
+
+		client.applications(applicationSid).get(function (err, application) {
+			if (err) {
+				reject('TWILIO_APPLICATION_NOT_ACCESSIBLE')
+			} else {
+				resolve()
+			}
+		})
+
 	})
 
 }
 
 module.exports.verifyAccount = function () {
-
 	return new Promise(function (resolve, reject) {
-
 		var client = new twilio(process.env.TWILIO_ACCOUNT_SID , process.env.TWILIO_AUTH_TOKEN)
 
 		client.accounts(process.env.TWILIO_ACCOUNT_SID).get(function (err, account) {
@@ -395,30 +410,24 @@ module.exports.verifyAccount = function () {
 		})
 
 	})
-
 }
 
 module.exports.verifyWorkspace = function (callback) {
+	return new Promise(function (resolve, reject) {
+		var client = new twilio.TaskRouterClient(
+			process.env.TWILIO_ACCOUNT_SID,
+			process.env.TWILIO_AUTH_TOKEN,
+			process.env.TWILIO_WORKSPACE_SID
+		)
 
-	return new Promise(
-
-		function (resolve, reject) {
-
-			var client = new twilio.TaskRouterClient(
-				process.env.TWILIO_ACCOUNT_SID,
-				process.env.TWILIO_AUTH_TOKEN,
-				process.env.TWILIO_WORKSPACE_SID
-			)
-
-			client.workspace.get(function (err, workspace) {
-				if (err) {
-					reject('TWILIO_WORKSPACE_NOT_ACCESSIBLE')
-				} else {
-					resolve()
-				}
-			})
-
+		client.workspace.get(function (err, workspace) {
+			if (err) {
+				reject('TWILIO_WORKSPACE_NOT_ACCESSIBLE')
+			} else {
+				resolve()
+			}
 		})
 
+	})
 }
 
