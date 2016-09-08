@@ -17,7 +17,9 @@ This application is provided as-is.  Twilio does not officially support it.
 
 # Customer Journey Flows:
 ## Voice Calling (Callback over PSTN):
-Customer Fill out online call request form -> Customer request detected -> TaskRouter -> Find Available Agent -> Dial Customer Out (PSTN) -> Connect Customer to awaiting Agent (WebRTC)
+Customer fills out online call request form -> Customer request detected -> TaskRouter -> Find Available Agent -> Dial Customer Out (PSTN) -> Connect Customer to awaiting Agent (WebRTC)
+
+![Customer Journey Call Back over PSTN](contact_center_flow_call_back.png)
 
 ## Voice Calling (PSTN):
 Customer Calls (PSTN) ->Twilio phone number -> Customer request detected -> IVR -> TaskRouter -> Find Available Agent -> Connect to Agent (WebRTC)
