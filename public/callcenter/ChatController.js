@@ -13,12 +13,12 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
   $scope.$on('DestroyChat', function(event) { 
 
     $log.log('DestroyChat event received');
-    
-    $scope.message = null;
-    $scope.channel.leave().then(function() {
-      delete scope.channel;
-    });
 
+    $scope.channel.leave().then(function() {
+      $log.log('channel left');
+      delete $scope.channel;
+    });
+  
     $scope.messages = [];
     $scope.session.isInitialized = false;
 
