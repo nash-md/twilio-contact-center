@@ -11,7 +11,8 @@ module.exports.createCallback = function (req, res) {
 
 	client.workspace.tasks.create({
 		WorkflowSid: req.configuration.twilio.workflowSid,
-		attributes: JSON.stringify(req.body)
+		attributes: JSON.stringify(req.body),
+		timeout: 3600
 	}, function (err) {
 		if (err) {
 			res.status(500).json(err)
@@ -71,7 +72,6 @@ module.exports.createChat = function (req, res) {
 					callback(err)
 				} else {
 					payload.channelSid = channel.sid
-					payload.channel_unique_name = channel.uniqueName
 					callback(null, payload)
 				}
 			})
@@ -93,9 +93,8 @@ module.exports.createChat = function (req, res) {
 					channel: 'chat',
 					team: 'support',
 					name: payload.identity,
-					channelSid: payload.channelSid,
-					channel_unique_name: payload.channel_unique_name
-				})
+					channelSid: payload.channelSid
+				}), timeout: 3600
 			}, function (err, task) {
 				if (err) {
 					callback(err)
