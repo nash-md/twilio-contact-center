@@ -1,5 +1,7 @@
-var twilio 	= require('twilio')
-var async 	= require('async')
+'use strict'
+
+const twilio 	= require('twilio')
+const async 	= require('async')
 
 /* check if the application runs on heroku */
 var util
@@ -26,6 +28,7 @@ module.exports.update = function (req, res) {
 					callback(err)
 				} else {
 					config.twilio.applicationSid = application.sid
+
 					callback(null, config)
 				}
 			})
@@ -84,7 +87,6 @@ module.exports.update = function (req, res) {
 					callback(err)
 				} else {
 					config.twilio.workflowSid = workflow.sid
-
 					callback(null, config)
 				}
 			})
@@ -102,12 +104,7 @@ module.exports.update = function (req, res) {
 		}
 	], function (err) {
 		if (err) {
-			res.status(500).json({
-				stack: err.stack,
-				message: err.message
-			})
-
-			return
+			return res.status(500).json({ code: 'TWILIO_UNKNOWN_ERROR', message: JSON.stringify(err, Object.getOwnPropertyNames(err)) })
 		}
 
 		res.status(200).end()
@@ -134,7 +131,6 @@ module.exports.syncQueues = function (config, callback) {
 				callback(err)
 			} else {
 				queue.taskQueueSid = queueFromApi.sid
-
 				next()
 			}
 		})
@@ -195,7 +191,6 @@ module.exports.createOrUpdateWorkflow = function (workflow, callback) {
 				callback(err)
 			} else {
 				workflow.sid = workflowFromApi.sid
-
 				callback(null, workflow)
 			}
 		})
@@ -203,7 +198,7 @@ module.exports.createOrUpdateWorkflow = function (workflow, callback) {
 }
 
 module.exports.createOrUpdateApplication = function (configuration, req, callback) {
-	var client = new require('twilio')(
+	var client = new twilio(
 		process.env.TWILIO_ACCOUNT_SID,
 		process.env.TWILIO_AUTH_TOKEN
 	)
@@ -211,7 +206,6 @@ module.exports.createOrUpdateApplication = function (configuration, req, callbac
 	var url =  req.protocol + '://' + req.hostname + '/api/agents/call'
 
 	if (configuration.twilio.applicationSid) {
-
 		client.applications(configuration.twilio.applicationSid).update({
 			friendlyName: 'Twilio Contact Center Demo',
 			voiceUrl: url,
@@ -240,44 +234,25 @@ module.exports.createOrUpdateApplication = function (configuration, req, callbac
 }
 
 module.exports.updateInboundPhoneNumber = function (req, config, callback) {
-	var client = new require('twilio')(
+	var client = new twilio(
 		process.env.TWILIO_ACCOUNT_SID,
 		process.env.TWILIO_AUTH_TOKEN
 	)
 
-	var params = {
-		PhoneNumber: config.twilio.callerId
-	}
-
-	client.incomingPhoneNumbers.list(params, function (err, data) {
-		/* we did not find the phone number provided */
-		if (data.incomingPhoneNumbers.length === 0) {
-			return callback(new Error(config.twilio.callerId + ' not found'))
-		}
-
-		/* the query returned more than one number, something went wrong */
-		if (data.incomingPhoneNumbers.length !== 1) {
-			return callback(new Error('query for ' + config.twilio.callerId + ' returned more than one phone number'))
-		}
-
-		var sid = data.incomingPhoneNumbers[0].sid
-		var phoneNumber = data.incomingPhoneNumbers[0].phoneNumber
-
-		console.log('configure phone number ' + sid + ' (' +  phoneNumber + ')')
-
-		var voiceUrl =  req.protocol + '://' + req.hostname + '/api/ivr/welcome'
+	var voiceUrl 	=  req.protocol + '://' + req.hostname + '/api/ivr/welcome'
+	var smsUrl 		=  req.protocol + '://' + req.hostname + '/api/messaging-adapter/inbound'
 	
-		client.incomingPhoneNumbers(sid).update({
-			voiceUrl: voiceUrl,
-			voiceMethod: 'GET'
-		}, function (err) {
-			if (err) {
-				callback(err)
-			} else {
-				callback(null)
-			}
-		})
-
+	client.incomingPhoneNumbers(req.body.sid).update({
+		voiceUrl: voiceUrl,
+		voiceMethod: 'GET',
+		smsUrl: smsUrl,
+		smsMethod: 'POST'
+	}, function (err) {
+		if (err) {
+			callback(err)
+		} else {
+			callback(null)
+		}
 	})
 
 }
@@ -314,6 +289,40 @@ module.exports.getActivities = function (req, res) {
 		}
 	})
 
+}
+
+module.exports.verifyPhoneNumber = function (req, res) {	
+	var client = new twilio(process.env.TWILIO_ACCOUNT_SID , process.env.TWILIO_AUTH_TOKEN)
+	var filter = {
+		PhoneNumber: req.body.callerId
+	}
+
+	client.incomingPhoneNumbers.list(filter, function (err, data) {
+		if(err){
+			return res.status(500).json({ code: 'TWILIO_UNKNOWN_ERROR', message: JSON.stringify(err, Object.getOwnPropertyNames(err)) })
+		}
+
+		/* phone number not found */
+		if (data.incomingPhoneNumbers.length === 0) {
+			return res.status(404).json({ code: 'TWILIO_UNKNOWN_PHONE_NUMBER'})
+		}
+
+		/* the query returned more than one number, something went wrong */
+		if (data.incomingPhoneNumbers.length !== 1) {
+			return res.status(500).json({ code: 'TWILIO_MULTIPLE_PHONE_NUMBERS'})
+		}
+
+		/* the number does not support voice */
+		if (data.incomingPhoneNumbers[0].capabilities.voice === false) {
+			return res.status(500).json({ code: 'TWILIO_PHONE_NUMBER_NOT_VOICE_CAPABLE'})
+		}
+
+		var sid = data.incomingPhoneNumbers[0].sid
+		var capabilities = data.incomingPhoneNumbers[0].capabilities
+
+		res.status(200).json({sid: sid, capabilities: capabilities})
+
+	})
 }
 
 module.exports.validate = function (req, res) {
@@ -375,7 +384,6 @@ module.exports.validate = function (req, res) {
 			res.status(500).json({ code: err})
 			return
 		}
-
 		res.status(200).end()
 	})
 

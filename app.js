@@ -43,6 +43,7 @@ router.route('/setup').post(setup.update)
 router.route('/setup/validate').get(setup.validate)
 router.route('/setup/workspace').get(setup.getWorkspace)
 router.route('/setup/activities').get(setup.getActivities)
+router.route('/setup/verify-phone-number').post(setup.verifyPhoneNumber)
 
 var tasks = require('./controllers/tasks.js')
 
@@ -85,4 +86,3 @@ app.use('/', express.static(__dirname + '/public'))
 app.listen(app.get('port'), function() {
   console.log('magic happens on port', app.get('port'))
 })
-

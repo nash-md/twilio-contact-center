@@ -1,16 +1,16 @@
 var app = angular.module('setupApplication', ['ngMessages']);
 
 app.controller('SetupController', function ($scope, $http, $q) {
-
-  $scope.isSaving = false;
-  $scope.configuration = null;
-  $scope.workspace = null;
-  $scope.activities = [];
+  
+  $scope.phoneNumber    = { isValid: true, message: null, code: null};
+  $scope.isSaving       = false;
+  $scope.configuration  = null;
+  $scope.workspace      = null;
+  $scope.activities     = [];
 
   $scope.init = function(){
 
     var retrieveSetup = function() {
-
       var deferred = $q.defer();
 
       $http.get('/api/setup').then(function(response){
@@ -24,7 +24,6 @@ app.controller('SetupController', function ($scope, $http, $q) {
     };
 
     var retrieveActivities = function() {
-
       var deferred = $q.defer();
 
       $http.get('/api/setup/activities').then(function(response){
@@ -38,7 +37,6 @@ app.controller('SetupController', function ($scope, $http, $q) {
     };
 
     var retrieveWorkspace = function() {
-
       var deferred = $q.defer();
 
       $http.get('/api/setup/workspace').then(function(response){
@@ -60,17 +58,48 @@ app.controller('SetupController', function ($scope, $http, $q) {
   };
   
   $scope.saveConfig = function(){
-
+    $scope.phoneNumber.isValid = true;
     $scope.isSaving = true;
 
-    $http.post('/api/setup', { configuration: $scope.configuration })
+    var verifyPhoneNumber = function() {
+      var deferred = $q.defer();
 
-      .then(function onSuccess(response) {
-        $scope.isSaving = false;
-      }, function onError(response) { 
-        $scope.isSaving = false;
-        alert('Error: ' +  response.data.message);
+      $http.post('/api/setup/verify-phone-number', { callerId: $scope.configuration.twilio.callerId }).then(function(response){
+        deferred.resolve(response.data);
+      }, function(error) {
+        deferred.reject(error);
       });
+
+      return deferred.promise;
+
+    };
+
+    var saveConfiguration = function(sid, configuration) {
+      var deferred = $q.defer();
+
+      $http.post('/api/setup', { sid: sid, configuration: configuration }).then(function(response){
+        deferred.resolve();
+      }, function(error) {
+        deferred.reject(error);
+      });
+
+      return deferred.promise;
+
+    };
+
+    /* verify phone number and save configuration */
+    verifyPhoneNumber().then(function(phoneNumber){
+
+      return saveConfiguration(phoneNumber.sid, $scope.configuration).then(function(){
+         $scope.isSaving = false;
+      });
+
+    }).catch(function(error) {
+      $scope.phoneNumber.isValid = false;
+      $scope.phoneNumber.code = error.data.code;
+      $scope.phoneNumber.message = error.data.message;
+      $scope.isSaving = false;
+    });
 
   };
 
