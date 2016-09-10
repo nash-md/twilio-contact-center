@@ -76,10 +76,6 @@ router.route('/workers').get(workers.list) // agents
 router.route('/workers').post(workers.create)
 router.route('/workers/:id').delete(workers.delete)
 
-var dashboard = require('./controllers/dashboard.js')
-
-router.route('/dashboard/event-receiver').post(dashboard.pushEvent) 
-
 app.use('/api', router)
 app.use('/', express.static(__dirname + '/public'))
 
