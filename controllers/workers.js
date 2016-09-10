@@ -1,3 +1,5 @@
+'use strict'
+
 var twilio = require('twilio')
 
 module.exports.delete = function (req, res) {

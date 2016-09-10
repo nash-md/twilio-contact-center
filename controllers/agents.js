@@ -1,3 +1,5 @@
+'use strict'
+
 var twilio = require('twilio')
 
 module.exports.login = function (req, res) {
@@ -13,10 +15,10 @@ module.exports.login = function (req, res) {
 	/* all token we generate are valid for 1 hour */
 	var lifetime = 3600
 
-	client.workspace.workers.get(function (error, data) {
+	client.workspace.workers.get({FriendlyName: friendlyName}, function (err, data) {
 
-		if (error) {
-			res.status(500).json(error)
+		if (err) {
+			res.status(500).json(err)
 			return
 		}
 

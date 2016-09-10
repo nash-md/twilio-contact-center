@@ -1,3 +1,5 @@
+'use strict'
+
 var twilio  = require('twilio')
 var async   = require('async')
 

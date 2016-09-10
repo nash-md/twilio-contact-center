@@ -1,3 +1,5 @@
+'use strict'
+
 var twilio = require('twilio')
 
 module.exports.welcome = function (req, res) {

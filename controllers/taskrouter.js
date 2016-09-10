@@ -1,3 +1,5 @@
+'use strict'
+
 module.exports.assignment = function (req, res) {
 
 	res.setHeader('Content-Type', 'application/json')
