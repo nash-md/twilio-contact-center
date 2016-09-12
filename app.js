@@ -1,39 +1,37 @@
 var express       = require('express')
 var bodyParser    = require('body-parser')
-var sessions      = require('express-session')
+var sessions      = require("express-session")
 var compression   = require('compression')
 
 /* check if the application runs on heroku */
 var util
 
-if (process.env.DYNO) {
-	util = require('./util-pg.js')
+if(process.env.DYNO){
+  util = require("./util-pg.js")
 } else {
-	util = require('./util-file.js')
+  util = require("./util-file.js")
 }
-
-var app = express()
+ 
+var app = express() 
 
 app.set('port', (process.env.PORT || 5000))
 
 app.use(compression())
 app.use(sessions({resave: true, saveUninitialized: false, secret: 'keyboard cat', name: 'session',  cookie: {expires: util.generateSessionExirationDate() }}))
-app.use(bodyParser.json({}))
+app.use(bodyParser.json({})) 
 app.use(bodyParser.urlencoded({
-	extended: true
-}))
+  extended: true
+}));
 
 app.use(function (req, res, next) {
-
-	util.getConfiguration(function (error, configuration) {
-		if (error) {
-			res.status(500).json({stack: error.stack, message: error.message})
-		} else {
-			req.configuration = configuration
-			next()
-		}
-	})
-
+  util.getConfiguration(function(error, configuration){
+  	if(error){
+  		res.status(500).json({stack: error.stack, message: error.message })
+  	} else {
+  		req.configuration = configuration
+  		next()
+  	}
+  })
 })
 
 var router = express.Router()
@@ -78,15 +76,9 @@ router.route('/workers').get(workers.list) // agents
 router.route('/workers').post(workers.create)
 router.route('/workers/:id').delete(workers.delete)
 
-/* routes for messaging adapter */
-var messagingAdapter = require('./controllers/messaging-adapter.js')
-
-router.route('/messaging-adapter/inbound').post(messagingAdapter.inbound)
-router.route('/messaging-adapter/outbound').post(messagingAdapter.outbound)
-
 app.use('/api', router)
 app.use('/', express.static(__dirname + '/public'))
 
-app.listen(app.get('port'), function () {
-	console.log('magic happens on port', app.get('port'))
+app.listen(app.get('port'), function() {
+  console.log('magic happens on port', app.get('port'))
 })

@@ -8,6 +8,7 @@ const chatClient = new twilio.IpMessagingClient(
 	process.env.TWILIO_ACCOUNT_SID,
 	process.env.TWILIO_AUTH_TOKEN)
 
+
 /* check if the application runs on heroku */
 var util
 
@@ -50,16 +51,6 @@ module.exports.update = function (req, res) {
 
 		}, function (config, callback) {
 
-			module.exports.updateMessagingService(req, config, function (err) {
-				if (err) {
-					callback(err)
-				} else {
-					callback(null, config)
-				}
-			})
-
-		}, function (config, callback) {
-
 			module.exports.syncQueues(config, function (err) {
 				if (err) {
 					callback(err)
@@ -69,7 +60,6 @@ module.exports.update = function (req, res) {
 			})
 
 		}, function (config, callback) {
-
 			var workflowConfiguration = { task_routing: { filters: [] }}
 
 			for (var i = 0; i < config.queues.length; i++) {
@@ -121,9 +111,7 @@ module.exports.update = function (req, res) {
 		if (err) {
 			return res.status(500).json({ code: 'TWILIO_UNKNOWN_ERROR', message: JSON.stringify(err, Object.getOwnPropertyNames(err)) })
 		}
-
 		res.status(200).end()
-
 	})
 
 }
@@ -272,30 +260,6 @@ module.exports.updateInboundPhoneNumber = function (req, config, callback) {
 
 }
 
-module.exports.updateMessagingService = function (req, config, callback) {
-	var webhooks = {}
-
-	var url = req.protocol + '://' + req.hostname + '/api/messaging-adapter/outbound'
-
-	webhooks['Webhooks.OnMessageSent.Url'] = url
-	webhooks['Webhooks.OnMessageSent.Method'] = 'POST'
-
-
-console.log(webhooks)
-// "Webhooks.OnMessageSent.Url" => "https://hooks.yoursite.com",
-
-//	webhooks.onMessageSent.Url = req.protocol + '://' + req.hostname + '/api/messaging-adapter/outbound'
-//	webhooks.onMessageSent.Method = 'POST'
-console.log(webhooks)
-	chatClient.services(process.env.TWILIO_IPM_SERVICE_SID).update(webhooks).then(function(response) {
-		console.log(response)
-		callback(null)
-	}).catch(function(error) {
-		callback(error);
-	})
-
-}
-
 module.exports.getWorkspace = function (req, res) {
 	var client = new twilio.TaskRouterClient(
 		process.env.TWILIO_ACCOUNT_SID,
@@ -310,7 +274,7 @@ module.exports.getWorkspace = function (req, res) {
 			res.status(200).json(workspace)
 		}
 	})
-	
+
 }
 
 module.exports.getActivities = function (req, res) {

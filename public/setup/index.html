@@ -63,19 +63,11 @@
 
       <br /><br />
 
-      <h4>Phone Number:</h4>
+      <h4>Phone Number (Inbound/Outbound):</h4>
 
-      <span class="help-block">This phone number will be configured as your voice inbound and outbound number by this setup script. If you provide a message-capable phone number the demo provides a bridge from SMS to Twiio IP Chat ans vice versa.</span>
+      <span class="help-block">This number will be configured as your call center number by this setup script.</span>
 
-      <input style="width:350px" ng-model="configuration.twilio.callerId" data-ng-trim="false" name="callerId" type="text" class="form-control" placeholder="+..." required phone-number>
-
-      <br />
-
-      <h4>Facebook Page ID (optional):</h4>
-
-      <span class="help-block">Please enable Facebook Messaging in your Twilio account and forward messages to http://&lt;your_application&gt;/messaging-adapter/outbound </span>
-
-       <input style="width:350px" ng-model="configuration.twilio.facebookPageId" data-ng-trim="true" name="facebookPageId" type="text" class="form-control">
+       <input style="width:350px" ng-model="configuration.twilio.callerId" data-ng-trim="false" name="callerId" type="text" class="form-control" placeholder="+..." required phone-number>
 
       <div ng-messages="setupForm.callerId.$error" role="alert" style="margin-top: 10px; margin-bottom: 0px;">
           <div ng-message="required" class="error-message alert alert-danger">Phone number is required</div>
