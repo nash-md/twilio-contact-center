@@ -3,6 +3,11 @@
 const twilio 	= require('twilio')
 const async 	= require('async')
 
+/* client for Twilio IP Chat */
+const chatClient = new twilio.IpMessagingClient(
+	process.env.TWILIO_ACCOUNT_SID,
+	process.env.TWILIO_AUTH_TOKEN)
+
 /* check if the application runs on heroku */
 var util
 
@@ -36,6 +41,16 @@ module.exports.update = function (req, res) {
 		}, function (config, callback) {
 
 			module.exports.updateInboundPhoneNumber(req, config, function (err) {
+				if (err) {
+					callback(err)
+				} else {
+					callback(null, config)
+				}
+			})
+
+		}, function (config, callback) {
+
+			module.exports.updateMessagingService(req, config, function (err) {
 				if (err) {
 					callback(err)
 				} else {
@@ -257,6 +272,30 @@ module.exports.updateInboundPhoneNumber = function (req, config, callback) {
 
 }
 
+module.exports.updateMessagingService = function (req, config, callback) {
+	var webhooks = {}
+
+	var url = req.protocol + '://' + req.hostname + '/api/messaging-adapter/outbound'
+
+	webhooks['Webhooks.OnMessageSent.Url'] = url
+	webhooks['Webhooks.OnMessageSent.Method'] = 'POST'
+
+
+console.log(webhooks)
+// "Webhooks.OnMessageSent.Url" => "https://hooks.yoursite.com",
+
+//	webhooks.onMessageSent.Url = req.protocol + '://' + req.hostname + '/api/messaging-adapter/outbound'
+//	webhooks.onMessageSent.Method = 'POST'
+console.log(webhooks)
+	chatClient.services(process.env.TWILIO_IPM_SERVICE_SID).update(webhooks).then(function(response) {
+		console.log(response)
+		callback(null)
+	}).catch(function(error) {
+		callback(error);
+	})
+
+}
+
 module.exports.getWorkspace = function (req, res) {
 	var client = new twilio.TaskRouterClient(
 		process.env.TWILIO_ACCOUNT_SID,
@@ -271,7 +310,7 @@ module.exports.getWorkspace = function (req, res) {
 			res.status(200).json(workspace)
 		}
 	})
-
+	
 }
 
 module.exports.getActivities = function (req, res) {
