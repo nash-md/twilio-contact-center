@@ -32,7 +32,7 @@
 						<div class="form-group">
 							<label class="col-md-4 control-label">Department</label>
 							<div class="col-md-8">
-								<select ng-model="question.team" class="form-control" id="team">
+								<select ng-model="question.team" class="form-control" id="team" required>
 									<option ng-repeat="option in configuration.ivr.options" value="{{ option.id }}">{{ option.friendlyName }}</option>
 								</select>
 							</div>
@@ -62,7 +62,7 @@
 								<div ng-message="invalidPhone"  class="error-message alert alert-danger">Invalid phone number</div>
 							</div>
 
-							<button ng-click="submit()" ng-disabled="supportForm.$invalid" class="submit btn btn-primary btn-md">Submit</button>
+							<button ng-click="submit()" ng-disabled="supportForm.$pristine || supportForm.$valid !== true" class="submit btn btn-primary btn-md">Submit</button>
 
 							<div ng-show="submitted == true" class="alert alert-success" role="alert">Thanks, we call you as soon as possible.</div>
 						</div>
@@ -87,7 +87,9 @@
 
 	<script src="/scripts/angular.min.js"></script>
 	<script src="/scripts/angular-messages.min.js"></script>
+
 	<script src="ContactController.js"></script>
+	<script src="/scripts/directives/PhoneNumberDirective.js"></script>
 
 </body>
 </html>

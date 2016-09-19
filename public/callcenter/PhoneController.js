@@ -94,24 +94,24 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout,
 
   $scope.addDigit = function(digit){
 
-   $log.log('send digit: ' + digit);
-   $scope.phoneNumber = $scope.phoneNumber + digit;
+    $log.log('send digit: ' + digit);
+    $scope.phoneNumber = $scope.phoneNumber + digit;
 
-   if($scope.connection){
-    $scope.connection.sendDigits(digit);
-  }
+    if($scope.connection){
+      $scope.connection.sendDigits(digit);
+    }
 
-};
+  };
 
-$scope.$on('CallPhoneNumber', function(event, data) { 
+  $scope.$on('CallPhoneNumber', function(event, data) { 
 
-  $log.log('call: ' + data.phoneNumber);
-  $scope.phoneNumber = data.phoneNumber;
+    $log.log('call: ' + data.phoneNumber);
+    $scope.phoneNumber = data.phoneNumber;
 
-  Twilio.Device.connect({'phone': data.phoneNumber});
+    Twilio.Device.connect({'phone': data.phoneNumber});
 
-  $scope.state = 'isActive';
+    $scope.state = 'isActive';
 
-});
+  });
 
 });      

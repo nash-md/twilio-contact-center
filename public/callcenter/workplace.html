@@ -38,8 +38,8 @@
           <table>
           <tr>
             <td>
-             <div class="title">{{reservation.task.attributes.type}} from {{reservation.task.attributes.name}}</div>
-             <div class="timer">created {{ reservationCounter | counter }} ago</div>
+             <div class="title">{{reservation.task.attributes.title}} from {{reservation.task.attributes.name}}</div>
+             <div class="timer" ng-class='{"invisible": !reservationCounter}'>created {{ reservationCounter | counter }} ago</div>
              </td>
             <td class="accept-panel"><button ng-click="acceptReservation(reservation)">Accept</button></td>
           </tr>
@@ -67,12 +67,16 @@
         </div>
 
         <div class="panel-body">
-            <div class="description">{{task.attributes.type}} from {{task.attributes.name}}</div>
+            <div class="description">{{task.attributes.title}} from 
+              <span ng-show="!task.attributes.nameIsPhoneNumber">{{task.attributes.name}}</span>
+              
+              <a href="#" ng-click="callPhoneNumber('{{task.attributes.name}}')"" ng-show="task.attributes.nameIsPhoneNumber">{{task.attributes.name}}</a>
+            </div>
             {{task.attributes.text}}
         </div>
 
         <!-- chat -->
-        <section ng-show="channel !== undefined" class="chat-controller" ng-controller="ChatController" ng-cloak>
+        <section ng-show="session.channelSid" class="chat-controller" ng-controller="ChatController" ng-cloak>
           
            <div class="load-indicator" ng-show="session.isLoading">
               <i class="fa fa-refresh fa-spin"></i>

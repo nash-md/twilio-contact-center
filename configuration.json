@@ -16,28 +16,25 @@
 	},
 	"queues": [
 		{
-			"friendlyName": "Email Queue",
-			"id": "email",
-			"taskQueueSid": null,
-			"expression": "channel == \"email\""
-		},
-		{
 			"friendlyName": "Chat Queue",
 			"id": "chat",
 			"taskQueueSid": null,
-			"expression": "channel == \"chat\""
+			"expression": "channel == \"chat\"",
+			"targetWorkerExpression": ""
 		},
 		{
 			"friendlyName": "Phone Queue",
 			"id": "phone",
 			"taskQueueSid": null,
-			"expression": "channel == \"phone\""
+			"expression": "channel == \"phone\"",
+			"targetWorkerExpression": "task.team == worker.team"
 		},
 		{
 			"friendlyName": "Video Queue",
 			"id": "phone",
 			"taskQueueSid": null,
-			"expression": "channel == \"video\""
+			"expression": "channel == \"video\"",
+			"targetWorkerExpression": "task.team == worker.team"
 		}
 	],
 	"twilio": {

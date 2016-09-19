@@ -1,6 +1,6 @@
-var administrationController = angular.module('administrationApplication', ['checklist-model']);
+var app = angular.module('administrationApplication', ['checklist-model']);
 
-administrationController.controller('AdministrationController', function ($scope, $http, $log) {
+app.controller('AdministrationController', function ($scope, $http, $log) {
 
   $scope.init = function(){
 
@@ -9,8 +9,7 @@ administrationController.controller('AdministrationController', function ($scope
     $scope.channels = {
       phone: 'Phone',
       chat: 'Chat',
-      video: 'Video',
-      email: 'Email'
+      video: 'Video'
     };
 
     $scope.createForm = false;
@@ -47,17 +46,14 @@ administrationController.controller('AdministrationController', function ($scope
         worker.attributes = attributes;
 
         for (var i = 0; i < $scope.configuration.ivr.options.length; i++) {
-
           if($scope.configuration.ivr.options[i].id == worker.attributes.team){
             worker.team = $scope.configuration.ivr.options[i].friendlyName;
           }
-
         }
 
         worker.channelsFriendlyName = '';
 
         for (i = 0; i < worker.attributes.channels.length; i++) {
-
           worker.channelsFriendlyName += $scope.channels[worker.attributes.channels[i]];
           
           if(i < (worker.attributes.channels.length -1)){
@@ -95,7 +91,7 @@ administrationController.controller('AdministrationController', function ($scope
     var worker =  { 
       friendlyName:  $scope.agent.friendlyName, 
       attributes: JSON.stringify(attributes) 
-    } ;
+    };
 
     $http.post('/api/workers', worker)
 
@@ -156,7 +152,6 @@ administrationController.controller('AdministrationController', function ($scope
   $scope.saveConfig = function(){
 
     for (var i = 0; i < $scope.configuration.ivr.options.length; i++) {
-
       var tmpId = $scope.configuration.ivr.options[i].friendlyName.toLowerCase();
 
       tmpId = tmpId.replace(/[^a-z0-9 ]/g, '');
@@ -181,41 +176,4 @@ administrationController.controller('AdministrationController', function ($scope
 
   };
 
-});  
-
-administrationController.directive('clientName', function () {
-
-  var REGEX = /^[a-zA-Z0-9_]*$/;
-
-  return {
-    require: 'ngModel',
-    link: function (scope, element, attrs, ctrl) {
-
-      ctrl.$validators.integer = function (ngModelValue) {
-
-        if (REGEX.test(ngModelValue)) {
-          ctrl.$setValidity('invalidCharacter', true);
-          return ngModelValue;
-        } else {
-          ctrl.$setValidity('invalidCharacter', false);
-          return ngModelValue;     
-        }
-
-      };
-    }
-  };
-});
-
-administrationController.directive('convertToNumber', function() {
-  return {
-    require: 'ngModel',
-    link: function(scope, element, attrs, ngModel) {
-      ngModel.$parsers.push(function(value) {
-        return value ? parseInt(value, 10) : null;
-      });
-      ngModel.$formatters.push(function(value) {
-        return value ? '' + value : null;
-      });
-    }
-  };
-});
+}); 

@@ -1,39 +1,34 @@
 'use strict'
 
-var twilio = require('twilio')
+const twilio = require('twilio')
+
+/* client for Twilio TaskRouter */
+const taskrouterClient = new twilio.TaskRouterClient(
+	process.env.TWILIO_ACCOUNT_SID,
+	process.env.TWILIO_AUTH_TOKEN,
+	process.env.TWILIO_WORKSPACE_SID)
 
 module.exports.login = function (req, res) {
-
-	var client = new twilio.TaskRouterClient(
-		process.env.TWILIO_ACCOUNT_SID,
-		process.env.TWILIO_AUTH_TOKEN,
-		process.env.TWILIO_WORKSPACE_SID
-	)
-
 	var friendlyName = req.body.worker.friendlyName
 
 	/* all token we generate are valid for 1 hour */
 	var lifetime = 3600
 
-	client.workspace.workers.get({FriendlyName: friendlyName}, function (err, data) {
-
+	taskrouterClient.workspace.workers.get({FriendlyName: friendlyName}, function (err, data) {
 		if (err) {
 			res.status(500).json(err)
 			return
 		}
 
 		for (var i = 0; i < data.workers.length; i++) {
-
 			var worker = data.workers[i]
 
 			if (worker.friendlyName === friendlyName) {
-
 				/* create a token for taskrouter */
 				var workerCapability = new twilio.TaskRouterWorkerCapability(
 					process.env.TWILIO_ACCOUNT_SID,
 					process.env.TWILIO_AUTH_TOKEN,
-					process.env.TWILIO_WORKSPACE_SID, worker.sid
-				)
+					process.env.TWILIO_WORKSPACE_SID, worker.sid)
 
 				workerCapability.allowActivityUpdates()
 				workerCapability.allowReservationUpdates()
@@ -42,8 +37,7 @@ module.exports.login = function (req, res) {
 				/* create a token for Twilio client */
 				var phoneCapability = new twilio.Capability(
 					process.env.TWILIO_ACCOUNT_SID,
-					process.env.TWILIO_AUTH_TOKEN
-				)
+					process.env.TWILIO_AUTH_TOKEN)
 
 				phoneCapability.allowClientOutgoing(req.configuration.twilio.applicationSid)
 				phoneCapability.allowClientIncoming(friendlyName.toLowerCase())
@@ -58,8 +52,7 @@ module.exports.login = function (req, res) {
 					process.env.TWILIO_ACCOUNT_SID,
 					process.env.TWILIO_API_KEY,
 					process.env.TWILIO_API_SECRET,
-					{ ttl: lifetime }
-				)
+					{ ttl: lifetime })
 
 				accessToken.addGrant(grant)
 				accessToken.identity = worker.friendlyName
@@ -74,17 +67,15 @@ module.exports.login = function (req, res) {
 				req.session.worker = worker
 
 				res.status(200).end()
-				return
 
+				return
 			}
 
 		}
-
 		res.status(404).end()
+
 		return
-
 	})
-
 }
 
 module.exports.logout = function (req, res) {
@@ -100,10 +91,10 @@ module.exports.logout = function (req, res) {
 }
 
 module.exports.getSession = function (req, res) {
-
 	if (!req.session.worker) {
 		res.status(403).end()
 	} else {
+
 		res.status(200).json({
 			tokens: req.session.tokens,
 			worker: req.session.worker,
@@ -111,13 +102,13 @@ module.exports.getSession = function (req, res) {
 				twilio: req.configuration.twilio
 			}
 		})
-	}
 
+	}
 }
 
 module.exports.call = function (req, res) {
-
 	var twiml = new twilio.TwimlResponse()
+
 	twiml.dial({ callerId: req.configuration.twilio.callerId }, function (node) {
 		node.number(req.query.phone)
 	})
@@ -125,5 +116,4 @@ module.exports.call = function (req, res) {
 	res.setHeader('Content-Type', 'application/xml')
 	res.setHeader('Cache-Control', 'public, max-age=0')
 	res.send(twiml.toString())
-
 }

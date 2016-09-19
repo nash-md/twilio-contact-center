@@ -1,7 +1,7 @@
 {
-  "name": "twilio-contact-center-omni-channel",
+  "name": "twilio-contact-center-internal",
   "description": "A simple omni channel contact center using Twilio Client and Taskrouter",
-  "version": "1.2.0",
+  "version": "1.5.0",
   "author": "Matthias Damm",
   "contributors": [],
   "license": "MIT",
@@ -30,10 +30,10 @@
     "express": "^4.13.4",
     "express-session": "^1.13.0",
     "pg": "^4.5.6",
-    "twilio": "^2.9.0"
+    "twilio": "^2.9.x"
   },
   "devDependencies": {
-    "eslint": "^2.11.1"
+    "eslint": "^3.5.x"
   },
   "engines": {
     "node": "^6.5.x"
@@ -44,6 +44,6 @@
   ],
   "scripts": {
     "start": "node app.js",
-    "lint": "./node_modules/.bin/eslint ."
+    "lint": "./node_modules/.bin/eslint . || exit 0"
   }
 }

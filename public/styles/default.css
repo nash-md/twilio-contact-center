@@ -380,7 +380,7 @@
   left:auto;
 }
 
-.message .author .footer
+.message .footer
 {
 	overflow:auto;
 	clear: both;
@@ -432,11 +432,16 @@
 	margin-top: 5px;
 }
 
-.chat-inline-number
+.message .chat-inline-number
 {
 	color: white;
 	cursor: pointer;
 	text-decoration: underline;
+}
+
+.message.me .chat-inline-number
+{
+	color: #1a1a1a;
 }
 
 /* task overview */

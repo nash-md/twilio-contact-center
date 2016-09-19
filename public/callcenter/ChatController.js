@@ -16,11 +16,12 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 
     $scope.channel.leave().then(function() {
       $log.log('channel left');
-      delete $scope.channel;
+      $scope.channel = null;
     });
   
     $scope.messages = [];
     $scope.session.isInitialized = false;
+    $scope.session.channelSid = null;
 
   });
 

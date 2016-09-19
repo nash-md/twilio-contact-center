@@ -1,42 +1,41 @@
-var fs    = require('fs');
-var pg    = require("pg");
+var fs = require('fs')
+var uc = require('./util-common.js')
+
+module.exports.convertToString = function (err) {
+	return uc.convertToString(err)
+}
 
 module.exports.generateSessionExirationDate = function (seconds) {
-
-  var now = new Date();
-  var offset = (now.getTimezoneOffset() * 60 * 1000 ) * -1;
-  var date = new Date(now.getTime() + offset + (seconds * 1000));
-
-  return date;
+	return uc.generateSessionExirationDate(seconds)
 }
 
 module.exports.getConfiguration = function (callback) {
 
-  fs.readFile('configuration.json', 'utf8', function (err, data) {
-    if(err){
-      return callback(err)
-    }
+	fs.readFile('configuration.json', 'utf8', function (err, data) {
+		if (err) {
+			return callback(err)
+		}
 
-    try{
-      configuration = JSON.parse(data);
-    } catch (exception){
-      return callback(exception)
-    }
+		try {
+			var configuration = JSON.parse(data)
+		} catch (exception) {
+			return callback(exception)
+		}
 
-    return callback(null, configuration) 
-  });
-  
+		callback(null, configuration)
+	})
+
 }
 
 exports.setConfiguration = function (configuration, callback) {
+	var configurationAsString =  JSON.stringify(configuration, null, 4)
 
-  var configurationAsString =  JSON.stringify(configuration, null, 4);
+	fs.writeFile('configuration.json', configurationAsString, function (err) {
+		if (err) {
+			callback(err)
+		} else {
+			callback(null)
+		}
+	})
 
-  fs.writeFile('configuration.json', configurationAsString, function(err) {
-    if(err) {
-      return callback(err);
-    } else {
-      return callback(null);
-    }
-  }); 
 }

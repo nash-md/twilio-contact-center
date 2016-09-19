@@ -30,7 +30,7 @@
 
         <div class="form-group">
           <div class="col-xs-12">
-            <button ng-disabled="loginForm.friendlyName.$invalid" ng-click="login()" type="submit" class="btn btn-primary">Log In</button>
+            <button ng-disabled="loginForm.friendlyName.$invalid" type="submit" class="btn btn-primary">Log In</button>
           </div>
         </div>
 
@@ -41,7 +41,7 @@
         <div ng-messages="loginForm.$error" role="alert">
           <div ng-message="notFound"  class="alert alert-danger" style="margin-bottom:0px">Worker does not exist</div>
           <div ng-message="serverError" class="alert alert-danger" style="margin-bottom:0px">
-            <strong>Oh snap!</strong> An error occured, please check JavaScript console for details
+            <strong>Oh snap!</strong>An error occured, please check JavaScript console for details
           </div>
         </div>
 

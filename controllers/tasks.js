@@ -1,17 +1,22 @@
 'use strict'
 
-var twilio  = require('twilio')
-var async   = require('async')
+const twilio  = require('twilio')
+const async   = require('async')
+
+/* client for Twilio TaskRouter */
+const taskrouterClient = new twilio.TaskRouterClient(
+	process.env.TWILIO_ACCOUNT_SID,
+	process.env.TWILIO_AUTH_TOKEN,
+	process.env.TWILIO_WORKSPACE_SID)
+
+/* client for Twilio IP Chat */
+const chatClient = new twilio.IpMessagingClient(
+	process.env.TWILIO_ACCOUNT_SID,
+	process.env.TWILIO_AUTH_TOKEN)
 
 module.exports.createCallback = function (req, res) {
 
-	var client = new twilio.TaskRouterClient(
-		process.env.TWILIO_ACCOUNT_ID,
-		process.env.TWILIO_AUTH_TOKEN,
-		process.env.TWILIO_WORKSPACE_SID
-	)
-
-	client.workspace.tasks.create({
+	taskrouterClient.workspace.tasks.create({
 		WorkflowSid: req.configuration.twilio.workflowSid,
 		attributes: JSON.stringify(req.body),
 		timeout: 3600
@@ -22,15 +27,14 @@ module.exports.createCallback = function (req, res) {
 			res.status(200).end()
 		}
 	})
+
 }
 
 module.exports.createChat = function (req, res) {
-
 	/* create a chat room */
 	async.waterfall([
 
 		function (callback) {
-
 			/* create token */
 			var grant = new twilio.AccessToken.IpMessagingGrant({
 				serviceSid: process.env.TWILIO_IPM_SERVICE_SID,
@@ -41,8 +45,7 @@ module.exports.createChat = function (req, res) {
 				process.env.TWILIO_ACCOUNT_SID,
 				process.env.TWILIO_API_KEY,
 				process.env.TWILIO_API_SECRET,
-				{ ttl: 3600 }
-			)
+				{ ttl: 3600 })
 
 			accessToken.addGrant(grant)
 			accessToken.identity = req.body.identity
@@ -53,17 +56,9 @@ module.exports.createChat = function (req, res) {
 			}
 
 			callback(null, payload)
-
-		},
-		function (payload, callback) {
-
-			var client = new twilio.IpMessagingClient(
-				process.env.TWILIO_ACCOUNT_SID,
-				process.env.TWILIO_AUTH_TOKEN
-			)
-
-			var service = client.services(process.env.TWILIO_IPM_SERVICE_SID)
-
+		}, function (payload, callback) {
+			/* retrieve ip chat service */
+			var service = chatClient.services(process.env.TWILIO_IPM_SERVICE_SID)
 			var uid = Math.random().toString(36).substring(7)
 
 			service.channels.create({
@@ -78,21 +73,15 @@ module.exports.createChat = function (req, res) {
 				}
 			})
 
-		},
-		function (payload, callback) {
+		}, function (payload, callback) {
 
-			var client = new twilio.TaskRouterClient(
-				process.env.TWILIO_ACCOUNT_SID,
-				process.env.TWILIO_AUTH_TOKEN,
-				process.env.TWILIO_WORKSPACE_SID
-			)
-
-			client.workspace.tasks.create({
+			taskrouterClient.workspace.tasks.create({
 				workflowSid: req.configuration.twilio.workflowSid,
 				attributes: JSON.stringify({
-					type: 'Chat request',
+					title: 'Chat request',
 					text: 'Customer entered chat via support page',
 					channel: 'chat',
+					endpoint: 'web',
 					team: 'support',
 					name: payload.identity,
 					channelSid: payload.channelSid
@@ -107,17 +96,14 @@ module.exports.createChat = function (req, res) {
 			})
 
 		}
-	],
-	function (err, payload) {
-
+	], function (err, payload) {
 		if (err) {
 			console.log(err)
 			res.status(500).json(err)
+
 			return
 		}
 
 		res.status(200).send(payload)
-
 	})
-
 }

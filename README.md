@@ -24,8 +24,12 @@ Customer fills out online call request form -> Customer request detected -> Task
 ## Voice Calling (PSTN):
 Customer Calls (PSTN) ->Twilio phone number -> Customer request detected -> IVR -> TaskRouter -> Find Available Agent -> Connect to Agent (WebRTC)
 
+![Customer Journey Inbound Call](contact_center_flow_inbound.png)
+
 ## Web Chat:
 Customer Fill out online web chat request form -> Customer request detected -> TaskRouter -> Find Available Agent -> Start web chat between Customer and Agent (IP Messaging)
+
+![Customer Journey Chat](contact_center_flow_chat.png)
 
 ## Video Chat (future):
 Customer Fill out online video chat request form -> Customer request detected -> TaskRouter -> Find Available Agent -> Start video chat between Agent and Customer (Video)

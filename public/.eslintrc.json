@@ -10,10 +10,11 @@
     "max-len": [2, 100],
     "no-empty": 2,
     "default-case": 2,
-    "semi": 1
+    "semi": ["error", "always"]
   },
   "globals": {
     "angular": false,
-    "Twilio": false
+    "Twilio": false,
+    "app": false
   }
 }
