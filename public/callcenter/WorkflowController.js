@@ -244,7 +244,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
   };
 
   $scope.callPhoneNumber = function(phoneNumber){
-    $rootScope.$broadcast('CallPhoneNumber', { phoneNumber: phone });
+    $rootScope.$broadcast('CallPhoneNumber', { phoneNumber: phoneNumber });
   };
 
   $scope.logout = function () {
