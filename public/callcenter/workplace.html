@@ -75,6 +75,11 @@
             {{task.attributes.text}}
         </div>
 
+        <!-- video -->
+        <section class="agent-video-canvas" id="remote-media" ng-controller="VideoController" ng-cloak>
+        </section>
+        <!-- video -->
+
         <!-- chat -->
         <section ng-show="session.channelSid" class="chat-controller" ng-controller="ChatController" ng-cloak>
           
@@ -176,6 +181,7 @@
   <script type="text/javascript" src="//media.twiliocdn.com/taskrouter/js/v1.7/taskrouter.min.js"></script>
   <script src="https://media.twiliocdn.com/sdk/js/common/v0.1/twilio-common.js"></script>
   <script src="https://media.twiliocdn.com/sdk/rtc/js/ip-messaging/v0.10/twilio-ip-messaging.js"></script>
+  <script src="//media.twiliocdn.com/sdk/js/video/v1/twilio-video.min.js"></script>
   <script src="/scripts/angular.min.js"></script>
   <script src="/scripts/angular-messages.min.js"></script>
   <script src="/scripts/angular-scrollglue.js"></script>
@@ -183,7 +189,7 @@
   <script src="WorkflowController.js"></script>
   <script src="PhoneController.js"></script>
   <script src="ChatController.js"></script>
-
+  <script src="VideoController.js"></script>
 
 </body>
 </html>

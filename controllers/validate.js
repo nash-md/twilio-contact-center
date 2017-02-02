@@ -104,7 +104,9 @@ module.exports.validatePhoneNumber = function (req, res) {
 
 	client.incomingPhoneNumbers.list(filter, function (err, data) {
 		if (err) {
-			return res.status(500).json({ code: 'TWILIO_UNKNOWN_ERROR', message: req.util.convertToString(err)})
+			return res.status(500).json({
+				code: 'TWILIO_UNKNOWN_ERROR', message: req.util.convertToString(err)
+			})
 		}
 
 		/* phone number not found */

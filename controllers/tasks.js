@@ -107,3 +107,64 @@ module.exports.createChat = function (req, res) {
 		res.status(200).send(payload)
 	})
 }
+
+module.exports.createVideo = function (req, res) {
+
+	async.waterfall([
+
+		function (callback) {
+			/* create token */
+			var grant = new twilio.AccessToken.VideoGrant({
+				configurationProfileSid: process.env.TWILIO_VIDEO_CONFIGURATION_SID
+			})
+
+			var accessToken = new twilio.AccessToken(
+				process.env.TWILIO_ACCOUNT_SID,
+				process.env.TWILIO_API_KEY_SID,
+				process.env.TWILIO_API_KEY_SECRET,
+				{ ttl: 3600 })
+
+			accessToken.addGrant(grant)
+			accessToken.identity = req.body.identity
+
+			var uid = Math.random().toString(36).substring(7)
+
+			var payload = {
+				identity: req.body.identity,
+				token: accessToken.toJwt(),
+				room: uid
+			}
+
+			callback(null, payload)
+		}, function (payload, callback) {
+
+			taskrouterClient.workspace.tasks.create({
+				workflowSid: req.configuration.twilio.workflowSid,
+				attributes: JSON.stringify({
+					title: 'Video request',
+					text: 'Customer requested video support on web page',
+					channel: 'video',
+					name: payload.identity,
+					room: payload.room
+				}), timeout: 3600
+			}, function (err, task) {
+				if (err) {
+					callback(err)
+				} else {
+					payload.task = task.sid
+					callback(null, payload)
+				}
+			})
+
+		}
+	], function (err, payload) {
+		if (err) {
+			console.log(err)
+			res.status(500).json(err)
+
+			return
+		}
+
+		res.status(200).send(payload)
+	})
+}

@@ -52,8 +52,11 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
       /* initialize Twilio client with token received from the backend */
       $scope.$broadcast('InitializePhone', { token: response.data.tokens.phone});
 
-      /* initialize Twilio IP Messaging client with token received from the backend */
-      $scope.$broadcast('InitializeChat', { token: response.data.tokens.chat, identity: response.data.worker.friendlyName});
+      /* initialize Twilio Chat client with token received from the backend */
+      $scope.$broadcast('InitializeChat', { token: response.data.tokens.chatAndVideo, identity: response.data.worker.friendlyName});
+
+       // initialize Twilio Video client
+      $scope.$broadcast('InitializeVideo', { token: response.data.tokens.chatAndVideo });
 
     }, function onError(response) { 
       
@@ -180,6 +183,23 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
     $log.log('accept reservation with TaskRouter Worker JavaScript SDK');
 
     /* depending on the typ of taks that was created we handle the reservation differently */
+    if(reservation.task.attributes.channel == 'video') {
+
+      reservation.accept(
+
+        function(err, reservation) {
+
+          if(err) {
+            $log.error(err);
+            return;
+          }
+
+          $scope.$broadcast('ActivateVideo', { room: reservation.task.attributes.room });
+
+        });
+
+    }
+
     if(reservation.task.attributes.channel == 'chat'){
 
       reservation.accept(
@@ -224,8 +244,15 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 
   $scope.complete = function (reservation) {
 
-    if($scope.task.attributes.channel == 'chat'){
-      $scope.$broadcast('DestroyChat');
+    switch($scope.task.attributes.channel) {
+        case 'video':
+          $scope.$broadcast('DestroyVideo');
+          break;
+        case 'chat':
+          $scope.$broadcast('DestroyChat');
+          break;
+        default:
+          // do nothing
     }
 
     $scope.workerJS.update('ActivitySid', $scope.configuration.twilio.workerIdleActivitySid, function(err, worker) {

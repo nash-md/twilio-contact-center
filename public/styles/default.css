@@ -454,3 +454,139 @@
 {
 	font-size:1em;
 }
+
+/* Twilio Video */
+.video-support-form input[name="identity"]
+{
+	width: 250px;
+}
+
+.video-support-form .initiate > span
+{
+	padding-right:8px;
+}
+
+.video-canvas
+{
+	position: relative;
+	width: 600px;
+	height:450px;
+}
+
+.video-canvas > div
+{
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	z-index: 100;
+}
+
+.video-canvas .button-toggle-media
+{
+	background-color: rgba(0,0,0,0.7);
+	padding: 0px;
+	cursor: pointer;
+	height: 60px;
+	width: 60px; 
+	border-radius: 30px;
+	left: 50%;
+	margin-left: 10px;
+	background-repeat: no-repeat;
+	background-size: 50%;
+	bottom: 15px;
+	background-position: center center;
+	position: absolute;
+}
+
+.video-canvas .media-enabled
+{
+	background-image: url(/images/icon_camera.svg);
+}
+
+.video-canvas .media-disabled
+{
+	background-image: url(/images/icon_camera_off.svg);
+}
+
+.video-canvas .button-leave-room
+{
+	background-color: rgba(0,0,0,0.7);
+	background-image: url(/images/icon_leave_room.svg);
+	padding: 0px;
+	cursor: pointer;
+	height: 60px;
+	width: 60px;
+	border-radius: 30px;
+	left: 50%;
+	margin-left: -70px;
+	background-repeat: no-repeat;
+	background-size: 50%;
+	bottom: 15px;
+	background-position: center center;
+	position: absolute;
+}
+
+.video-canvas .waiting-for-agent
+{
+	position: absolute;
+	z-index: -1;
+	width: 100%;
+	height: 100%;
+}
+
+.video-canvas .waiting-for-agent > div
+{
+	position: absolute;
+	top: 45%;
+	text-align: center;
+	width: 100%;
+}
+
+.video-canvas .waiting-for-agent > div i
+{
+	font-size: 2.6em;
+}
+
+.video-canvas #remote-media
+{
+	width: 100%;
+	line-height:0px;
+	position: absolute;
+	z-index: -1;
+}
+
+.video-canvas #remote-media video
+{
+	width: 100%;
+}
+
+.video-canvas #local-media
+{
+	width: 240px;
+	height: 180px;
+	left: 0px;
+	top: 0px;
+	position: absolute;
+}
+
+.video-canvas #local-media video
+{
+	width: 240px;
+	-webkit-box-shadow: 3px 3px 5px -2px rgba(0,0,0,0.39);
+	-moz-box-shadow: 3px 3px 5px -2px rgba(0,0,0,0.39);
+	box-shadow: 3px 3px 5px -2px rgba(0,0,0,0.39);
+}
+
+.agent-video-canvas
+{
+	position: relative;
+	width: 100%;
+	background-color: #f5f5f5;
+}
+
+.agent-video-canvas > video
+{
+	width: 100%;
+}

@@ -34,7 +34,7 @@ module.exports.login = function (req, res) {
 				workerCapability.allowReservationUpdates()
 				workerCapability.allowFetchSubresources()
 
-				/* create a token for Twilio client */
+				/* create a token for Twilio Client */
 				var phoneCapability = new twilio.Capability(
 					process.env.TWILIO_ACCOUNT_SID,
 					process.env.TWILIO_AUTH_TOKEN)
@@ -42,25 +42,33 @@ module.exports.login = function (req, res) {
 				phoneCapability.allowClientOutgoing(req.configuration.twilio.applicationSid)
 				phoneCapability.allowClientIncoming(friendlyName.toLowerCase())
 
-				/* create token for Twilio IP Messaging */
-				var grant = new twilio.AccessToken.IpMessagingGrant({
-					serviceSid: process.env.TWILIO_IPM_SERVICE_SID,
+				var accessToken = new twilio.AccessToken(
+					process.env.TWILIO_ACCOUNT_SID,
+					process.env.TWILIO_API_KEY_SID,
+					process.env.TWILIO_API_KEY_SECRET,
+					{ ttl: lifetime })
+
+				accessToken.identity = worker.friendlyName
+				
+				/* grant the access token Twilio Programmable Chat capabilities */
+				var chatGrant = new twilio.AccessToken.IpMessagingGrant({
+					serviceSid: process.env.TWILIO_CHAT_SERVICE_SID,
 					endpointId: req.body.endpoint
 				})
 
-				var accessToken = new twilio.AccessToken(
-					process.env.TWILIO_ACCOUNT_SID,
-					process.env.TWILIO_API_KEY,
-					process.env.TWILIO_API_SECRET,
-					{ ttl: lifetime })
+				accessToken.addGrant(chatGrant)
 
-				accessToken.addGrant(grant)
-				accessToken.identity = worker.friendlyName
+				/* grant the access token Twilio Video capabilities */
+				var videoGrant = new twilio.AccessToken.VideoGrant({
+					configurationProfileSid: process.env.TWILIO_VIDEO_CONFIGURATION_SID
+				})
+
+				accessToken.addGrant(videoGrant)
 
 				var tokens = {
 					worker: workerCapability.generate(lifetime),
 					phone: phoneCapability.generate(lifetime),
-					chat: accessToken.toJwt()
+					chatAndVideo: accessToken.toJwt()
 				}
 
 				req.session.tokens = tokens

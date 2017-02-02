@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Twilio Contact Center: Video Call</title>
+
+	<link rel="stylesheet" href="/styles/bootstrap.min.css" type="text/css" />
+	<link rel="stylesheet" href="/styles/default.css" type="text/css" />
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"
+	type="text/css" rel="stylesheet" />
+
+</head>
+
+<body ng-app="supportApplication">
+
+	<div class="container" style="max-width:960px">
+
+		<div class="row">
+			<div class="page-header col-md-12">
+				<h2>Twilio Contact Center: Video Call</h2>
+			</div>
+		</div>
+
+		<section class="row" ng-controller="VideoController" ng-cloak>
+
+			<div class="col-md-8">
+
+				<section>
+
+					<form name="videoSupportForm" class="video-support-form form-inline" ng-show="state == 'WAITING_FOR_INPUT' || state == 'INITIALIZING'">
+
+						<div class="form-group">
+							<input ng-model="user.identity" name="identity" ng-minlength="3" ng-maxlength="20" ng-required="true" type="text" class="form-control" ng-disabled="session.isLoading" placeholder="Your Name">
+			
+							<button type="submit" ng-disabled="state == 'INITIALIZING' || videoSupportForm.$invalid || videoSupportForm.$pristine" class="initiate btn btn-primary" ng-click="initVideo()" ><span ng-show="state == 'INITIALIZING'"><i class="fa fa-refresh fa-spin"></i></span>Go</button>
+
+							<div ng-messages="videoSupportForm.identity.$error" role="alert">
+								<div ng-message="minlength"  class="alert alert-danger">Name is too short</div>
+								<div ng-message="maxlength" class="alert alert-danger">Name is too long</div>
+								<div ng-message="required" ng-show="videoSupportForm.identity.$touched" class="alert alert-danger">Name is required</div>
+							</div>
+
+						</div>
+
+					</form>
+
+					<div class="video-canvas tab-pane" ng-show="state == 'WAITING_FOR_AGENT' || state == 'CONVERSATION_ACTIVE'">
+
+						<div>
+							<div class="button-toggle-media" ng-click="toggleMediaStream()" ng-class="{'media-enabled': localMedia != null, 'media-disabled': localMedia == null }"></div>
+							<div class="button-leave-room" ng-click="leaveRoom()"></div>
+
+							<div class="waiting-for-agent" ng-show="state == 'WAITING_FOR_AGENT'"> 
+								<div><i class="fa fa-refresh fa-spin"></i></div>
+							</div>
+
+							<div ng-show="state == 'CONVERSATION_ACTIVE'" id="remote-media"></div>
+							<div ng-show="localMedia" id="local-media"></div>
+
+						</div>
+
+					</div>
+
+					<div ng-show="state == 'CLOSED'">
+						<h4>Thank you for your patience...</h4>
+					</div>
+
+				</section>
+
+			</div>
+
+			<div class="col-md-4">
+				<h4 style="margin:0px">Call us:</h4>
+				<h3 class="caller-id" style="margin:0px">{{configuration.twilio.callerId}}</h3>
+
+				<h4>Request a callback?</h4>
+				<a href="index.html">click here</a>
+
+			</div>
+
+		</section>
+
+	</div>
+
+	<script src="/scripts/angular.min.js"></script>
+	<script src="/scripts/angular-messages.min.js"></script>
+	<script src="VideoController.js"></script>
+  <script src="//media.twiliocdn.com/sdk/js/video/v1/twilio-video.min.js"></script>
+
+</body>
+</html>

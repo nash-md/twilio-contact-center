@@ -29,7 +29,6 @@ app.use(bodyParser.urlencoded({
 	extended: true
 }))
 
-
 app.use(function (req, res, next) {
 
 	util.getConfiguration(function (err, configuration) {
@@ -62,6 +61,7 @@ var tasks = require('./controllers/tasks.js')
 
 router.route('/tasks/callback').post(tasks.createCallback)
 router.route('/tasks/chat').post(tasks.createChat)
+router.route('/tasks/video').post(tasks.createVideo)
 
 /* routes for agent interface and phone */
 var agents = require('./controllers/agents.js')
