@@ -9,7 +9,7 @@ const taskrouterClient = new twilio.TaskRouterClient(
 	process.env.TWILIO_AUTH_TOKEN,
 	process.env.TWILIO_WORKSPACE_SID)
 
-/* client for Twilio IP Chat */
+/* client for Twilio Programmable Chat */
 const chatClient = new twilio.IpMessagingClient(
 	process.env.TWILIO_ACCOUNT_SID,
 	process.env.TWILIO_AUTH_TOKEN)
@@ -37,14 +37,14 @@ module.exports.createChat = function (req, res) {
 		function (callback) {
 			/* create token */
 			var grant = new twilio.AccessToken.IpMessagingGrant({
-				serviceSid: process.env.TWILIO_IPM_SERVICE_SID,
+				serviceSid: process.env.TWILIO_CHAT_SERVICE_SID,
 				endpointId: req.body.endpoint
 			})
 
 			var accessToken = new twilio.AccessToken(
 				process.env.TWILIO_ACCOUNT_SID,
-				process.env.TWILIO_API_KEY,
-				process.env.TWILIO_API_SECRET,
+				process.env.TWILIO_API_KEY_SID,
+				process.env.TWILIO_API_KEY_SECRET,
 				{ ttl: 3600 })
 
 			accessToken.addGrant(grant)
@@ -57,8 +57,8 @@ module.exports.createChat = function (req, res) {
 
 			callback(null, payload)
 		}, function (payload, callback) {
-			/* retrieve ip chat service */
-			var service = chatClient.services(process.env.TWILIO_IPM_SERVICE_SID)
+			/* retrieve chat service */
+			var service = chatClient.services(process.env.TWILIO_CHAT_SERVICE_SID)
 			var uid = Math.random().toString(36).substring(7)
 
 			service.channels.create({

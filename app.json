@@ -1,6 +1,6 @@
 {
   "name": "Twilio Contact Center",
-  "description": "A web-based contact center utilizing Twilio Client, IP Messaging and TaskRouter",
+  "description": "A web-based contact center utilizing Twilio Client, Chat, Video, SMS and TaskRouter",
   "repository": "",
   "logo": "http://node-js-sample.herokuapp.com/node.svg",
   "keywords": ["node", "express", "twilio"],
@@ -20,23 +20,25 @@
       "description": "Your Twilio authToken",
       "value": "authToken"
     },
-     "TWILIO_WORKSPACE_SID": {
-      "description": "Please create a new Taksrouter workspace and type in your workspaceSid",
+    "TWILIO_WORKSPACE_SID": {
+      "description": "A Workspace is a container for your Tasks, Workers, TaskQueues. You can create it here: https://www.twilio.com/console/taskrouter/workspaces",
       "value": "workspaceSid"
     },
-     "TWILIO_IPM_SERVICE_SID": {
-      "description": "IP Messaging Service Sid",
-      "value": "ipmServiceSid"
+    "TWILIO_CHAT_SERVICE_SID": {
+      "description": "A service instance where all the chat data is stored and scoped. You can create it here: https://www.twilio.com/console/chat/services",
+      "value": "chatServiceSid"
     },
-     "TWILIO_API_KEY": {
-      "description": "IP Messaging API Key",
-      "value": "apiKey"
+    "TWILIO_VIDEO_CONFIGURATION_SID": {
+      "description": "A Configuration Profile to configure the behavior of your video application. You can create it here: https://www.twilio.com/console/video/profiles",
+      "value": "videoConfigurationSid"
     },
-     "TWILIO_API_SECRET": {
-      "description": "IP Messaging API Secret",
-      "value": "apiSecret"
+    "TWILIO_API_KEY_SID": {
+      "description": "API Keys are revokable credentials for the Twilio API. You can create it here: https://www.twilio.com/console/dev-tools/api-keys",
+      "value": "apiKeySid"
+    },
+    "TWILIO_API_KEY_SECRET": {
+      "description": "API Keys are revokable credentials for the Twilio API.",
+      "value": "apiKeySecret"
     }
-
   }
-
 }

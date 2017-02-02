@@ -14,12 +14,12 @@ const taskrouterClient = new twilio.TaskRouterClient(
 	process.env.TWILIO_AUTH_TOKEN,
 	process.env.TWILIO_WORKSPACE_SID)
 
-/* client for Twilio IP Chat */
+/* client for Twilio Programmable Chat */
 const chatClient = new twilio.IpMessagingClient(
 	process.env.TWILIO_ACCOUNT_SID,
 	process.env.TWILIO_AUTH_TOKEN)
 
-const service = chatClient.services(process.env.TWILIO_IPM_SERVICE_SID)
+const service = chatClient.services(process.env.TWILIO_CHAT_SERVICE_SID)
 
 module.exports.inbound = function (req, res) {
 	req.direction = 'inbound: '

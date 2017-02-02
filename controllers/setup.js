@@ -278,7 +278,7 @@ module.exports.updateMessagingService = function (req, config, callback) {
 	webhooks['Webhooks.OnMessageSent.Url'] = url
 	webhooks['Webhooks.OnMessageSent.Method'] = 'POST'
 
-	chatClient.services(process.env.TWILIO_IPM_SERVICE_SID).update(webhooks).then(function (res) {
+	chatClient.services(process.env.TWILIO_CHAT_SERVICE_SID).update(webhooks).then(function (res) {
 		callback(null)
 	}).catch(function (error) {
 		callback(error)
