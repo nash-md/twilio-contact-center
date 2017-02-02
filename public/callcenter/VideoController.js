@@ -33,7 +33,21 @@ function VideoController ($scope, $rootScope, $http, $timeout, $log) {
 
 			room.on('participantDisconnected', participant => {
 				$log.log('Participant "%s" disconnected', participant.identity);
+				participant.media.detach();
 			});
+
+			room.on('disconnected', function () {
+				room.localParticipant.media.detach();
+				room.participants.forEach(function (participant) {
+					participant.media.detach();
+				});
+
+				$scope.state = 'CLOSED';
+				$timeout(function () {
+					$scope.$apply();
+				});
+			});
+
 		});
 
 	});

@@ -63,7 +63,9 @@ function VideoController ($scope, $http, $timeout, $log) {
 					});
 
 					$scope.room.on('disconnected', function () {
-						$scope.localMedia.stop();
+						if ($scope.localMedia) {
+							$scope.localMedia.stop();
+						}
 
 						$scope.state = 'CLOSED';
 						$timeout(function () {
