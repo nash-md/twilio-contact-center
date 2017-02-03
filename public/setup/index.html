@@ -25,7 +25,7 @@
 
       <div class="btn-group" uib-dropdown>
 
-        <select ng-model="configuration.twilio.workerOfflineActivitySid" class="form-control">
+        <select ng-model="configuration.twilio.workerOfflineActivitySid" class="form-control" required>
           <option ng-repeat="activity in activities" value="{{ activity.sid }}">{{ activity.friendlyName }}</option>
         </select>
 
@@ -35,7 +35,7 @@
 
       <div class="btn-group" uib-dropdown>
 
-        <select ng-model="configuration.twilio.workerIdleActivitySid" class="form-control">
+        <select ng-model="configuration.twilio.workerIdleActivitySid" class="form-control" required>
           <option ng-repeat="activity in activities" value="{{ activity.sid }}">{{ activity.friendlyName }}</option>
         </select>
 
@@ -45,7 +45,7 @@
 
       <div class="btn-group" uib-dropdown>
 
-        <select ng-model="configuration.twilio.workerReservationActivitySid" class="form-control">
+        <select ng-model="configuration.twilio.workerReservationActivitySid" class="form-control" required>
           <option ng-repeat="activity in activities" value="{{ activity.sid }}">{{ activity.friendlyName }}</option>
         </select>
 
@@ -55,7 +55,7 @@
 
       <div class="btn-group" uib-dropdown>
 
-        <select ng-model="configuration.twilio.workerAssignmentActivitySid" class="form-control">
+        <select ng-model="configuration.twilio.workerAssignmentActivitySid" class="form-control" required>
           <option ng-repeat="activity in activities" value="{{ activity.sid }}">{{ activity.friendlyName }}</option>
         </select>
 
