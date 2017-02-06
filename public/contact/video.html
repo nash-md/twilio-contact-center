@@ -11,7 +11,11 @@
 
 </head>
 
-<body ng-app="supportApplication">
+<body ng-app="supportApplication" ng-controller="VideoController">
+
+</style>
+
+	<div ng-show="UI.warning" class="panel panel-default ui-warning" ng-cloak>{{UI.warning}}</div>
 
 	<div class="container" style="max-width:960px">
 
@@ -21,18 +25,18 @@
 			</div>
 		</div>
 
-		<section class="row" ng-controller="VideoController" ng-cloak>
+		<section class="row" ng-cloak>
 
 			<div class="col-md-8">
 
 				<section>
 
-					<form name="videoSupportForm" class="video-support-form form-inline" ng-show="state == 'WAITING_FOR_INPUT' || state == 'INITIALIZING'">
+					<form name="videoSupportForm" class="video-support-form form-inline" ng-show="UI.state == 'WAITING_FOR_INPUT' || UI.state == 'INITIALIZING'">
 
 						<div class="form-group">
 							<input ng-model="user.identity" name="identity" ng-minlength="3" ng-maxlength="20" ng-required="true" type="text" class="form-control" ng-disabled="session.isLoading" placeholder="Your Name">
 			
-							<button type="submit" ng-disabled="state == 'INITIALIZING' || videoSupportForm.$invalid || videoSupportForm.$pristine" class="initiate btn btn-primary" ng-click="initVideo()" ><span ng-show="state == 'INITIALIZING'"><i class="fa fa-refresh fa-spin"></i></span>Go</button>
+							<button type="submit" ng-disabled="UI.state == 'INITIALIZING' || videoSupportForm.$invalid || videoSupportForm.$pristine" class="initiate btn btn-primary" ng-click="initVideo()" ><span ng-show="UI.state == 'INITIALIZING'"><i class="fa fa-refresh fa-spin"></i></span>Go</button>
 
 							<div ng-messages="videoSupportForm.identity.$error" role="alert">
 								<div ng-message="minlength"  class="alert alert-danger">Name is too short</div>
@@ -44,24 +48,24 @@
 
 					</form>
 
-					<div class="video-canvas tab-pane" ng-show="state == 'WAITING_FOR_AGENT' || state == 'CONVERSATION_ACTIVE'">
+					<div class="video-canvas tab-pane" ng-show="UI.state == 'WAITING_FOR_AGENT' || UI.state == 'CONVERSATION_ACTIVE'">
 
 						<div>
-							<div class="button-toggle-media" ng-click="toggleMediaStream()" ng-class="{'media-enabled': localMedia != null, 'media-disabled': localMedia == null }"></div>
+							<div class="button-toggle-media" ng-click="toggleMediaStream()" ng-class="{'media-enabled': localMediaPreview == true, 'media-disabled': localMediaPreview == false }"></div>
 							<div class="button-leave-room" ng-click="leaveRoom()"></div>
 
-							<div class="waiting-for-agent" ng-show="state == 'WAITING_FOR_AGENT'"> 
+							<div class="waiting-for-agent" ng-show="UI.state == 'WAITING_FOR_AGENT'"> 
 								<div><i class="fa fa-refresh fa-spin"></i></div>
 							</div>
 
-							<div ng-show="state == 'CONVERSATION_ACTIVE'" id="remote-media"></div>
-							<div ng-show="localMedia" id="local-media"></div>
+							<div ng-show="UI.state == 'CONVERSATION_ACTIVE'" id="remote-media"></div>
+							<div ng-show="localMediaPreview" id="local-media"></div>
 
 						</div>
 
 					</div>
 
-					<div ng-show="state == 'CLOSED'">
+					<div ng-show="UI.state == 'CLOSED'">
 						<h4>Thank you for your patience...</h4>
 					</div>
 
