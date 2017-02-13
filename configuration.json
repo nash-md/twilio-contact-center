@@ -34,7 +34,7 @@
 			"id": "video",
 			"taskQueueSid": null,
 			"expression": "channel == \"video\"",
-			"targetWorkerExpression": "task.team == worker.team"
+			"targetWorkerExpression": ""
 		}
 	],
 	"twilio": {
