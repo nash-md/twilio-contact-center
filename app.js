@@ -21,7 +21,7 @@ app.use(sessions({resave: true,
 									saveUninitialized: false,
 									secret: 'keyboard cat',
 									name: 'twilio_call_center_session',
-									cookie: { expires: util.generateSessionExirationDate(3600)}
+									cookie: { maxAge: 3600}
 								}))
 
 app.use(bodyParser.json({}))
