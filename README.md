@@ -18,12 +18,13 @@ This application is provided as-is. Twilio does not officially support it.
 * Twilio REST APIs
 
 # Customer Journey Flows:
-## Voice Calling (Callback over PSTN):
-Customer fills out online call request -> Form submitted to server -> Task on TaskRouter created -> Find available and matching agent -> Agent accepts reservation and dials customer out (PSTN) -> Connect customer to awaiting agent (WebRTC)
+
+## Callback Voice Calling (PSTN):
+Customer fills out online call request -> Form submitted to server -> Task on TaskRouter created -> Find available and matching agent -> Agent accepts reservation and dials customer out (PSTN) -> Connect customer to agent (WebRTC)
 
 ![Customer Journey Call Back over PSTN](contact_center_flow_call_back.png)
 
-## Voice Calling (PSTN):
+## Inbound Voice Calling (PSTN):
 Customer calls Twilio phone number -> Twilio requests webhook -> Server generates TwiML for IVR -> Caller selects IVR option -> Task on TaskRouter created -> Find available and matching agent -> Agent accepts reservation -> Connect customer to agent (WebRTC)
 
 ![Customer Journey Inbound Call](contact_center_flow_inbound.png)
@@ -34,7 +35,9 @@ Customer fills out online web chat request form -> Form submitted to server -> T
 ![Customer Journey Chat](contact_center_flow_chat.png)
 
 ## Video Call:
-Customer fills out video chat request form -> Form submitted to server -> Task on TaskRouter created -> Find available and matching agent -> Agent accepts reservation -> Start video call between agent and customer (Video)
+Customer fills out video call request form -> Form submitted to server -> Task on TaskRouter and video room created -> Find available and matching agent -> Agent accepts reservation -> Agent joins video room
+
+![Customer Journey Video](contact_center_flow_video.png)
 
 ## Operational Analytics/Dashboard (future):
 Real-time display of operational contact center metrics (for example: average call handle time, agent productivity, call metrics, TaskRouter stats, and more etc.) 
