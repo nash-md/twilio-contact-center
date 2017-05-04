@@ -194,7 +194,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
             return;
           }
 
-          $scope.$broadcast('ActivateVideo', { room: reservation.task.attributes.room });
+          $scope.$broadcast('ActivateVideo', { roomName: reservation.task.attributes.roomName });
 
         });
 

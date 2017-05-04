@@ -114,9 +114,7 @@ module.exports.createVideo = function (req, res) {
 
 		function (callback) {
 			/* create token */
-			var grant = new twilio.AccessToken.VideoGrant({
-				configurationProfileSid: process.env.TWILIO_VIDEO_CONFIGURATION_SID
-			})
+			var grant = new twilio.AccessToken.VideoGrant()
 
 			var accessToken = new twilio.AccessToken(
 				process.env.TWILIO_ACCOUNT_SID,
@@ -132,7 +130,7 @@ module.exports.createVideo = function (req, res) {
 			var payload = {
 				identity: req.body.identity,
 				token: accessToken.toJwt(),
-				room: uid
+				roomName: uid
 			}
 
 			callback(null, payload)
@@ -145,7 +143,7 @@ module.exports.createVideo = function (req, res) {
 					text: 'Customer requested video support on web page',
 					channel: 'video',
 					name: payload.identity,
-					room: payload.room
+					roomName: payload.roomName
 				}), timeout: 3600
 			}, function (err, task) {
 				if (err) {

@@ -91,9 +91,10 @@ For web chat you need to set Twilio Programmable Chat environment variables:
 - `TWILIO_API_KEY_SID`
 - `TWILIO_API_KEY_SECRET`
 
-For video calls you need to set Twilio Video Configuration Profile variable:
+For video calls you need to set Twilio API Keys:
 
-- `TWILIO_VIDEO_CONFIGURATION_SID`
+- `TWILIO_API_KEY_SID`
+- `TWILIO_API_KEY_SECRET`
 
 Start the application
 

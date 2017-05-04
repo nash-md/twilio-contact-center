@@ -2,10 +2,10 @@ function VideoController ($scope, $http, $timeout, $log, $window) {
 	$scope.configuration;
 
 	/* Twilio Video */
-	$scope.client;
 	$scope.room;
-	$scope.localMedia;
-	$scope.localMediaPreview = true;
+
+	$scope.localVideoTrack;
+	$scope.localAudioTrack;
 
 	/* UI */
 	$scope.UI = { warning: null, state: null };
@@ -34,15 +34,7 @@ function VideoController ($scope, $http, $timeout, $log, $window) {
 
 		$http.post('/api/tasks/video', user)
 			.then(function onSuccess (response) {
-				$scope.client = new Twilio.Video.Client(response.data.token);
-
-				$scope.client.on('error', function (error) {
-					$log.error('Twilio Video Client failed, %o', error);
-					$scope.UI.warning = 'Twilio Video Client failed, check JavaScript console';
-				});
-
-				$scope.setupLocalMedia(response.data.room);
-
+				$scope.setupLocalTracks(response.data.token, response.data.roomName);
 			}, function onError (response) {
 				$log.error('Connect to Room failed, %o', response);
 				$scope.UI.warning = 'Connect to Room failed, check JavaScript console';
@@ -50,9 +42,13 @@ function VideoController ($scope, $http, $timeout, $log, $window) {
 
 	};
 
-	$scope.enterRoom = function (room) {
+	$scope.enterRoom = function (token, roomName) {
+		let options = {
+			name: roomName,
+			tracks: [ $scope.localVideoTrack, $scope.localAudioTrack ]
+		};
 
-		$scope.client.connect({ to: room, localMedia: $scope.localMedia }).then(room => {
+		Twilio.Video.connect(token, options).then(room => {
 			$log.log('Connected to Room "%s"', room.name);
 
 			$scope.room = room;
@@ -60,11 +56,26 @@ function VideoController ($scope, $http, $timeout, $log, $window) {
 
 			$scope.$apply();
 
+			$scope.room.participants.forEach(function (participant) {
+				$log.log('Already in Room: ' + participant.identity);
+
+				var tracks = Array.from(participant.tracks.values());
+				var remoteMediaContainer = document.getElementById('remote-media');
+
+				tracks.forEach(function (track) {
+					remoteMediaContainer.appendChild(track.attach());
+				});
+
+			});
+
+			$scope.room.on('trackAdded', function (track, participant) {
+				$log.log(participant.identity + ' added track: ' + track.kind);
+
+				document.getElementById('remote-media').appendChild(track.attach());
+			});
+
 			$scope.room.on('participantConnected', participant => {
 				$log.log('Participant "%s" connected', participant.identity);
-
-				participant.media.attach('#remote-media');
-
 				$scope.UI.state = 'CONVERSATION_ACTIVE';
 				$scope.$apply();
 			});
@@ -72,19 +83,22 @@ function VideoController ($scope, $http, $timeout, $log, $window) {
 			$scope.room.on('participantDisconnected', participant => {
 				$log.log('Participant "%s" disconnected', participant.identity);
 
-				participant.media.detach();
+				participant.tracks.forEach(function (track) {
+					track.detach().forEach(function (detachedElement) {
+						detachedElement.remove();
+					});
+				});
 
 				$scope.leaveRoom(); /* agent left the room, let's disconnect */
-
-				$scope.UI.state = 'CLOSED';
-				$timeout(function () {
-					$scope.$apply();
-				});
 			});
 
 			$scope.room.on('disconnected', function () {
-				$scope.localMedia.detach();
-				$scope.localMedia.stop();
+				$log.log('Disconnect from Room complete');
+				$scope.localVideoTrack.disable();
+				$scope.localVideoTrack.stop();
+
+				$scope.localAudioTrack.disable();
+				$scope.localAudioTrack.stop();
 
 				$scope.UI.state = 'CLOSED';
 				$timeout(function () {
@@ -92,41 +106,51 @@ function VideoController ($scope, $http, $timeout, $log, $window) {
 				});
 			});
 
+		}).catch(function (error) {
+			$log.error('Connect to Room failed, %o', error);
+			$scope.UI.warning = 'Connect to Room failed, check JavaScript console';
+			$timeout(function () {
+				$scope.$apply();
+			});
 		});
 
 	};
 
-	$scope.setupLocalMedia = function (room) {
-		$scope.localMedia = new Twilio.Video.LocalMedia();
+	$scope.setupLocalTracks = function (token, room) {
+		Twilio.Video.createLocalTracks().then(function (tracks) {
 
-		Twilio.Video.getUserMedia().then(
-			function (mediaStream) {
-				$scope.localMedia.addStream(mediaStream);
-				$scope.localMedia.attach('#local-media');
+			for (let track of tracks) {
+				if (track.kind === 'video') {
+					document.getElementById('local-media').appendChild(track.attach());
+					$scope.localVideoTrack = track;
+				}
 
-				$scope.enterRoom(room);
+				if (track.kind === 'audio') {
+					$scope.localAudioTrack = track;
+				}
+			}
 
-				$timeout(function () {
-					$scope.$apply();
-				});
-			},
-			function (error) {
-				$log.error('Unable to access local media, %o', error);
-				$scope.UI.warning = 'Unable to access Camera and Microphone';
+			$scope.enterRoom(token, room);
 
-				$timeout(function () {
-					$scope.$apply();
-				});
+			$timeout(function () {
+				$scope.$apply();
 			});
+		}).catch(function (error) {
+			$log.error('Unable to access local media, %o', error);
+			$scope.UI.warning = 'Unable to access Camera and Microphone';
+
+			$timeout(function () {
+				$scope.$apply();
+			});
+		});
 	};
 
 	$scope.toggleMediaStream = function () {
-		if (!$scope.localMediaPreview) {
-			$scope.room.localParticipant.media.pause(false);
-			$scope.localMediaPreview = true;
+		console.log('isEnabled: ' + $scope.localVideoTrack.isEnabled);
+		if ($scope.localVideoTrack.isEnabled) {
+			$scope.localVideoTrack.disable();
 		} else {
-			$scope.room.localParticipant.media.pause(true);
-			$scope.localMediaPreview = false;
+			$scope.localVideoTrack.enable();
 		}
 	};
 

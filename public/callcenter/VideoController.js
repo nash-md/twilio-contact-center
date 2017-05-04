@@ -1,51 +1,65 @@
 function VideoController ($scope, $rootScope, $http, $timeout, $log) {
 	/* Twilio Video */
-	$scope.client;
+	$scope.token;
 	$scope.room;
 
 	$scope.$on('DestroyVideo', function (event) {
 		$log.log('DestroyVideo event received');
-
 		$scope.room.disconnect();
-
 	});
 
 	$scope.$on('InitializeVideo', function (event, data) {
 		$log.log('InitializeVideo event received, %o', data);
-
-		$scope.client = new Twilio.Video.Client(data.token);
-
+		$scope.token = data.token;
 	});
 
 	$scope.$on('ActivateVideo', function (event, data) {
-
 		$log.log('ActivateVideo event received, %o', data);
 
-		$scope.client.connect({ to: data.room }).then(room => {
+		Twilio.Video.connect($scope.token, { name: data.roomName }).then(room => {
 			$log.log('Connected to Room "%s"', room.name);
 
 			$scope.room = room;
 
-			room.participants.forEach(participant => {
-				$log.log('Participant "%s" is connected', participant.identity);
-				participant.media.attach('#remote-media');
+			$scope.room.participants.forEach(function (participant) {
+				$log.log('Already in Room: ' + participant.identity);
+
+				var tracks = Array.from(participant.tracks.values());
+				var remoteMediaContainer = document.getElementById('remote-media');
+
+				tracks.forEach(function (track) {
+					remoteMediaContainer.appendChild(track.attach());
+				});
+
+			});
+
+			$scope.room.on('trackAdded', function (track, participant) {
+				$log.log(participant.identity + ' added track: ' + track.kind);
+
+				document.getElementById('remote-media').appendChild(track.attach());
 			});
 
 			room.on('participantDisconnected', participant => {
 				$log.log('Participant "%s" disconnected', participant.identity);
-				participant.media.detach();
+
+				participant.tracks.forEach(function (track) {
+					track.detach().forEach(function (detachedElement) {
+						detachedElement.remove();
+					});
+				});
+
+				$scope.room.disconnect(); /* customer left the room, let's disconnect */
 			});
 
 			room.on('disconnected', function () {
-				room.localParticipant.media.detach();
-				room.participants.forEach(function (participant) {
-					participant.media.detach();
+				$log.log('Disconnect from Room complete');
+				var tracks = Array.from($scope.room.localParticipant.tracks.values());
+
+				tracks.forEach(function (track) {
+					track.disable();
+					track.stop();
 				});
 
-				$scope.state = 'CLOSED';
-				$timeout(function () {
-					$scope.$apply();
-				});
 			});
 
 		});

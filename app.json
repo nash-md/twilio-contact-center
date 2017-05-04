@@ -28,10 +28,6 @@
       "description": "A service instance where all the chat data is stored and scoped. You can create it here: https://www.twilio.com/console/chat/services",
       "value": "chatServiceSid"
     },
-    "TWILIO_VIDEO_CONFIGURATION_SID": {
-      "description": "A Configuration Profile to configure the behavior of your video application. You can create it here: https://www.twilio.com/console/video/profiles",
-      "value": "videoConfigurationSid"
-    },
     "TWILIO_API_KEY_SID": {
       "description": "API Keys are revokable credentials for the Twilio API. You can create it here: https://www.twilio.com/console/dev-tools/api-keys",
       "value": "apiKeySid"
