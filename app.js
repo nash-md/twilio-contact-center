@@ -17,12 +17,13 @@ var app = express()
 app.set('port', (process.env.PORT || 5000))
 
 app.use(compression())
-app.use(sessions({resave: true,
-									saveUninitialized: false,
-									secret: 'keyboard cat',
-									name: 'twilio_call_center_session',
-									cookie: { maxAge: 3600}
-								}))
+app.use(sessions({
+	resave: true,
+	saveUninitialized: false,
+	secret: 'keyboard cat',
+	name: 'twilio_call_center_session',
+	cookie: { maxAge: 3600000 }
+}))
 
 app.use(bodyParser.json({}))
 app.use(bodyParser.urlencoded({
