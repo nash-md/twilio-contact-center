@@ -11,11 +11,13 @@
 
 </head>
 
-<body ng-app="callcenterApplication">
+<body ng-app="callcenterApplication" ng-controller="WorkflowController" data-ng-init="init()">
+
+<div ng-show="UI.warning" class="panel panel-default ui-warning" ng-cloak>{{UI.warning}}</div>
 
 <div class="container" style="width:860px">
 
-  <section class="workflow-controller" ng-controller="WorkflowController" data-ng-init="init()" ng-cloak>
+  <section class="workflow-controller" ng-cloak>
 
     <div class="panel panel-default">
 

@@ -21,7 +21,7 @@ app.filter('counter', function() {
 
 });
 
-app.controller('WorkflowController', function ($scope, $rootScope, $http, $interval, $log) {
+app.controller('WorkflowController', function ($scope, $rootScope, $http, $interval, $log, $window) {
 
   /* misc configuration data, for instance callerId for outbound calls */
   $scope.configuration;
@@ -35,6 +35,15 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 
   /* TaskRouter Worker */
   $scope.workerJS;
+
+  /* UI */
+  $scope.UI = { warning: null, state: null };
+
+  if ($window.location.protocol !== 'https:') {
+    let message =  `Depending on your browser and/or settings capturing audio and video 
+                    requires a secure (HTTPS) page. The demo may not work.`;
+    $scope.UI.warning = message;
+  }
 
   /* request configuration data and tokens from the backend */
   $scope.init = function () {

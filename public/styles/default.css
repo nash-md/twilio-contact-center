@@ -594,8 +594,8 @@
 
 .ui-warning
 {
-  background-color: rgb(244, 67, 54);
-  color: white;
+  background-color: rgb(244, 67, 54) !important;
+  color: white !important;
   line-height: 26px;
   vertical-align: middle;
   font-weight: 500;
@@ -604,4 +604,5 @@
   align-items: center;
   text-align: center;
   box-sizing: border-box;
+  margin-bottom: 0 !important
 } 
