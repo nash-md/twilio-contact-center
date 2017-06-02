@@ -9,13 +9,23 @@ const taskrouterClient = new twilio.TaskRouterClient(
 	process.env.TWILIO_WORKSPACE_SID)
 
 module.exports.welcome = function (req, res) {
-	var twiml = new twilio.TwimlResponse()
+	let twiml = new twilio.TwimlResponse()
+
+	let keywords = []
+
+	/* add the team names as hints to the automatic speech recognition  */
+	for (let i = 0; i < req.configuration.ivr.options.length; i++) {
+		keywords.push(req.configuration.ivr.options[i].friendlyName)
+	}
 
 	twiml.gather({
+		input: 'dtmf speech',
 		action: 'select-team',
 		method: 'GET',
 		numDigits: 1,
-		timeout: 10
+		timeout: 5,
+		language: 'en-us',
+		hints: keywords.join()
 	}, function (node) {
 		node.say(req.configuration.ivr.text)
 	})
@@ -25,13 +35,39 @@ module.exports.welcome = function (req, res) {
 	res.send(twiml.toString())
 }
 
-module.exports.selectTeam = function (req, res) {
-	var team = null
+let analyzeKeypadInput = function (digits, options) {
 
-	for (var i = 0; i < req.configuration.ivr.options.length; i++) {
-		if (parseInt(req.query.Digits) === req.configuration.ivr.options[i].digit) {
-			team = req.configuration.ivr.options[i]
+	for (let i = 0; i < options.length; i++) {
+		if (parseInt(digits) === options[i].digit) {
+			return options[i]
 		}
+	}
+
+	return null
+}
+
+let analyzeSpeechInput = function (text, options) {
+
+	for (let i = 0; i < options.length; i++) {
+		console.log(options[i].friendlyName)
+		if (text.toLowerCase().includes(options[i].friendlyName.toLowerCase())) {
+			return options[i]
+		}
+	}
+
+	return null
+}
+
+module.exports.selectTeam = function (req, res) {
+	let team = null
+
+	/* check if we got a dtmf input or a speech-to-text */
+	if (req.query.SpeechResult) {
+		team = analyzeSpeechInput(req.query.SpeechResult, req.configuration.ivr.options)
+	}
+
+	if (req.query.Digits) {
+		team = analyzeKeypadInput(req.query.Digits, req.configuration.ivr.options)
 	}
 
 	var twiml = new twilio.TwimlResponse()
@@ -49,7 +85,7 @@ module.exports.selectTeam = function (req, res) {
 			numDigits: 1,
 			timeout: 5
 		}, function (node) {
-			node.say('Press any key if you want a callback, if you want to talk to an agent please wait in the line')
+			node.say('Press a key if you want a callback from ' + team.friendlyName + ', or stay on the line')
 		})
 
 		/* create task attributes */
@@ -100,7 +136,7 @@ module.exports.createTask = function (req, res) {
 			console.log(err)
 			twiml.say('An application error occured, the demo ends now')
 		}  else {
-			twiml.say('Thanks for your callback request, an agent will call you back a soon as possible')
+			twiml.say('Thanks for your callback request, an agent will call you back a soon.')
 			twiml.hangup()
 		}
 
