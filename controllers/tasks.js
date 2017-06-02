@@ -1,5 +1,3 @@
-'use strict'
-
 const twilio  = require('twilio')
 const async   = require('async')
 

@@ -1,5 +1,3 @@
-'use strict'
-
 const twilio 	= require('twilio')
 
 /* client for Twilio Programmable Voice / SMS */
