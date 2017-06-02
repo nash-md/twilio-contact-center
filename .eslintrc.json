@@ -4,8 +4,11 @@
         "node": true
    },
     "extends": "eslint:recommended",
+    "parserOptions": {
+        "sourceType": "module"
+    },
     "rules": {
-    "strict": 0,
+    "strict": ["error", "global"],
     "indent": [2, "tab"],
     "curly": [2, "all"],
     "quotes": [2, "single"],
