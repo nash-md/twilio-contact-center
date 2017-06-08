@@ -13,7 +13,8 @@
 
 <body ng-app="callcenterApplication" ng-controller="WorkflowController" data-ng-init="init()">
 
-<div ng-show="UI.warning" class="panel panel-default ui-warning" ng-cloak>{{UI.warning}}</div>
+<div ng-show="UI.warning.browser" class="panel panel-default ui-warning" ng-cloak>{{UI.warning.browser}}</div>
+<div ng-show="UI.warning.worker" class="panel panel-default ui-warning" ng-cloak>{{UI.warning.worker}}</div>
 
 <div class="container" style="width:860px">
 
@@ -41,7 +42,7 @@
           <tr>
             <td>
              <div class="title">{{reservation.task.attributes.title}} from {{reservation.task.attributes.name}}</div>
-             <div class="timer" ng-class='{"invisible": !reservationCounter}'>created {{ reservationCounter | counter }} ago</div>
+             <div class="timer" ng-class='{"invisible": !reservationCounter}'>created {{ reservationCounter | TaskWaitingTime }} ago</div>
              </td>
             <td class="accept-panel"><button ng-click="acceptReservation(reservation)">Accept</button></td>
           </tr>
@@ -180,7 +181,7 @@
 </div>
 
   <script type="text/javascript" src="//media.twiliocdn.com/sdk/js/client/v1.4/twilio.min.js"></script>
-  <script type="text/javascript" src="//media.twiliocdn.com/taskrouter/js/v1.7/taskrouter.min.js"></script>
+  <script type="text/javascript" src="//media.twiliocdn.com/taskrouter/js/v1.9.3/taskrouter.min.js"></script>
   <script src="https://media.twiliocdn.com/sdk/js/common/v0.1/twilio-common.js"></script>
   <script src="https://media.twiliocdn.com/sdk/rtc/js/ip-messaging/v0.10/twilio-ip-messaging.js"></script>
   <script src="//media.twiliocdn.com/sdk/js/video/v1/twilio-video.min.js"></script>
@@ -192,6 +193,7 @@
   <script src="PhoneController.js"></script>
   <script src="ChatController.js"></script>
   <script src="VideoController.js"></script>
+  <script src="/scripts/directives/TaskWaitingTimeFilter.js"></script>
 
 </body>
 </html>
