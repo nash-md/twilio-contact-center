@@ -11,9 +11,11 @@
 
 </head>
 
-<body ng-app="setupApplication">
+<body ng-app="setupApplication" ng-controller="SetupController"  data-ng-init="init()" >
 
-  <section ng-controller="SetupController"  data-ng-init="init()" style="margin: auto; width:750px;">
+   <div ng-show="UI.warning" class="panel panel-default ui-warning" ng-cloak>{{UI.warning | json}}</div>
+
+  <section style="margin: auto; width:750px;">
 
     <h2 class="page-header">Twilio Contact Center: Setup</h2>
 
@@ -111,7 +113,6 @@
 <script src="/scripts/angular-messages.min.js"></script>
 <script src="SetupController.js"></script>
 <script src="/scripts/directives/PhoneNumberDirective.js"></script>
-
 
 </body>
 </html>

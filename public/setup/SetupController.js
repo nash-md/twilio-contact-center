@@ -1,107 +1,106 @@
 var app = angular.module('setupApplication', ['ngMessages']);
 
 app.controller('SetupController', function ($scope, $http, $q) {
-  
-  $scope.phoneNumber    = { isValid: true, message: null, code: null};
-  $scope.isSaving       = false;
-  $scope.configuration  = null;
-  $scope.workspace      = null;
-  $scope.activities     = [];
+	$scope.phoneNumber    = { isValid: true, message: null, code: null};
+	$scope.configuration  = null;
+	$scope.workspace      = null;
+	$scope.activities     = [];
 
-  $scope.init = function(){
+	/* UI */
+	$scope.UI = { warning: null, isSaving: false };
 
-    var retrieveSetup = function() {
-      var deferred = $q.defer();
+	$scope.init = function () {
 
-      $http.get('/api/setup').then(function(response){
-        $scope.configuration = response.data;
-        deferred.resolve();
-      }, function(response) {
-        deferred.reject('The application could not access the configuration');
-      });
-      return deferred.promise;
+		var retrieveSetup = function () {
+			var deferred = $q.defer();
 
-    };
+			$http.get('/api/setup').then(function (response) {
+				$scope.configuration = response.data;
+				deferred.resolve();
+			}, function (response) {
+				deferred.reject('The application could not access the configuration');
+			});
 
-    var retrieveActivities = function() {
-      var deferred = $q.defer();
+			return deferred.promise;
+		};
 
-      $http.get('/api/setup/activities').then(function(response){
-        $scope.activities = response.data;
-        deferred.resolve();
-      }, function(response) {
-        deferred.reject('The application could not access the your Twilio TaskRouter workspace activities please verify the Workspace Sid.');
-      });
-      return deferred.promise;
+		var retrieveActivities = function () {
+			var deferred = $q.defer();
 
-    };
+			$http.get('/api/setup/activities').then(function (response) {
+				$scope.activities = response.data;
+				deferred.resolve();
+			}, function (response) {
+				deferred.reject('The application could not access the your Twilio TaskRouter workspace activities please verify the Workspace Sid.');
+			});
 
-    var retrieveWorkspace = function() {
-      var deferred = $q.defer();
+			return deferred.promise;
+		};
 
-      $http.get('/api/setup/workspace').then(function(response){
-        $scope.workspace = response.data;
-        deferred.resolve();
-      }, function(response) {
-        deferred.reject('The application could not access the your Twilio Taskrouter workspace please verify the Workspace Sid.');
-      });
-      return deferred.promise;
+		var retrieveWorkspace = function () {
+			var deferred = $q.defer();
 
-    };
+			$http.get('/api/setup/workspace').then(function (response) {
+				$scope.workspace = response.data;
+				deferred.resolve();
+			}, function (response) {
+				deferred.reject('The application could not access the your Twilio Taskrouter workspace please verify the Workspace Sid.');
+			});
 
-    $q.all([retrieveSetup(), retrieveActivities(), retrieveWorkspace()])
-      .then(function(data) {})
-      .catch(function(err) {
-        alert(err);
-      });
+			return deferred.promise;
+		};
 
-  };
-  
-  $scope.saveConfig = function(){
-    $scope.phoneNumber.isValid = true;
-    $scope.isSaving = true;
+		$q.all([retrieveSetup(), retrieveActivities(), retrieveWorkspace()])
+			.then(function (data) {})
+			.catch(function (error) {
+				$scope.UI.warning = error;
+			});
 
-    var verifyPhoneNumber = function() {
-      var deferred = $q.defer();
+	};
 
-      $http.post('/api/validate/phone-number', { callerId: $scope.configuration.twilio.callerId }).then(function(response){
-        deferred.resolve(response.data);
-      }, function(error) {
-        deferred.reject(error);
-      });
+	$scope.saveConfig = function () {
+		$scope.phoneNumber.isValid = true;
+		$scope.UI.isSaving = true;
 
-      return deferred.promise;
+		var verifyPhoneNumber = function () {
+			var deferred = $q.defer();
 
-    };
+			$http.post('/api/validate/phone-number', { callerId: $scope.configuration.twilio.callerId }).then(function (response) {
+				deferred.resolve(response.data);
+			}, function (error) {
+				deferred.reject(error);
+			});
 
-    var saveConfiguration = function(sid, configuration) {
-      var deferred = $q.defer();
+			return deferred.promise;
+		};
 
-      $http.post('/api/setup', { sid: sid, configuration: configuration }).then(function(response){
-        deferred.resolve();
-      }, function(error) {
-        deferred.reject(error);
-      });
+		var saveConfiguration = function (sid, configuration) {
+			var deferred = $q.defer();
 
-      return deferred.promise;
+			$http.post('/api/setup', { sid: sid, configuration: configuration }).then(function (response) {
+				deferred.resolve();
+			}, function (error) {
+				deferred.reject(error);
+			});
 
-    };
+			return deferred.promise;
+		};
 
-    /* verify phone number and save configuration */
-    verifyPhoneNumber().then(function(phoneNumber){
+		/* verify phone number and save configuration */
+		verifyPhoneNumber().then(function (phoneNumber) {
 
-      return saveConfiguration(phoneNumber.sid, $scope.configuration).then(function(){
-        $scope.isSaving = false;
-        $scope.phoneNumber = { isValid: true, message: null, code: null};
-      });
+			return saveConfiguration(phoneNumber.sid, $scope.configuration).then(function () {
+				$scope.UI.isSaving = false;
+				$scope.phoneNumber = { isValid: true, message: null, code: null};
+			});
 
-    }).catch(function(error) {
-      $scope.phoneNumber.isValid = false;
-      $scope.phoneNumber.code = error.data.code;
-      $scope.phoneNumber.message = error.data.message;
-      $scope.isSaving = false;
-    });
+		}).catch(function (error) {
+			$scope.phoneNumber.isValid = false;
+			$scope.phoneNumber.code = error.data.code;
+			$scope.phoneNumber.message = error.data.message;
+			$scope.UI.isSaving = false;
+		});
 
-  };
+	};
 
-});  
+});
