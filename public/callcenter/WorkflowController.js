@@ -165,20 +165,23 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 		});
 
 		/* the agent's browser lost the connection to Twilio */
-		$scope.workerJS.on("connected", function() {
+		$scope.workerJS.on('connected', function() {
 			$log.log('TaskRouter Worker: WebSocket has connected');
 			$scope.UI.warning.worker = null;
+			$scope.$apply();
 		});
 
 
-		$scope.workerJS.on("disconnected", function() {
+		$scope.workerJS.on('disconnected', function() {
 			$log.error('TaskRouter Worker: WebSocket has disconnected');
-			$scope.UI.warning = 'TaskRouter Worker: WebSocket has disconnected';
+			$scope.UI.warning.worker = 'TaskRouter Worker: WebSocket has disconnected';
+			$scope.$apply();
 		});
 
-		$scope.workerJS.on("error", function(error) {
-			$log.error('TaskRouter Worker: an error occured: ' + error.response + ' with message: ' + error.message);
-			$scope.UI.warning = 'TaskRouter Worker: an error occured: ' + error.response + ' with message: ' + error.message;
+		$scope.workerJS.on('error', function(error) {
+			$log.error('TaskRouter Worker: an error occurred: ' + error.response + ' with message: ' + error.message);
+			$scope.UI.warning.worker = 'TaskRouter Worker: an error occured: ' + error.response + ' with message: ' + error.message;
+			$scope.$apply();
 		});
 
 	};
