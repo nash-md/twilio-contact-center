@@ -1,325 +1,318 @@
 var app = angular.module('callcenterApplication', ['ngMessages', 'glue.directives']);
 
-app.filter('counter', function() {
-
-  return function(value) {
-
-    var minutes = Math.floor(value / 60);
-    var seconds = value - (minutes * 60);
-
-    if (minutes < 10){
-      minutes = '0' + minutes;
-    }
-
-    if (seconds < 10){
-      seconds = '0' + seconds;
-    }
-
-    return minutes + ':' + seconds;
-
-  };
-
-});
-
 app.controller('WorkflowController', function ($scope, $rootScope, $http, $interval, $log, $window) {
 
-  /* misc configuration data, for instance callerId for outbound calls */
-  $scope.configuration;
+	/* misc configuration data, for instance callerId for outbound calls */
+	$scope.configuration;
 
-  /* contains task data pushed by the TaskRouter JavaScript SDK */
-  $scope.reservation;
-  $scope.tasks;
+	/* contains task data pushed by the TaskRouter JavaScript SDK */
+	$scope.reservation;
+	$scope.tasks;
 
-  /* contains worker record received by the Twilio API or the TaskRouter JavaScript SDK */
-  $scope.worker;
+	/* contains worker record received by the Twilio API or the TaskRouter JavaScript SDK */
+	$scope.worker;
 
-  /* TaskRouter Worker */
-  $scope.workerJS;
+	/* TaskRouter Worker */
+	$scope.workerJS;
 
-  /* UI */
-  $scope.UI = { warning: null, state: null };
+	/* UI */
+	$scope.UI = { warning: { browser: null, worker: null}};
 
-  if ($window.location.protocol !== 'https:') {
-    let message =  `Depending on your browser and/or settings capturing audio and video 
-                    requires a secure (HTTPS) page. The demo may not work.`;
-    $scope.UI.warning = message;
-  }
+	if ($window.location.protocol !== 'https:') {
+		let message =  `Depending on your browser and/or settings capturing audio and video 
+										requires a secure (HTTPS) page. The demo may not work.`;
+		$scope.UI.warning.browser = message;
+	}
 
-  /* request configuration data and tokens from the backend */
-  $scope.init = function () {
+	/* request configuration data and tokens from the backend */
+	$scope.init = function () {
 
-    $http.get('/api/agents/session')
+		$http.get('/api/agents/session')
 
-      .then(function onSuccess(response) {
+			.then(function onSuccess(response) {
 
-      /* keep a local copy of the configuration and the worker */
-      $scope.configuration = response.data.configuration;
+			/* keep a local copy of the configuration and the worker */
+			$scope.configuration = response.data.configuration;
 
-      /* initialize Twilio worker js with token received from the backend */
-      $scope.initWorker(response.data.tokens.worker);
+			/* initialize Twilio worker js with token received from the backend */
+			$scope.initWorker(response.data.tokens.worker);
 
-      /* initialize Twilio client with token received from the backend */
-      $scope.$broadcast('InitializePhone', { token: response.data.tokens.phone});
+			/* initialize Twilio client with token received from the backend */
+			$scope.$broadcast('InitializePhone', { token: response.data.tokens.phone});
 
-      /* initialize Twilio Chat client with token received from the backend */
-      $scope.$broadcast('InitializeChat', { token: response.data.tokens.chatAndVideo, identity: response.data.worker.friendlyName});
+			/* initialize Twilio Chat client with token received from the backend */
+			$scope.$broadcast('InitializeChat', { token: response.data.tokens.chatAndVideo, identity: response.data.worker.friendlyName});
 
-       // initialize Twilio Video client
-      $scope.$broadcast('InitializeVideo', { token: response.data.tokens.chatAndVideo });
+			 // initialize Twilio Video client
+			$scope.$broadcast('InitializeVideo', { token: response.data.tokens.chatAndVideo });
 
-    }, function onError(response) { 
-      
-      /* session is not valid anymore */
-      if(response.status == 403){
-         window.location.replace('/callcenter/');
-      } else {
-        alert(JSON.stringify(response));
-      }
+		}, function onError(response) { 
+			
+			/* session is not valid anymore */
+			if(response.status == 403){
+				 window.location.replace('/callcenter/');
+			} else {
+				alert(JSON.stringify(response));
+			}
 
-    });
+		});
 
-  };
+	};
 
-  $scope.initWorker = function(token) {
+	$scope.initWorker = function(token) {
 
-    /* create TaskRouter Worker */
-    $scope.workerJS = new Twilio.TaskRouter.Worker(token, true, $scope.configuration.twilio.workerIdleActivitySid, $scope.configuration.twilio.workerOfflineActivitySid);
+		/* create TaskRouter Worker */
+		$scope.workerJS = new Twilio.TaskRouter.Worker(token, true, $scope.configuration.twilio.workerIdleActivitySid, $scope.configuration.twilio.workerOfflineActivitySid);
 
-    $scope.workerJS.on('ready', function(worker) {
+		$scope.workerJS.on('ready', function(worker) {
 
-      $log.log('TaskRouter Worker: ready');
+			$log.log('TaskRouter Worker: ready');
 
-      $scope.worker = worker;
+			$scope.worker = worker;
 
-    });
+		});
 
-    $scope.workerJS.on('reservation.created', function(reservation) {
+		$scope.workerJS.on('reservation.created', function(reservation) {
 
-      $log.log('TaskRouter Worker: reservation.created');
-      $log.log(reservation);
+			$log.log('TaskRouter Worker: reservation.created');
+			$log.log(reservation);
 
-      $scope.reservation = reservation;
-      $scope.$apply();
+			$scope.reservation = reservation;
+			$scope.$apply();
 
-      $scope.startReservationCounter();
+			$scope.startReservationCounter();
 
-    });
+		});
 
-    $scope.workerJS.on('reservation.accepted', function(reservation) {
+		$scope.workerJS.on('reservation.accepted', function(reservation) {
 
-      $log.log('TaskRouter Worker: reservation.accepted');
-      $log.log(reservation);
+			$log.log('TaskRouter Worker: reservation.accepted');
+			$log.log(reservation);
 
-      $scope.task = reservation.task;
+			$scope.task = reservation.task;
 
-      /* check if the customer name is a phone number */
-      var pattern = /(.*)(\+[0-9]{8,20})(.*)$/;
+			/* check if the customer name is a phone number */
+			var pattern = /(.*)(\+[0-9]{8,20})(.*)$/;
 
-      if (pattern.test($scope.task.attributes.name) == true) {
-        $scope.task.attributes.nameIsPhoneNumber = true;
-      }  
+			if (pattern.test($scope.task.attributes.name) == true) {
+				$scope.task.attributes.nameIsPhoneNumber = true;
+			}  
 
-      $scope.task.completed = false;
-      $scope.reservation = null;
-      $scope.stopReservationCounter();
+			$scope.task.completed = false;
+			$scope.reservation = null;
+			$scope.stopReservationCounter();
 
-      $scope.$apply();
+			$scope.$apply();
 
-    });
+		});
 
-    $scope.workerJS.on('reservation.timeout', function(reservation) {
+		$scope.workerJS.on('reservation.timeout', function(reservation) {
 
-      $log.log('TaskRouter Worker: reservation.timeout');
-      $log.log(reservation);
+			$log.log('TaskRouter Worker: reservation.timeout');
+			$log.log(reservation);
 
-      /* reset all data */
-      $scope.reservation = null;
-      $scope.task = null;
-      $scope.$apply();
+			/* reset all data */
+			$scope.reservation = null;
+			$scope.task = null;
+			$scope.$apply();
 
-    });
+		});
 
-    $scope.workerJS.on('reservation.rescinded', function(reservation) {
+		$scope.workerJS.on('reservation.rescinded', function(reservation) {
 
-      $log.log('TaskRouter Worker: reservation.rescinded');
-      $log.log(reservation);
+			$log.log('TaskRouter Worker: reservation.rescinded');
+			$log.log(reservation);
 
-      /* reset all data */
-      $scope.reservation = null;
-      $scope.task = null;
-      $scope.$apply();
+			/* reset all data */
+			$scope.reservation = null;
+			$scope.task = null;
+			$scope.$apply();
 
-    });
+		});
 
-    $scope.workerJS.on('reservation.canceled', function(reservation) {
+		$scope.workerJS.on('reservation.canceled', function(reservation) {
 
-      $log.log('TaskRouter Worker: reservation.cancelled');
-      $log.log(reservation);
+			$log.log('TaskRouter Worker: reservation.cancelled');
+			$log.log(reservation);
 
-      $scope.reservation = null;
-      $scope.task = null;
-      $scope.$apply();
+			$scope.reservation = null;
+			$scope.task = null;
+			$scope.$apply();
 
-    });
+		});
 
-    $scope.workerJS.on('activity.update', function(worker) {
+		$scope.workerJS.on('activity.update', function(worker) {
 
-      $log.log('TaskRouter Worker: activity.update');
-      $log.log(worker);
+			$log.log('TaskRouter Worker: activity.update');
+			$log.log(worker);
 
-      $scope.worker = worker;
-      $scope.$apply();
+			$scope.worker = worker;
+			$scope.$apply();
 
-    });
+		});
 
-    $scope.workerJS.on('token.expired', function() {
+		$scope.workerJS.on('token.expired', function() {
 
-      $log.log('TaskRouter Worker: token.expired');
+			$log.log('TaskRouter Worker: token.expired');
 
-      $scope.reservation = null;
-      $scope.task = null;
-      $scope.$apply();
+			$scope.reservation = null;
+			$scope.task = null;
+			$scope.$apply();
 
-      /* the worker token expired, the agent shoud log in again, token is generated upon log in */
-      window.location.replace('/callcenter/');
+			/* the worker token expired, the agent shoud log in again, token is generated upon log in */
+			window.location.replace('/callcenter/');
 
-    });
+		});
 
-  };
+		/* the agent's browser lost the connection to Twilio */
+		$scope.workerJS.on("connected", function() {
+			$log.log('TaskRouter Worker: WebSocket has connected');
+			$scope.UI.warning.worker = null;
+		});
 
-  $scope.acceptReservation = function (reservation) {
 
-    $log.log('accept reservation with TaskRouter Worker JavaScript SDK');
+		$scope.workerJS.on("disconnected", function() {
+			$log.error('TaskRouter Worker: WebSocket has disconnected');
+			$scope.UI.warning = 'TaskRouter Worker: WebSocket has disconnected';
+		});
 
-    /* depending on the typ of taks that was created we handle the reservation differently */
-    if(reservation.task.attributes.channel == 'video') {
+		$scope.workerJS.on("error", function(error) {
+			$log.error('TaskRouter Worker: an error occured: ' + error.response + ' with message: ' + error.message);
+			$scope.UI.warning = 'TaskRouter Worker: an error occured: ' + error.response + ' with message: ' + error.message;
+		});
 
-      reservation.accept(
+	};
 
-        function(err, reservation) {
+	$scope.acceptReservation = function (reservation) {
 
-          if(err) {
-            $log.error(err);
-            return;
-          }
+		$log.log('accept reservation with TaskRouter Worker JavaScript SDK');
 
-          $scope.$broadcast('ActivateVideo', { roomName: reservation.task.attributes.roomName });
+		/* depending on the typ of taks that was created we handle the reservation differently */
+		if(reservation.task.attributes.channel == 'video') {
 
-        });
+			reservation.accept(
 
-    }
+				function(err, reservation) {
 
-    if(reservation.task.attributes.channel == 'chat'){
+					if(err) {
+						$log.error(err);
+						return;
+					}
 
-      reservation.accept(
+					$scope.$broadcast('ActivateVideo', { roomName: reservation.task.attributes.roomName });
 
-        function(err, reservation) {
+				});
 
-          if(err) {
-            $log.error(err);
-            return;
-          }
+		}
 
-          $scope.$broadcast('ActivateChat', { channelSid: reservation.task.attributes.channelSid });
+		if(reservation.task.attributes.channel == 'chat'){
 
-        });
+			reservation.accept(
 
-    }
+				function(err, reservation) {
 
-    if(reservation.task.attributes.channel == 'phone' && reservation.task.attributes.type == 'inbound_call'){
+					if(err) {
+						$log.error(err);
+						return;
+					}
 
-      $log.log('dequeue reservation with  callerId: ' + $scope.configuration.twilio.callerId);
-      reservation.dequeue($scope.configuration.twilio.callerId);
+					$scope.$broadcast('ActivateChat', { channelSid: reservation.task.attributes.channelSid });
 
-    }
-    
-    /* we accept the reservation and initiate a call to the customer's phone number */
-    if(reservation.task.attributes.channel == 'phone' && reservation.task.attributes.type == 'callback_request'){
+				});
 
-      reservation.accept(
+		}
 
-        function(err, reservation) {
+		if(reservation.task.attributes.channel == 'phone' && reservation.task.attributes.type == 'inbound_call'){
 
-          if(err) {
-            $log.error(err);
-            return;
-          }  
+			$log.log('dequeue reservation with  callerId: ' + $scope.configuration.twilio.callerId);
+			reservation.dequeue($scope.configuration.twilio.callerId);
 
-          $scope.$broadcast('CallPhoneNumber', { phoneNumber: reservation.task.attributes.phone });
+		}
+		
+		/* we accept the reservation and initiate a call to the customer's phone number */
+		if(reservation.task.attributes.channel == 'phone' && reservation.task.attributes.type == 'callback_request'){
 
-        });
-    }
-  };
+			reservation.accept(
 
-  $scope.complete = function (reservation) {
+				function(err, reservation) {
 
-    switch($scope.task.attributes.channel) {
-        case 'video':
-          $scope.$broadcast('DestroyVideo');
-          break;
-        case 'chat':
-          $scope.$broadcast('DestroyChat');
-          break;
-        default:
-          // do nothing
-    }
+					if(err) {
+						$log.error(err);
+						return;
+					}  
 
-    $scope.workerJS.update('ActivitySid', $scope.configuration.twilio.workerIdleActivitySid, function(err, worker) {
+					$scope.$broadcast('CallPhoneNumber', { phoneNumber: reservation.task.attributes.phone });
 
-      if(err) {
-        $log.error(err);
-        return;
-      } 
+				});
+		}
+	};
 
-      $scope.reservation = null;
-      $scope.task = null;
-      $scope.$apply();
+	$scope.complete = function (reservation) {
 
-    });
+		switch($scope.task.attributes.channel) {
+				case 'video':
+					$scope.$broadcast('DestroyVideo');
+					break;
+				case 'chat':
+					$scope.$broadcast('DestroyChat');
+					break;
+				default:
+					// do nothing
+		}
 
-  };
+		$scope.workerJS.update('ActivitySid', $scope.configuration.twilio.workerIdleActivitySid, function(err, worker) {
 
-  $scope.callPhoneNumber = function(phoneNumber){
-    $rootScope.$broadcast('CallPhoneNumber', { phoneNumber: phoneNumber });
-  };
+			if(err) {
+				$log.error(err);
+				return;
+			} 
 
-  $scope.logout = function () {
+			$scope.reservation = null;
+			$scope.task = null;
+			$scope.$apply();
 
-    $http.post('/api/agents/logout')
+		});
 
-     .then(function onSuccess(response) {
+	};
 
-      window.location.replace('/callcenter/index.html');
+	$scope.callPhoneNumber = function(phoneNumber){
+		$rootScope.$broadcast('CallPhoneNumber', { phoneNumber: phoneNumber });
+	};
 
-    }, function onError(response) { 
+	$scope.logout = function () {
 
-      $log.error(response);
+		$http.post('/api/agents/logout')
 
-    });
+		 .then(function onSuccess(response) {
 
-  };
+			window.location.replace('/callcenter/index.html');
 
-  $scope.startReservationCounter = function() {
+		}, function onError(response) { 
 
-    $log.log('start reservation counter');
-    $scope.reservationCounter = $scope.reservation.task.age;
+			$log.error(response);
 
-    $scope.reservationInterval = $interval(function() {
-      $scope.reservationCounter++;
-    }, 1000);
+		});
 
-  };
+	};
 
-  $scope.stopReservationCounter = function() {
+	$scope.startReservationCounter = function() {
 
-    if (angular.isDefined($scope.reservationInterval)) {
-      $interval.cancel($scope.reservationInterval);
-      $scope.reservationInterval = undefined;
-    }
-    
-  };
+		$log.log('start reservation counter');
+		$scope.reservationCounter = $scope.reservation.task.age;
+
+		$scope.reservationInterval = $interval(function() {
+			$scope.reservationCounter++;
+		}, 1000);
+
+	};
+
+	$scope.stopReservationCounter = function() {
+
+		if (angular.isDefined($scope.reservationInterval)) {
+			$interval.cancel($scope.reservationInterval);
+			$scope.reservationInterval = undefined;
+		}
+		
+	};
 
 });  
-
-
-  
