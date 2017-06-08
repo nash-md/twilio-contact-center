@@ -1,4 +1,4 @@
-app.directive('convertToNumber', function() {
+function convertToNumberDirective() {
  
   return {
     require: 'ngModel',
@@ -13,4 +13,8 @@ app.directive('convertToNumber', function() {
     }
   };
   
-});
+}
+
+angular
+  .module('administrationApplication')
+  .directive('convertToNumberDirective', convertToNumberDirective)

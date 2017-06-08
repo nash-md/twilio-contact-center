@@ -1,4 +1,4 @@
-app.directive('clientName', function () {
+function clientName() {
   var REGEX = /^[a-zA-Z0-9_]*$/;
 
   return {
@@ -18,4 +18,8 @@ app.directive('clientName', function () {
     }
   };
   
-});
+}
+
+angular
+  .module('administrationApplication')
+  .filter('clientName', clientName)
