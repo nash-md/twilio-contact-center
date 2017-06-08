@@ -107,8 +107,9 @@ function AdministrationController ($scope, $http, $log, $q) {
 			attributes: JSON.stringify(attributes)
 		};
 
-		$q.when(createWorker(worker))
-			.then(retrieveWorkers()).then(function (data) {
+		createWorker(worker).then(function(){
+			return retrieveWorkers()
+		}).then(function (data) {
 				$log.log('worker successfully created');
 				$scope.UI.isSaving = false;
 				$scope.agent = null;
@@ -130,7 +131,7 @@ function AdministrationController ($scope, $http, $log, $q) {
 
 		}
 
-		$q.when(deleteWorker(worker))
+		deleteWorker(worker)
 			.then(function (data) {
 				$log.log('worker successfully deleted');
 			}).catch(function (error) {
