@@ -21,12 +21,16 @@ module.exports.welcome = function (req, res) {
 		action: 'select-team',
 		method: 'GET',
 		numDigits: 1,
-		timeout: 5,
+		timeout: 4,
 		language: 'en-us',
 		hints: keywords.join()
 	}, function (node) {
 		node.say(req.configuration.ivr.text)
 	})
+
+	twiml.say('You did not say anything or enter any digits.')
+	twiml.pause({length: 2})
+	twiml.redirect({method: 'GET'}, 'welcome')
 
 	res.setHeader('Content-Type', 'application/xml')
 	res.setHeader('Cache-Control', 'public, max-age=0')
@@ -47,7 +51,6 @@ let analyzeKeypadInput = function (digits, options) {
 let analyzeSpeechInput = function (text, options) {
 
 	for (let i = 0; i < options.length; i++) {
-		console.log(options[i].friendlyName)
 		if (text.toLowerCase().includes(options[i].friendlyName.toLowerCase())) {
 			return options[i]
 		}
@@ -61,6 +64,7 @@ module.exports.selectTeam = function (req, res) {
 
 	/* check if we got a dtmf input or a speech-to-text */
 	if (req.query.SpeechResult) {
+		console.log(req.query.SpeechResult)
 		team = analyzeSpeechInput(req.query.SpeechResult, req.configuration.ivr.options)
 	}
 
