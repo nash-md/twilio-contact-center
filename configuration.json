@@ -1,6 +1,6 @@
 {
 	"ivr": {
-		"text": "Welcome to my call center, please press 1 for sales, press 2 for support",
+		"text": "Thanks for calling. You can press a key or say the department name. Press 1 for Sales, press 2 for Support",
 		"options": [
 			{
 				"friendlyName": "Sales",
@@ -41,6 +41,10 @@
 		"workerOfflineActivitySid": null,
 		"workerIdleActivitySid": null,
 		"workerReservationActivitySid": null,
-		"workerAssignmentActivitySid": null
+		"workerAssignmentActivitySid": null,
+		"callerId": null,
+		"applicationSid": null,
+		"workflowSid": null,
+    "facebookPageId": null
 	}
 }
