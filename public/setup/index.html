@@ -86,7 +86,7 @@
 
       <div>
 
-        <button class="btn btn-primary" ng-disabled="setupForm.$invalid || setupForm.$pristine" ng-click="saveConfig()"><span style="margin-right: 10px;" ng-show="isSaving == true"><i class="fa fa-refresh fa-spin"></i></span>Save Settings</button>
+        <button class="btn btn-primary" ng-disabled="setupForm.$invalid || setupForm.$pristine || UI.isSaving" ng-click="saveConfig()"><span style="margin-right: 10px;" ng-show="UI.isSaving == true"><i class="fa fa-refresh fa-spin"></i></span>Save Settings</button>
 
       </div>
 
@@ -102,6 +102,8 @@
           <span ng-if="phoneNumber.code == 'TWILIO_PHONE_NUMBER_NOT_VOICE_CAPABLE'">The Twilio phone number does not support voice.</span>
 
       </div>
+
+      <br>
 
     </div>
   
