@@ -1,179 +1,183 @@
-var app = angular.module('administrationApplication', ['checklist-model']);
+function AdministrationController ($scope, $http, $log, $q) {
+	/* misc configuration data, for instance callerId for outbound calls */
+	$scope.configuration;
 
-app.controller('AdministrationController', function ($scope, $http, $log) {
+	/* list of TaskRouter workers */
+	$scope.workers = [];
 
-  $scope.init = function(){
+	/* a new agent template */
+	$scope.agent = null;
 
-    $scope.tab = 'agents';
+	/* UI */
+	$scope.UI = { warning: null, tab: 'agents', isSaving: false };
 
-    $scope.channels = {
-      phone: 'Phone',
-      chat: 'Chat',
-      video: 'Video'
-    };
+	$scope.channels = [
+		{id: 'phone', friendlyName: 'Phone'},
+		{id: 'chat', friendlyName: 'Chat (Web, SMS, Facebook)'},
+		{id: 'video', friendlyName: 'Video'}
+	];
+
+	let retrieveSetup = function () {
+		let deferred = $q.defer();
+
+		$http.get('/api/setup').then(function (response) {
+			$scope.configuration = response.data;
+			deferred.resolve();
+		}, function (response) {
+			deferred.reject(response);
+		});
+		return deferred.promise;
+
+	};
 
-    $scope.createForm = false;
-    $scope.configuration = null;
-    $scope.agent = { channels: []};
+	let retrieveWorkers = function () {
+		let deferred = $q.defer();
 
-    $http.get('/api/setup')
+		$http.get('/api/workers').then(function (response) {
+			$scope.workers = [];
+
+			response.data.forEach(function (worker) {
+				worker.attributes = JSON.parse(worker.attributes);
+				$scope.workers.push(worker);
+			});
 
-      .then(function onSuccess(response) {
+			deferred.resolve();
+		}, function (response) {
+			deferred.reject(response);
+		});
+		return deferred.promise;
 
-        $scope.configuration = response.data;
-        $scope.listWorkers();
-        
-      }, function onError(response) { 
+	};
 
-        alert(response.data);
+	let createWorker = function (worker) {
+		let deferred = $q.defer();
 
-      });
+		$http.post('/api/workers', worker).then(function (response) {
+			deferred.resolve();
+		}, function (response) {
+			deferred.reject(response);
+		});
 
-  };
+		return deferred.promise;
 
-  $scope.listWorkers = function(){
+	};
 
-    $http.get('/api/workers')
+	let deleteWorker = function (worker) {
+		let deferred = $q.defer();
 
-      .then(function onSuccess(response) {
+		$http.delete('/api/workers/' + worker.sid).then(function (response) {
+			deferred.resolve();
+		}, function (response) {
+			deferred.reject(response);
+		});
 
-        $scope.workers = [];
+		return deferred.promise;
 
-        response.data.forEach(function(worker) {
+	};
 
-        var attributes = JSON.parse(worker.attributes);
+	$scope.init = function () {
 
-        worker.attributes = attributes;
+		$q.all([retrieveSetup(), retrieveWorkers()])
+			.then(function (data) {
+				$log.log('configuration and worker loaded');
+			}).catch(function (error) {
+				$scope.UI.warning = error;
+				$scope.$apply();
+			});
 
-        for (var i = 0; i < $scope.configuration.ivr.options.length; i++) {
-          if($scope.configuration.ivr.options[i].id == worker.attributes.team){
-            worker.team = $scope.configuration.ivr.options[i].friendlyName;
-          }
-        }
+	};
 
-        worker.channelsFriendlyName = '';
+	$scope.showAgentForm = function () {
+		$scope.agent = { channels: []};
+	};
 
-        for (i = 0; i < worker.attributes.channels.length; i++) {
-          worker.channelsFriendlyName += $scope.channels[worker.attributes.channels[i]];
-          
-          if(i < (worker.attributes.channels.length -1)){
-            worker.channelsFriendlyName += ', ';
-          }
+	$scope.createAgent = function () {
+		$scope.UI.isSaving = true;
 
-        }    
-    
-        $scope.workers.push(worker);
+		/* create attributes which are used for TaskRouter routing */
+		let attributes = {
+			contact_uri: 'client:' + $scope.agent.friendlyName.toLowerCase(),
+			channels: $scope.agent.channels,
+			team: $scope.agent.team
+		};
 
-      });
-      
-    }, function onError(response) { 
+		/* create the worker JSON entity */
+		let worker = {
+			friendlyName: $scope.agent.friendlyName,
+			attributes: JSON.stringify(attributes)
+		};
 
-      alert(response.data);
+		$q.when(createWorker(worker))
+			.then(retrieveWorkers()).then(function (data) {
+				$log.log('worker successfully created');
+				$scope.UI.isSaving = false;
+				$scope.agent = null;
+			}).catch(function (error) {
+				$scope.UI.warning = error;
+				$scope.$apply();
+			});
 
-    });
+	};
 
-  };
+	$scope.deleteAgent = function (worker) {
 
-  $scope.expandAgentCreate = function(){
+		for (let i = 0; i < $scope.workers.length; i++) {
 
-    $scope.createForm = true;
+			if ($scope.workers[i].sid === worker.sid) {
+				$scope.workers.splice(i, 1);
+				break;
+			}
 
-  };
+		}
 
-  $scope.createWorker = function(){
+		$q.when(deleteWorker(worker))
+			.then(function (data) {
+				$log.log('worker successfully deleted');
+			}).catch(function (error) {
+				$scope.UI.warning = error;
+				$scope.$apply();
+			});
 
-    var attributes = { 
-      contact_uri: 'client:' + $scope.agent.friendlyName.toLowerCase(), 
-      channels: $scope.agent.channels, 
-      team: $scope.agent.team
-    };
+	};
 
-    var worker =  { 
-      friendlyName:  $scope.agent.friendlyName, 
-      attributes: JSON.stringify(attributes) 
-    };
+	$scope.showTab = function (name) {
+		$scope.UI.tab = name;
+	};
 
-    $http.post('/api/workers', worker)
+	$scope.removeIvrOption = function (array, index) {
+		$scope.configuration.ivr.options.splice(index, 1);
+	};
 
-      .then(function onSuccess(response) {
+	$scope.createIvrOption = function () {
+		let option = { friendlyName: 'unknown' };
 
-        $log.log(response.data);
+		$scope.configuration.ivr.options.push(option);
+	};
 
-        $scope.createForm = false;
-        $scope.agent = { channels: []};
+	$scope.saveIvr = function () {
+		$scope.UI.isSaving = true;
 
-        $scope.listWorkers();
-        
-      }, function onError(response) { 
+		for (let i = 0; i < $scope.configuration.ivr.options.length; i++) {
+			let tmpId = $scope.configuration.ivr.options[i].friendlyName.toLowerCase();
 
-        $log.error(response);
-        alert(response.data);
+			tmpId = tmpId.replace(/[^a-z0-9 ]/g, '');
+			tmpId = tmpId.replace(/[ ]/g, '_');
 
-      });
+			$scope.configuration.ivr.options[i].id = tmpId;
+		}
 
-  };
+		$http.post('/api/setup', { configuration: $scope.configuration })
+			.then(function onSuccess (response) {
+				$scope.UI.isSaving = false;
+				$scope.$apply();
+			}, function (response) {
+				$scope.UI.warning = response;
+			});
 
-  $scope.removeWorker = function(worker){
+	};
 
-    for (var i = 0; i < $scope.workers.length; i++) {
+}
 
-      if($scope.workers[i].sid == worker.sid){            
-        $scope.workers.splice(i, 1);    
-        break;
-      }
-
-    } 
-
-    $http.delete('/api/workers/' + worker.sid);
-
-  };
-
-  $scope.setTab = function (tab) {
-
-    $scope.tab = tab;
-
-  };
-
-  $scope.removeIvrOption = function(array, index) {
-
-    $scope.configuration.ivr.options.splice(index, 1);
-
-  };
-
-  $scope.createIvrOption = function(){
-
-    var option = { friendlyName: 'unknown' };
-
-    $scope.configuration.ivr.options.push(option);
-    $scope.createForm = false;
-
-  };
-
-  $scope.saveConfig = function(){
-
-    for (var i = 0; i < $scope.configuration.ivr.options.length; i++) {
-      var tmpId = $scope.configuration.ivr.options[i].friendlyName.toLowerCase();
-
-      tmpId = tmpId.replace(/[^a-z0-9 ]/g, '');
-      tmpId = tmpId.replace(/[ ]/g, '_');
-
-      $scope.configuration.ivr.options[i].id = tmpId;
-
-    }
-
-    $http.post('/api/setup', { configuration: $scope.configuration })
-
-      .then(function onSuccess(response) {
-
-        $log.log('setup saved');
-        $log.log(response.data);
-        
-      }, function onError(response) { 
-
-        alert(response.data);
-
-      });
-
-  };
-
-}); 
+angular
+	.module('administrationApplication', ['checklist-model'])
+	.controller('AdministrationController', AdministrationController);

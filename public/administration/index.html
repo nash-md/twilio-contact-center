@@ -6,24 +6,28 @@
 
   <link rel="stylesheet" href="/styles/bootstrap.css" type="text/css" />
   <link rel="stylesheet" href="/styles/default.css" type="text/css" />
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"
+  type="text/css" rel="stylesheet" />
 
 </head>
 
-<body ng-app="administrationApplication">
+<body ng-app="administrationApplication" ng-controller="AdministrationController">
+
+  <div ng-show="UI.warning" class="panel panel-default ui-warning" ng-cloak>{{UI.warning | json}}</div>
 
   <div class="container" style="width:900px">
 
-    <section class="row" ng-controller="AdministrationController" ng-cloak data-ng-init="init()">
+    <section class="row" ng-init="init()" ng-cloak>
 
       <h2 class="page-header">Twilio Contact Center: Administration</h2>
 
       <ul class="nav nav-tabs">
-        <li role="presentation"  ng-click="setTab('agents')" ng-class="{active: tab == 'agents'}"><a href="#">Call Agents</a></li>
-        <li role="presentation"  ng-click="setTab('ivr')" ng-class="{active: tab == 'ivr'}"><a href="#">IVR Menu</a></li>
+        <li role="presentation"  ng-click="showTab('agents')" ng-class="{active: UI.tab == 'agents'}"><a href="#">Call Agents</a></li>
+        <li role="presentation"  ng-click="showTab('ivr')" ng-class="{active: UI.tab == 'ivr'}"><a href="#">IVR Menu</a></li>
       </ul>
 
       <div class="tab-content">
-        <div class="tab-pane" ng-class="{active: tab == 'agents'}" id="home" style="margin-bottom:10px">
+        <div class="tab-pane" ng-class="{active: UI.tab == 'agents'}" id="home" style="margin-bottom:10px">
           <table  class="table table-striped table-hover" style="width:100%">
            <thead>
             <tr >
@@ -38,17 +42,17 @@
            <tr ng-repeat="worker in workers track by worker.sid">
             <td>{{worker.friendlyName}}</td>
             <td>{{worker.activityName}}</td>
-            <td>{{worker.channelsFriendlyName}}</td>
-            <td>{{worker.team}}</td>
+            <td>{{worker.attributes.channels | ChannelListFilter:channels}}</td>
+            <td>{{worker.attributes.team | TeamName:configuration}}</td>
 
-            <td style="text-align:right"><button class="btn btn-danger btn-xs" ng-click="removeWorker(worker)" ng-show="worker.activityName == 'Offline'">remove</button></td>
+            <td style="text-align:right"><button class="btn btn-danger btn-xs" ng-click="deleteAgent(worker)" ng-show="worker.activityName == 'Offline'">remove</button></td>
           </tr>
         </tbody>
       </table>
 
-      <button style="margin-left:8px" class="btn btn-primary" ng-show="createForm == false" ng-click="expandAgentCreate()">Create Agent</button>
+      <button style="margin-left:8px" class="btn btn-primary" ng-show="agent == null" ng-click="showAgentForm()">Create Agent</button>
 
-      <div ng-show="createForm == true" class="panel panel-default" style="margin-bottom:0px; margin-left:10px; margin-right:10px">
+      <div ng-show="agent != null" class="panel panel-default" style="margin-bottom:0px; margin-left:10px; margin-right:10px">
 
         <div class="panel-heading">Create Agent</div>
 
@@ -62,15 +66,9 @@
             </div>
 
             <div class="form-group">
-             <label class="checkbox-inline">
-              <input type="checkbox" checklist-model="agent.channels" value="phone">Phone
-            </label>
-            <label class="checkbox-inline">
-              <input type="checkbox" checklist-model="agent.channels" value="chat">Chat (Web, SMS, Facebook)
-            </label>
-            <label class="checkbox-inline">
-              <input type="checkbox" checklist-model="agent.channels" value="video">Video
-            </label>
+              <label class="checkbox-inline" ng-repeat="channel in channels" style="margin-right: 5px">
+                <input type="checkbox" checklist-model="agent.channels"  checklist-value="channel.id">{{channel.friendlyName}}
+              </label>
           </div>
 
           <div class="btn-group">
@@ -80,7 +78,7 @@
             </select>
           </div>
 
-          <button  style="margin-left:10px" class="btn btn-primary" ng-disabled="agentForm.$invalid || agentForm.$pristine"  ng-click="createWorker()">Save</button>
+          <button style="margin-left:10px" class="btn btn-primary" ng-disabled="agentForm.$invalid || agentForm.$pristine || UI.isSaving"  ng-click="createAgent()"><span style="margin-right: 10px;" ng-show="UI.isSaving == true"><i class="fa fa-refresh fa-spin"></i></span>Save</button>
 
           <div class="alert alert-danger" style="margin-top:10px; margin-bottom:0px" role="alert" ng-show="agentForm.friendlyName.$error.invalidCharacter">Name must be an alphanumeric string</div>
 
@@ -89,20 +87,20 @@
     </div>
   </div>
 
-  <div class="tab-pane"  ng-class="{active: tab == 'ivr'}"  id="profile">
+  <div class="tab-pane"  ng-class="{active: UI.tab == 'ivr'}"  id="profile">
 
     <div style="padding:8px">
       <h4>Text-to-Speech</h4>
-
-      <textarea class="form-control" rows="5" name="text" ng-model="configuration.ivr.text" style="resize:none"></textarea>
+<form name="ivrForm" >
+      <textarea class="form-control" rows="5" name="text" ng-model="configuration.ivr.text" style="resize:none" required></textarea>
 
       <div class="panel panel-default" style="margin-top:10px">
 
         <div class="panel-heading">Teams</div>
-
+       
         <ul class="list-group">
           <li ng-repeat="option in configuration.ivr.options track by $index" class="list-group-item">
-            <form class="form-inline">
+            <div class="form-inline">
               <div class="form-group">
                 <input ng-model="option.friendlyName" class="form-control" name="friendlyName" client-name/>&nbsp;&nbsp;&nbsp;</div>
                 <div class="form-group">
@@ -117,7 +115,7 @@
                 </div>
                 &nbsp;&nbsp;&nbsp;
                 <button class="btn btn-danger" ng-click="removeIvrOption(option, $index)">delete</button>
-              </form>
+              </div>
             </li>
 
             <li class="list-group-item">
@@ -127,8 +125,8 @@
 
         </div>
 
-        <button class="btn btn-primary" ng-click="saveConfig()">Save IVR</button>
-
+        <button ng-disabled="ivrForm.$invalid || ivrForm.$pristine || UI.isSaving" class="btn btn-primary" ng-click="saveIvr()"><span style="margin-right: 10px;" ng-show="UI.isSaving == true"><i class="fa fa-refresh fa-spin"></i></span>Save IVR</button>
+</form>
       </div>
 
     </div>
@@ -145,6 +143,8 @@
 
 <script src="/scripts/directives/ClientNameDirective.js"></script>
 <script src="/scripts/directives/ConvertToNumberDirective.js"></script>
+<script src="/scripts/directives/TeamNameFilter.js"></script>
+<script src="/scripts/directives/ChannelListFilter.js"></script>
 
 
 </body>
