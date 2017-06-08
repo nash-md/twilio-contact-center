@@ -604,5 +604,6 @@
   align-items: center;
   text-align: center;
   box-sizing: border-box;
-  margin-bottom: 0 !important
+  margin-bottom: 5px !important;
+  border-radius: 0 !important;
 } 
