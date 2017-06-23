@@ -50,9 +50,9 @@
         </tbody>
       </table>
 
-      <button style="margin-left:8px" class="btn btn-primary" ng-show="agent == null" ng-click="showAgentForm()">Create Agent</button>
+      <button style="margin-left:8px" class="btn btn-primary" ng-show="!UI.showForm" ng-click="showAgentForm()">Create Agent</button>
 
-      <div ng-show="agent != null" class="panel panel-default" style="margin-bottom:0px; margin-left:10px; margin-right:10px">
+      <div ng-show="UI.showForm" class="panel panel-default" style="margin-bottom:0px; margin-left:10px; margin-right:10px">
 
         <div class="panel-heading">Create Agent</div>
 
