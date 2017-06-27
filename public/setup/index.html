@@ -93,13 +93,20 @@
       <div style="margin-top:10px" ng-if="phoneNumber.isValid == false" class="alert alert-dismissible alert-danger">
           <strong>Oh snap!</strong><br />
           
-          <span ng-if="phoneNumber.code == 'TWILIO_UNKNOWN_ERROR'">{{phoneNumber.message}}</span>
+          <span ng-if="phoneNumber.code == 'TWILIO_UNKNOWN_ERROR'">{{ message | json}}</span>
 
-          <span ng-if="phoneNumber.code == 'TWILIO_UNKNOWN_PHONE_NUMBER'">The phone number could not be found in your Twilio account.</span>
+          <span ng-if="phoneNumber.code == 'TWILIO_PHONE_NUMBER_NOT_FOUND'">The phone number could not be found in your Twilio account.</span>
 
           <span ng-if="phoneNumber.code == 'TWILIO_MULTIPLE_PHONE_NUMBERS'">More than one Twilio phone number found, something went wrong.</span>
 
           <span ng-if="phoneNumber.code == 'TWILIO_PHONE_NUMBER_NOT_VOICE_CAPABLE'">The Twilio phone number does not support voice.</span>
+
+      </div>
+
+       <div style="margin-top:10px" ng-if="error != null" class="alert alert-dismissible alert-danger">
+          <strong>Oh snap!</strong><br />
+          
+          <span>{{ error | json}}</span>
 
       </div>
 
@@ -113,8 +120,9 @@
 
 <script src="/scripts/angular.min.js"></script>
 <script src="/scripts/angular-messages.min.js"></script>
-<script src="SetupController.js"></script>
 <script src="/scripts/directives/PhoneNumberDirective.js"></script>
+
+<script src="SetupController.js"></script>
 
 </body>
 </html>
