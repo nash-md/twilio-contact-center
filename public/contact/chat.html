@@ -2,6 +2,8 @@
 <html>
 <head>
 	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
 	<title>Twilio Contact Center: Live Chat</title>
 
 	<link rel="stylesheet" href="/styles/bootstrap.min.css" type="text/css" />
@@ -16,23 +18,35 @@
 	<div class="container" style="max-width:960px">
 
 		<div class="row">
-			<div class="page-header col-md-12">
+
+			<div class="page-header hidden-sm hidden-xs">
 				<h2>Twilio Contact Center: Live Chat</h2>
 			</div>
+
+			<div class="col-xs-12">
+				<h3 class="hidden-md hidden-lg">Live Chat</h3>
+			</div>
+
 		</div>
 
 		<section class="row" ng-controller="ChatController" ng-init="init()" ng-cloak>
 
-			<div class="col-md-8">
+			<div class="col-md-8 col-xs-12">
 
 				<section>
 
-					<form name="supportChatForm" class="support-chat-form form-inline" ng-hide="session.isInitialized">
+					<form name="supportChatForm" class="well col-md-12" ng-hide="session.isInitialized">
 
-						<div class="form-group">
-							<input ng-model="user.identity" name="identity" ng-minlength="3" ng-maxlength="20" ng-required="true" type="text" class="form-control" ng-disabled="session.isLoading" placeholder="Your Name">
-							<button type="submit" ng-disabled="session.isLoading || supportChatForm.$invalid || supportChatForm.$pristine" class="initiate btn btn-primary" ng-click="initChat()" ><span ng-show="session.isLoading == true"><i class="fa fa-refresh fa-spin"></i></span>Go</button>
+						<div>
 
+							<div class="form-group">
+			           <input ng-model="user.identity" name="identity" ng-minlength="3" ng-maxlength="20" ng-required="true" type="text" class="form-control" ng-disabled="session.isLoading" placeholder="Your Name">
+			        </div>
+
+			        <div class="form-group">
+			          <button type="submit" ng-disabled="session.isLoading || supportChatForm.$invalid || supportChatForm.$pristine" class="initiate btn btn-primary" ng-click="initChat()" ><span style="margin-right: 10px;" ng-show="session.isLoading == true"><i class="fa fa-refresh fa-spin"></i></span>Go</button>
+			        </div>
+							
 							<div ng-messages="supportChatForm.identity.$error" role="alert">
 								<div ng-message="minlength"  class="alert alert-danger">Name is too short</div>
 								<div ng-message="maxlength" class="alert alert-danger">Name is too long</div>
@@ -90,7 +104,7 @@
 
 			</div>
 
-			<div class="col-md-4">
+			<div class="col-md-4 hidden-sm hidden-xs">
 				<h4 style="margin:0px">Call us:</h4>
 				<h3 class="caller-id" style="margin:0px">{{configuration.twilio.callerId}}</h3>
 
@@ -110,6 +124,7 @@
 	<script src="/scripts/moment.min.js"></script>
   <script src="https://media.twiliocdn.com/sdk/js/common/v0.1/twilio-common.js"></script>
   <script src="https://media.twiliocdn.com/sdk/rtc/js/ip-messaging/v0.10/twilio-ip-messaging.js"></script>
+
 
 </body>
 </html>

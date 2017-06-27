@@ -2,6 +2,8 @@
 <html>
 <head>
 	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
 	<title>Twilio Contact Center: Contact Form</title>
 
 	<link rel="stylesheet" href="/styles/bootstrap.min.css" type="text/css" />
@@ -16,9 +18,15 @@
 	<div class="container" style="max-width:960px">
 
 		<div class="row">
-			<div class="page-header col-md-12">
+
+			<div class="page-header hidden-sm hidden-xs">
 				<h2>Twilio Contact Center: Contact Form</h2>
 			</div>
+
+			<div class="col-xs-12">
+				<h3 class="hidden-md hidden-lg">Contact Form</h3>
+			</div>
+
 		</div>
 
 		<section class="row" ng-controller="ContactController" data-ng-init="init()" ng-cloak>
@@ -59,7 +67,13 @@
 						<div class="col-md-8 col-md-offset-4">
 							<div ng-messages="supportForm.phone.$error" role="alert">
 								<div ng-message="required"ng-show="supportForm.phone.$touched" class="error-message alert alert-danger">Phone number is required</div>
-								<div ng-message="invalidPhone"  class="error-message alert alert-danger">Invalid phone number</div>
+								<div ng-message="invalidPhone" class="error-message alert alert-danger">Invalid phone number</div>
+							</div>
+
+							<div ng-messages="supportForm.$error" role="alert">
+								<div ng-message="serverError" class="alert alert-danger">
+		            	<strong>Oh snap!</strong><br>An error occured, please check JavaScript console for details
+		          	</div>
 							</div>
 
 							<button ng-click="submit()" ng-disabled="supportForm.$pristine || supportForm.$valid !== true" class="submit btn btn-primary btn-md">Submit</button>
@@ -72,7 +86,7 @@
 
 			</div>
 
-			<div class="col-md-4">
+			<div class="col-md-4 hidden-sm hidden-xs">
 				<h4 style="margin:0px">Call us:</h4>
 				<h3 class="caller-id" style="margin:0px">{{configuration.twilio.callerId}}</h3>
 
@@ -87,9 +101,9 @@
 
 	<script src="/scripts/angular.min.js"></script>
 	<script src="/scripts/angular-messages.min.js"></script>
+	<script src="/scripts/directives/PhoneNumberDirective.js"></script>
 
 	<script src="ContactController.js"></script>
-	<script src="/scripts/directives/PhoneNumberDirective.js"></script>
 
 </body>
 </html>
