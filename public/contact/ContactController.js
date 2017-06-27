@@ -1,4 +1,4 @@
-var app = angular.module('supportApplication', ['ngMessages']);
+var app = angular.module('supportApplication', ['ngMessages', 'phone-number']);
 
 app.controller('ContactController', function ($scope, $http, $timeout, $log) {
 
@@ -44,8 +44,8 @@ app.controller('ContactController', function ($scope, $http, $timeout, $log) {
 
 			}, function onError (response) {
 
-				$log('error creating task');
-				$log(response);
+				$scope.supportForm.$setValidity('serverError', false);
+				$log.error(response);
 
 			});
 

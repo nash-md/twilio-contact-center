@@ -188,5 +188,5 @@ function AdministrationController ($scope, $http, $log, $q) {
 }
 
 angular
-	.module('administrationApplication', ['checklist-model'])
+	.module('administrationApplication', ['checklist-model', 'client-name', 'convert-to-number'])
 	.controller('AdministrationController', AdministrationController);
