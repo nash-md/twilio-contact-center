@@ -6,13 +6,22 @@ app.controller('IndexController', function ($scope, $http) {
 
 	$scope.validateSetup = function () {
 
-		$http.post('/api/validate/setup')
+		$http.post('/api/validate/setup', undefined, { timeout: 10000 })
 			.then(function onSuccess (response) {
 				$scope.setup = 'VALID';
 				$scope.code = null;
 			}, function onError (response) {
 				$scope.setup = 'INVALID';
-				$scope.code = response.data.code;
+
+				switch (response.status) {
+				case -1:
+					$scope.code = 'SERVER_TIMEOUT';
+					break;
+				default:
+					$scope.code = response.data.code;
+					break;
+				}
+
 			});
 
 	};
