@@ -469,8 +469,8 @@
 .video-canvas
 {
 	position: relative;
-	width: 600px;
-	height:450px;
+	width: 100%;
+	padding-top: 75%;
 }
 
 .video-canvas > div
@@ -594,7 +594,7 @@
 
 .ui-warning
 {
-  background-color: rgb(244, 67, 54) !important;
+  background-color: #ff2c33 !important;
   color: white !important;
   line-height: 26px;
   vertical-align: middle;
@@ -606,4 +606,5 @@
   box-sizing: border-box;
   margin-bottom: 5px !important;
   border-radius: 0 !important;
+  padding: 5px;
 } 
