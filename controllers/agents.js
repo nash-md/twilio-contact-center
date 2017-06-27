@@ -1,92 +1,107 @@
-const twilio = require('twilio')
+const Twilio 	= require('twilio')
 
-/* client for Twilio TaskRouter */
-const taskrouterClient = new twilio.TaskRouterClient(
+const AccessToken 	= Twilio.jwt.AccessToken
+const VideoGrant 		= Twilio.jwt.AccessToken.VideoGrant
+const ChatGrant 		= Twilio.jwt.AccessToken.IpMessagingGrant
+
+const client = new Twilio(
 	process.env.TWILIO_ACCOUNT_SID,
-	process.env.TWILIO_AUTH_TOKEN,
-	process.env.TWILIO_WORKSPACE_SID)
+	process.env.TWILIO_AUTH_TOKEN)
+
+const taskrouterHelper = require('./helpers/taskrouter-helper.js')
 
 module.exports.login = function (req, res) {
-	var friendlyName = req.body.worker.friendlyName
+	const friendlyName = req.body.worker.friendlyName
 
-	/* all token we generate are valid for 1 hour */
-	var lifetime = 3600
+	const filter = { friendlyName: friendlyName }
 
-	taskrouterClient.workspace.workers.get({FriendlyName: friendlyName}, function (err, data) {
-		if (err) {
-			res.status(500).json(err)
-			return
-		}
+	client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).workers.list(filter)
+		.then(workers => {
 
-		for (var i = 0; i < data.workers.length; i++) {
-			var worker = data.workers[i]
+			for (let i = 0; i < workers.length; i++) {
+				let worker = workers[i]
 
-			if (worker.friendlyName === friendlyName) {
-				/* create a token for taskrouter */
-				var workerCapability = new twilio.TaskRouterWorkerCapability(
-					process.env.TWILIO_ACCOUNT_SID,
-					process.env.TWILIO_AUTH_TOKEN,
-					process.env.TWILIO_WORKSPACE_SID, worker.sid)
+				if (worker.friendlyName === friendlyName) {
+					const tokens = createWorkerTokens(req.configuration, worker, req.body.endpoint)
 
-				workerCapability.allowActivityUpdates()
-				workerCapability.allowReservationUpdates()
-				workerCapability.allowFetchSubresources()
+					req.session.tokens = tokens
+					req.session.worker = {
+						sid: worker.sid,
+						friendlyName: worker.friendlyName,
+						attributes: worker.attributes
+					}
 
-				/* create a token for Twilio Client */
-				var phoneCapability = new twilio.Capability(
-					process.env.TWILIO_ACCOUNT_SID,
-					process.env.TWILIO_AUTH_TOKEN)
-
-				phoneCapability.allowClientOutgoing(req.configuration.twilio.applicationSid)
-				phoneCapability.allowClientIncoming(friendlyName.toLowerCase())
-
-				var accessToken = new twilio.AccessToken(
-					process.env.TWILIO_ACCOUNT_SID,
-					process.env.TWILIO_API_KEY_SID,
-					process.env.TWILIO_API_KEY_SECRET,
-					{ ttl: lifetime })
-
-				accessToken.identity = worker.friendlyName
-
-				/* grant the access token Twilio Programmable Chat capabilities */
-				var chatGrant = new twilio.AccessToken.IpMessagingGrant({
-					serviceSid: process.env.TWILIO_CHAT_SERVICE_SID,
-					endpointId: req.body.endpoint
-				})
-
-				accessToken.addGrant(chatGrant)
-
-				/* grant the access token Twilio Video capabilities */
-				var videoGrant = new twilio.AccessToken.VideoGrant()
-
-				accessToken.addGrant(videoGrant)
-
-				var tokens = {
-					worker: workerCapability.generate(lifetime),
-					phone: phoneCapability.generate(lifetime),
-					chatAndVideo: accessToken.toJwt()
+					res.status(200).end()
+					return
 				}
 
-				req.session.tokens = tokens
-				req.session.worker = worker
-
-				res.status(200).end()
-
-				return
 			}
 
-		}
-		res.status(404).end()
+			res.status(404).end()
 
-		return
+		}).catch(error => {
+			res.status(500).send(res.convertErrorToJSON(error))
+		})
+}
+
+var createWorkerTokens = function (configuration, worker, endpoint) {
+	/* all token we generate are valid for 1 hour */
+	const lifetime = 3600
+
+	/* create a token for Twilio TaskRouter */
+	const workerCapability = taskrouterHelper.createWorkerCapabilityToken(worker.sid)
+
+	/* create a token for Twilio Client */
+	const ClientCapability = Twilio.jwt.ClientCapability
+
+	const phoneCapability = new ClientCapability({
+		accountSid: process.env.TWILIO_ACCOUNT_SID,
+		authToken: process.env.TWILIO_AUTH_TOKEN,
+		ttl: lifetime,
 	})
+
+	const clientName = worker.friendlyName.toLowerCase()
+
+	phoneCapability.addScope(new ClientCapability.IncomingClientScope(clientName))
+	phoneCapability.addScope(new ClientCapability.OutgoingClientScope({
+		applicationSid: configuration.twilio.applicationSid,
+		clientName: worker.friendlyName.toLowerCase()
+	}))
+
+	const accessToken = new AccessToken(
+		process.env.TWILIO_ACCOUNT_SID,
+		process.env.TWILIO_API_KEY_SID,
+		process.env.TWILIO_API_KEY_SECRET,
+		{ ttl: lifetime })
+
+	accessToken.identity = worker.friendlyName
+
+	/* grant the access token Twilio Programmable Chat capabilities */
+	const chatGrant = new ChatGrant({
+		serviceSid: process.env.TWILIO_CHAT_SERVICE_SID,
+		endpointId: endpoint
+	})
+
+	accessToken.addGrant(chatGrant)
+
+	/* grant the access token Twilio Video capabilities */
+	const videoGrant = new VideoGrant()
+
+	accessToken.addGrant(videoGrant)
+
+	return {
+		worker: workerCapability.toJwt(),
+		phone: phoneCapability.toJwt(),
+		chatAndVideo: accessToken.toJwt()
+	}
+
 }
 
 module.exports.logout = function (req, res) {
 
-	req.session.destroy(function (err) {
-		if (err) {
-			res.status(500).json(err)
+	req.session.destroy(function (error) {
+		if (error) {
+			res.status(500).send(res.convertErrorToJSON(error))
 		} else {
 			res.status(200).end()
 		}
@@ -111,13 +126,10 @@ module.exports.getSession = function (req, res) {
 }
 
 module.exports.call = function (req, res) {
-	var twiml = new twilio.TwimlResponse()
+	const twiml = new Twilio.twiml.VoiceResponse()
 
-	twiml.dial({ callerId: req.configuration.twilio.callerId }, function (node) {
-		node.number(req.query.phone)
-	})
+	const dial = twiml.dial({ callerId: req.configuration.twilio.callerId })
+	dial.number(req.query.phone)
 
-	res.setHeader('Content-Type', 'application/xml')
-	res.setHeader('Cache-Control', 'public, max-age=0')
 	res.send(twiml.toString())
 }

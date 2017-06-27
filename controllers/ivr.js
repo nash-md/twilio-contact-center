@@ -1,13 +1,9 @@
-const twilio = require('twilio')
+const Twilio 	= require('twilio')
 
-/* client for Twilio TaskRouter */
-const taskrouterClient = new twilio.TaskRouterClient(
-	process.env.TWILIO_ACCOUNT_SID,
-	process.env.TWILIO_AUTH_TOKEN,
-	process.env.TWILIO_WORKSPACE_SID)
+const taskrouterHelper = require('./helpers/taskrouter-helper.js')
 
 module.exports.welcome = function (req, res) {
-	let twiml = new twilio.TwimlResponse()
+	const twiml =  new Twilio.twiml.VoiceResponse()
 
 	let keywords = []
 
@@ -16,28 +12,26 @@ module.exports.welcome = function (req, res) {
 		keywords.push(req.configuration.ivr.options[i].friendlyName)
 	}
 
-	twiml.gather({
+	const gather = twiml.gather({
 		input: 'dtmf speech',
 		action: 'select-team',
 		method: 'GET',
 		numDigits: 1,
 		timeout: 4,
-		language: 'en-us',
+		language: 'en-US',
 		hints: keywords.join()
-	}, function (node) {
-		node.say(req.configuration.ivr.text)
 	})
+
+	gather.say(req.configuration.ivr.text)
 
 	twiml.say('You did not say anything or enter any digits.')
 	twiml.pause({length: 2})
 	twiml.redirect({method: 'GET'}, 'welcome')
 
-	res.setHeader('Content-Type', 'application/xml')
-	res.setHeader('Cache-Control', 'public, max-age=0')
 	res.send(twiml.toString())
 }
 
-let analyzeKeypadInput = function (digits, options) {
+var analyzeKeypadInput = function (digits, options) {
 
 	for (let i = 0; i < options.length; i++) {
 		if (parseInt(digits) === options[i].digit) {
@@ -48,7 +42,7 @@ let analyzeKeypadInput = function (digits, options) {
 	return null
 }
 
-let analyzeSpeechInput = function (text, options) {
+var analyzeSpeechInput = function (text, options) {
 
 	for (let i = 0; i < options.length; i++) {
 		if (text.toLowerCase().includes(options[i].friendlyName.toLowerCase())) {
@@ -64,7 +58,7 @@ module.exports.selectTeam = function (req, res) {
 
 	/* check if we got a dtmf input or a speech-to-text */
 	if (req.query.SpeechResult) {
-		console.log(req.query.SpeechResult)
+		console.log('SpeechResult: ' + req.query.SpeechResult)
 		team = analyzeSpeechInput(req.query.SpeechResult, req.configuration.ivr.options)
 	}
 
@@ -72,7 +66,7 @@ module.exports.selectTeam = function (req, res) {
 		team = analyzeKeypadInput(req.query.Digits, req.configuration.ivr.options)
 	}
 
-	var twiml = new twilio.TwimlResponse()
+	const twiml =  new Twilio.twiml.VoiceResponse()
 
 	/* the caller pressed a key that does not match any team */
 	if (team === null) {
@@ -81,17 +75,18 @@ module.exports.selectTeam = function (req, res) {
 		twiml.pause({length: 2})
 		twiml.redirect({ method: 'GET' }, 'welcome')
 	} else {
-		twiml.gather({
+
+		const gather = twiml.gather({
 			action: 'create-task?teamId=' + team.id + '&teamFriendlyName=' + encodeURIComponent(team.friendlyName),
 			method: 'GET',
 			numDigits: 1,
 			timeout: 5
-		}, function (node) {
-			node.say('Press a key if you want a callback from ' + team.friendlyName + ', or stay on the line')
 		})
 
+		gather.say('Press a key if you want a callback from ' + team.friendlyName + ', or stay on the line')
+
 		/* create task attributes */
-		var attributes = {
+		const attributes = {
 			text: 'Caller answered IVR with option "' + team.friendlyName + '"',
 			channel: 'phone',
 			phone: req.query.From,
@@ -101,23 +96,18 @@ module.exports.selectTeam = function (req, res) {
 			team: team.id
 		}
 
-		twiml.enqueue({ workflowSid: req.configuration.twilio.workflowSid }, function (node) {
-			node.task(JSON.stringify(attributes), {
-				priority: 1,
-				timeout: 3600
-			})
-		})
+		twiml.enqueueTask({
+			workflowSid: req.configuration.twilio.workflowSid,
+		}).task({priority: 1, timeout: 3600}, JSON.stringify(attributes));
 
 	}
 
-	res.setHeader('Content-Type', 'application/xml')
-	res.setHeader('Cache-Control', 'public, max-age=0')
 	res.send(twiml.toString())
 }
 
 module.exports.createTask = function (req, res) {
 	/* create task attributes */
-	var attributes = {
+	const attributes = {
 		text: 'Caller answered IVR with option "' + req.query.teamFriendlyName + '"',
 		channel: 'phone',
 		phone: req.query.From,
@@ -127,24 +117,16 @@ module.exports.createTask = function (req, res) {
 		team: req.query.teamId
 	}
 
-	taskrouterClient.workspace.tasks.create({
-		WorkflowSid: req.configuration.twilio.workflowSid,
-		attributes: JSON.stringify(attributes)
-	}, function (err, task) {
+	const twiml =  new Twilio.twiml.VoiceResponse()
 
-		var twiml = new twilio.TwimlResponse()
-
-		if (err) {
-			console.log(err)
-			twiml.say('An application error occured, the demo ends now')
-		}  else {
-			twiml.say('Thanks for your callback request, an agent will call you back a soon.')
+	taskrouterHelper.createTask(req.configuration.twilio.workflowSid, attributes)
+		.then(task => {
+			twiml.say('Thanks for your callback request, an agent will call you back soon.')
 			twiml.hangup()
-		}
-
-		res.setHeader('Content-Type', 'application/xml')
-		res.setHeader('Cache-Control', 'public, max-age=0')
-		res.send(twiml.toString())
-	})
+		}).catch(error => {
+			twiml.say('An application error occured, the demo ends now')
+		}).then(() => {
+			res.send(twiml.toString())
+		})
 
 }

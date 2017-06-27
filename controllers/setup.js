@@ -1,21 +1,9 @@
-const twilio 	= require('twilio')
+const Twilio 	= require('twilio')
 const async 	= require('async')
 
-/* client for Twilio Programmable Voice / SMS */
-const client = new twilio(
+const client = new Twilio(
 	process.env.TWILIO_ACCOUNT_SID,
 	process.env.TWILIO_AUTH_TOKEN)
-
-/* client for Twilio IP Chat */
-const chatClient = new twilio.IpMessagingClient(
-	process.env.TWILIO_ACCOUNT_SID,
-	process.env.TWILIO_AUTH_TOKEN)
-
-/* client for Twilio TaskRouter */
-const taskrouterClient = new twilio.TaskRouterClient(
-	process.env.TWILIO_ACCOUNT_SID,
-	process.env.TWILIO_AUTH_TOKEN,
-	process.env.TWILIO_WORKSPACE_SID)
 
 /* check if the application runs on heroku */
 var util
@@ -31,7 +19,7 @@ module.exports.get = function (req, res) {
 }
 
 module.exports.update = function (req, res) {
-	var config = req.body.configuration
+	let config = req.body.configuration
 
 	async.waterfall([
 
@@ -43,16 +31,6 @@ module.exports.update = function (req, res) {
 				} else {
 					config.twilio.applicationSid = application.sid
 
-					callback(null, config)
-				}
-			})
-
-		}, function (config, callback) {
-
-			module.exports.updateInboundPhoneNumber(req, config, function (err) {
-				if (err) {
-					callback(err)
-				} else {
 					callback(null, config)
 				}
 			})
@@ -78,10 +56,10 @@ module.exports.update = function (req, res) {
 			})
 
 		}, function (config, callback) {
-			var workflowConfiguration = { task_routing: { filters: [] }}
+			let workflowConfiguration = { task_routing: { filters: [] }}
 
-			for (var i = 0; i < config.queues.length; i++) {
-				var target = {
+			for (let i = 0; i < config.queues.length; i++) {
+				let target = {
 					targets: [{
 						queue: config.queues[i].taskQueueSid,
 						expression: config.queues[i].targetWorkerExpression
@@ -92,20 +70,15 @@ module.exports.update = function (req, res) {
 				workflowConfiguration.task_routing.filters.push(target)
 			}
 
-			var callbackUrl = req.protocol +
-				'://' +
-				req.hostname +
-				'/api/taskrouter/assignment'
-
-			var workflow = {
+			const workflow = {
 				sid: config.twilio.workflowSid,
 				friendlyName: 'Twilio Contact Center Workflow',
-				assignmentCallbackUrl: callbackUrl,
 				taskReservationTimeout: 1200,
 				configuration: JSON.stringify(workflowConfiguration)
 			}
 
 			module.exports.createOrUpdateWorkflow(workflow, function (err, workflow) {
+
 				if (err) {
 					callback(err)
 				} else {
@@ -127,7 +100,7 @@ module.exports.update = function (req, res) {
 		}
 	], function (err) {
 		if (err) {
-			res.status(500).json({code: 'TWILIO_UNKNOWN_ERROR', message: util.convertToString(err)})
+			res.status(500).send(res.convertErrorToJSON(err))
 			return
 		}
 
@@ -137,11 +110,11 @@ module.exports.update = function (req, res) {
 }
 
 module.exports.syncQueues = function (config, callback) {
-	var queues = config.queues
+	let queues = config.queues
 
 	/* create queues */
 	async.eachSeries(queues, function (queue, next) {
-		var queueForSync = {
+		let queueForSync = {
 			sid: queue.taskQueueSid,
 			friendlyName: queue.friendlyName,
 			reservationActivitySid: config.twilio.workerReservationActivitySid,
@@ -165,7 +138,7 @@ module.exports.syncQueues = function (config, callback) {
 module.exports.createOrUpdateQueue = function (queue, callback) {
 	if (queue.sid) {
 
-		taskrouterClient.workspace.taskQueues(queue.sid).update(queue, function (err) {
+		client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).taskQueues(queue.sid).update(queue, function (err) {
 			if (err) {
 				callback(err)
 			} else {
@@ -175,7 +148,7 @@ module.exports.createOrUpdateQueue = function (queue, callback) {
 
 	} else  {
 
-		taskrouterClient.workspace.taskQueues.create(queue, function (err, queueFromApi) {
+		client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).create(queue, function (err, queueFromApi) {
 			if (err) {
 				callback(err)
 			} else {
@@ -189,7 +162,7 @@ module.exports.createOrUpdateQueue = function (queue, callback) {
 module.exports.createOrUpdateWorkflow = function (workflow, callback) {
 	if (workflow.sid) {
 
-		taskrouterClient.workspace.workflows(workflow.sid).update(workflow, function (err) {
+		client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).workflows(workflow.sid).update(workflow, function (err) {
 			if (err) {
 				callback(err)
 			} else {
@@ -199,7 +172,7 @@ module.exports.createOrUpdateWorkflow = function (workflow, callback) {
 
 	} else  {
 
-		taskrouterClient.workspace.workflows.create(workflow, function (err, workflowFromApi) {
+		client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).create(workflow, function (err, workflowFromApi) {
 			if (err) {
 				callback(err)
 			} else {
@@ -212,7 +185,7 @@ module.exports.createOrUpdateWorkflow = function (workflow, callback) {
 }
 
 module.exports.createOrUpdateApplication = function (configuration, req, callback) {
-	var url =  req.protocol + '://' + req.hostname + '/api/agents/call'
+	const url =  req.protocol + '://' + req.hostname + '/api/agents/call'
 
 	if (configuration.twilio.applicationSid) {
 
@@ -245,65 +218,21 @@ module.exports.createOrUpdateApplication = function (configuration, req, callbac
 	}
 }
 
-module.exports.updateInboundPhoneNumber = function (req, config, callback) {
-	var voiceUrl 	=  req.protocol + '://' + req.hostname + '/api/ivr/welcome'
-	var smsUrl 		=  req.protocol + '://' + req.hostname + '/api/messaging-adapter/inbound'
-
-	// if no call sid was provided, skip phone number configuration
-	if (!req.body.sid) {
-		return callback(null)
-	}
-
-	client.incomingPhoneNumbers(req.body.sid).update({
-		voiceUrl: voiceUrl,
-		voiceMethod: 'GET',
-		smsUrl: smsUrl,
-		smsMethod: 'POST'
-	}, function (err) {
-		if (err) {
-			callback(err)
-		} else {
-			callback(null)
-		}
-	})
-
-}
-
 module.exports.updateMessagingService = function (req, config, callback) {
-	var url = req.protocol + '://' + req.hostname + '/api/messaging-adapter/outbound'
+	const url = req.protocol + '://' + req.hostname + '/api/messaging-adapter/outbound'
 
-	var webhooks = {}
-	webhooks['Webhooks.OnMessageSent.Url'] = url
-	webhooks['Webhooks.OnMessageSent.Method'] = 'POST'
+	let webhooks = {}
 
-	chatClient.services(process.env.TWILIO_CHAT_SERVICE_SID).update(webhooks).then(function (res) {
-		callback(null)
-	}).catch(function (err) {
-		callback(err)
-	})
+	webhooks.postWebhookUrl = url
+	webhooks.webhookFilters = 'onMessageSent'
+	webhooks.webhookMethod = 'POST'
 
-}
-
-module.exports.getWorkspace = function (req, res) {
-
-	taskrouterClient.workspace.get(function (err, workspace) {
-		if (err) {
-			res.status(500).json({stack: err.stack, message: err.message })
-		} else {
-			res.status(200).json(workspace)
-		}
-	})
-
-}
-
-module.exports.getActivities = function (req, res) {
-
-	taskrouterClient.workspace.activities.list(function (err, data) {
-		if (err) {
-			res.status(500).json({stack: err.stack, message: err.message })
-		} else {
-			res.status(200).json(data.activities)
-		}
-	})
+	client.chat.services(process.env.TWILIO_CHAT_SERVICE_SID).update(webhooks)
+		.then(function (res) {
+			callback(null)
+		}).catch(function (err) {
+			console.log(err)
+			callback(err)
+		})
 
 }
