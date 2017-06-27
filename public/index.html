@@ -2,6 +2,8 @@
 <html>
 <head>
 	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
 	<title>Twilio Contact Center</title>
 
 	<link rel="stylesheet" href="/styles/bootstrap.min.css" type="text/css" />
@@ -30,6 +32,8 @@
 
 				<div ng-if="setup == 'INVALID'" class="alert alert-dismissible alert-danger">
 					<strong>Oh snap!</strong><br />
+
+					<span ng-if="code == 'SERVER_TIMEOUT'">Timeout occured, We could not talk to the server? is it running is your connection to twilio slow?</span>
 					
 					<span ng-if="code == 'TWILIO_ACCOUNT_SID_INVALID'">The environment variable TWILIO_ACCOUNT_SID is not set or incorrect. If you are on Heroku please update your application settings.</span>
 					
@@ -45,6 +49,12 @@
 
 					<span ng-if="code == 'TWILIO_APPLICATION_NOT_ACCESSIBLE'">The application could not access the TwiML Application.</span>
 				
+					<span ng-if="code == 'TWILIO_PHONE_NUMBER_UNKNOWN'">The configured Twilio number was not found. Please run <strong>http://&lt;your_application&gt;/setup</strong></span>
+
+					<span ng-if="code == 'TWILIO_PHONE_NUMBER_VOICE_URL_INVALID'">The Twilio number Voice URL does not point to this server. Please run <strong>http://&lt;your_application&gt;/setup</strong></span>
+
+					<span ng-if="code == 'TWILIO_UNKNOWN_ERROR'">Please check the server console.</span>
+
 				</div>
 
 			</div>
