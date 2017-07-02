@@ -66,20 +66,25 @@ app.controller('SetupController', function ($scope, $http, $timeout, $q) {
 		var verifyPhoneNumber = function () {
 			var deferred = $q.defer();
 
-			$http.post('/api/setup/phone-number/validate', { callerId: $scope.configuration.twilio.callerId })
+			$http.post('/api/setup/phone-number/validate',
+				{
+					callerId: $scope.configuration.twilio.callerId,
+					smsId: $scope.configuration.twilio.smsId
+				})
 				.then(function (response) {
-					deferred.resolve(response.data);
+					deferred.resolve(response.data.numberSids);
 				}, function (error) {
 					deferred.reject(error);
 				});
 
 			return deferred.promise;
+
 		};
 
-		var setupPhonenumber = function (sid, configuration) {
+		var setupPhoneNumber = function (numberSids, configuration) {
 			var deferred = $q.defer();
 
-			$http.post('/api/setup/phone-number', { sid: sid }).then(function (response) {
+			$http.post('/api/setup/phone-number', { numberSids: numberSids }).then(function (response) {
 				deferred.resolve();
 			}, function (error) {
 				deferred.reject(error);
@@ -88,10 +93,10 @@ app.controller('SetupController', function ($scope, $http, $timeout, $q) {
 			return deferred.promise;
 		};
 
-		var saveConfiguration = function (sid, configuration) {
+		var saveConfiguration = function (numberSids, configuration) {
 			var deferred = $q.defer();
 
-			$http.post('/api/setup', { sid: sid, configuration: configuration }).then(function (response) {
+			$http.post('/api/setup', { numberSids: numberSids, configuration: configuration }).then(function (response) {
 				deferred.resolve();
 			}, function (error) {
 				deferred.reject(error);
@@ -101,11 +106,11 @@ app.controller('SetupController', function ($scope, $http, $timeout, $q) {
 		};
 
 		/* verify phone number and save configuration */
-		verifyPhoneNumber().then(function (phoneNumber) {
+		verifyPhoneNumber().then(function (numberSids) {
 
-			return setupPhonenumber(phoneNumber.sid).then(function () {
+			return setupPhoneNumber(numberSids).then(function () {
 
-				return saveConfiguration(phoneNumber.sid, $scope.configuration).then(function () {
+				return saveConfiguration(numberSids, $scope.configuration).then(function () {
 					$scope.UI.isSaving = false;
 					$scope.phoneNumber = { isValid: true, message: null, code: null};
 				});

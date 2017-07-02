@@ -1,5 +1,17 @@
 'use-strict'
 
+/**
+ * Load Twilio configuration from .env config file - the following environment
+ * variables should be set:
+ * process.env.TWILIO_ACCOUNT_SID
+ * process.env.TWILIO_AUTH_TOKEN
+ * process.env.TWILIO_WORKSPACE_SID
+ * process.env.TWILIO_CHAT_SERVICE_SID
+ * process.env.TWILIO_API_KEY_SID
+ * process.env.TWILIO_API_KEY_SECRET
+ */
+require('dotenv').load()
+
 var express       = require('express')
 var bodyParser    = require('body-parser')
 var sessions      = require('express-session')
@@ -147,6 +159,15 @@ router.route('/messaging-adapter/outbound').post(messagingAdapter.outbound)
 
 app.use('/api', router)
 app.use('/', express.static(__dirname + '/public'))
+app.use('/scripts/bootstrap.min.js', express.static(__dirname + '/node_modules/bootstrap/dist/js/bootstrap.min.js'))
+app.use('/styles/bootstrap.min.css', express.static(__dirname + '/node_modules/bootstrap/dist/css/bootstrap.min.css'))
+app.use('/scripts/angular.min.js', express.static(__dirname + '/node_modules/angular/angular.min.js'))
+app.use('/scripts/angular-messages.min.js', express.static(__dirname + '/node_modules/angular-messages/angular-messages.min.js'))
+app.use('/scripts/checklist-model.js', express.static(__dirname + '/node_modules/checklist-model/checklist-model.js'))
+app.use('/scripts/angular-scrollglue.js', express.static(__dirname + '/node_modules/angularjs-scroll-glue/src/scrollglue.js'))
+app.use('/scripts/angular-translate.min.js', express.static(__dirname + '/node_modules/angular-translate/dist/angular-translate.min.js'))
+app.use('/scripts/angular-translate-loader-static-files.min.js', express.static(__dirname + '/node_modules/angular-translate/dist/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js'))
+app.use('/scripts/moment.min.js', express.static(__dirname + '/node_modules/moment/min/moment.min.js'))
 
 app.listen(app.get('port'), function () {
 	console.log('magic happens on port', app.get('port'))

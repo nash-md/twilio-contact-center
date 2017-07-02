@@ -148,7 +148,7 @@ module.exports.createOrUpdateQueue = function (queue, callback) {
 
 	} else  {
 
-		client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).create(queue, function (err, queueFromApi) {
+		client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).taskQueues.create(queue, function (err, queueFromApi) {
 			if (err) {
 				callback(err)
 			} else {
@@ -172,7 +172,7 @@ module.exports.createOrUpdateWorkflow = function (workflow, callback) {
 
 	} else  {
 
-		client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).create(workflow, function (err, workflowFromApi) {
+		client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).workflows.create(workflow, function (err, workflowFromApi) {
 			if (err) {
 				callback(err)
 			} else {
@@ -185,7 +185,8 @@ module.exports.createOrUpdateWorkflow = function (workflow, callback) {
 }
 
 module.exports.createOrUpdateApplication = function (configuration, req, callback) {
-	const url =  req.protocol + '://' + req.hostname + '/api/agents/call'
+	const url =  (process.env.PROTOCOL || req.protocol) + '://'
+		+ (process.env.DOCKER_HOST_DOMAIN || req.hostname) + '/api/agents/call'
 
 	if (configuration.twilio.applicationSid) {
 
@@ -219,7 +220,8 @@ module.exports.createOrUpdateApplication = function (configuration, req, callbac
 }
 
 module.exports.updateMessagingService = function (req, config, callback) {
-	const url = req.protocol + '://' + req.hostname + '/api/messaging-adapter/outbound'
+	const url = (process.env.PROTOCOL || req.protocol) + '://'
+		+ (process.env.DOCKER_HOST_DOMAIN || req.hostname) + '/api/messaging-adapter/outbound'
 
 	let webhooks = {}
 
