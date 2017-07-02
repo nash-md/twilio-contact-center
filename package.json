@@ -24,11 +24,19 @@
     "contact centre"
   ],
   "dependencies": {
+    "angular": "^1.6.4",
+    "angular-messages": "^1.6.4",
+    "angular-translate": "^2.15.1",
+    "angularjs-scroll-glue": "^2.2.0",
     "async": "^1.5.2",
     "body-parser": "^1.15.1",
+    "bootstrap": "^3.3.7",
+    "checklist-model": "^0.11.0",
     "compression": "^1.6.2",
+    "dotenv": "^4.0.0",
     "express": "^4.13.4",
     "express-session": "^1.13.0",
+    "moment": "^2.18.1",
     "pg": "^4.5.6",
     "twilio": "^3.0.x"
   },
