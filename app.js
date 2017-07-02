@@ -1,5 +1,17 @@
 'use-strict'
 
+/**
+ * Load Twilio configuration from .env config file - the following environment
+ * variables should be set:
+ * process.env.TWILIO_ACCOUNT_SID
+ * process.env.TWILIO_AUTH_TOKEN
+ * process.env.TWILIO_WORKSPACE_SID
+ * process.env.TWILIO_CHAT_SERVICE_SID
+ * process.env.TWILIO_API_KEY_SID
+ * process.env.TWILIO_API_KEY_SECRET
+ */
+require('dotenv').load()
+
 var express       = require('express')
 var bodyParser    = require('body-parser')
 var sessions      = require('express-session')

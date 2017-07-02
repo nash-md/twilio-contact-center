@@ -6,8 +6,10 @@ const client = new Twilio(
 
 module.exports.update = function (req, res) {
 	console.log('configure number: ' + req.body.sid)
-	const voiceUrl 	=  req.protocol + '://' + req.hostname + '/api/ivr/welcome'
-	const smsUrl 		=  req.protocol + '://' + req.hostname + '/api/messaging-adapter/inbound'
+	const voiceUrl = (process.env.PROTOCOL || req.protocol) + '://'
+		+ (process.env.DOCKER_HOST_DOMAIN || req.hostname) + '/api/ivr/welcome'
+	const smsUrl = (process.env.PROTOCOL || req.protocol) + '://'
+		+ (process.env.DOCKER_HOST_DOMAIN || req.hostname) + '/api/messaging-adapter/inbound'
 
 	client.incomingPhoneNumbers(req.body.sid).update({
 		voiceUrl: voiceUrl,

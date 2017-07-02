@@ -25,3 +25,9 @@ pids
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# IDE files
+.idea/
+
+# generate files
+package-lock.json
