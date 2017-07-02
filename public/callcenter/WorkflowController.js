@@ -1,4 +1,4 @@
-var app = angular.module('callcenterApplication', ['ngMessages', 'glue.directives']);
+var app = angular.module('callcenterApplication', ['ngMessages', 'luegg.directives']);
 
 app.controller('WorkflowController', function ($scope, $rootScope, $http, $interval, $log, $window) {
 

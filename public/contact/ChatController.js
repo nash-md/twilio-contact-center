@@ -1,4 +1,4 @@
-var app = angular.module('supportApplication', ['ngMessages', 'glue.directives']);
+var app = angular.module('supportApplication', ['ngMessages', 'luegg.directives']);
 
 app.controller('ChatController', function ($scope, $http, $timeout, $log) {
 
