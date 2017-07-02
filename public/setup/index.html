@@ -73,6 +73,14 @@
 
       <br />
 
+      <h4>SMS Number:</h4>
+
+      <span class="help-block">This SMS number provides a bridge from SMS to Twiio IP Chat and vice versa.</span>
+
+      <input style="width:350px" ng-model="configuration.twilio.smsId" data-ng-trim="false" name="smsId" type="text" class="form-control" placeholder="+..." required phone-number>
+
+      <br />
+
       <h4>Facebook Page ID (optional):</h4>
 
       <span class="help-block">Please enable Facebook Messaging in your Twilio account and forward messages to <span style="white-space: nowrap; font-weight:bold">http://&lt;your_application&gt;/api/messaging-adapter/inbound</span> (request method POST)</span>
