@@ -37,7 +37,6 @@ function AdministrationController ($scope, $http, $log, $q) {
 			$scope.workers = [];
 
 			response.data.forEach(function (worker) {
-				worker.attributes = JSON.parse(worker.attributes);
 				$scope.workers.push(worker);
 			});
 
