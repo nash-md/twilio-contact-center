@@ -148,7 +148,7 @@ module.exports.createOrUpdateQueue = function (queue, callback) {
 
 	} else  {
 
-		client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).create(queue, function (err, queueFromApi) {
+		client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).taskQueues.create(queue, function (err, queueFromApi) {
 			if (err) {
 				callback(err)
 			} else {
@@ -172,7 +172,7 @@ module.exports.createOrUpdateWorkflow = function (workflow, callback) {
 
 	} else  {
 
-		client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).create(workflow, function (err, workflowFromApi) {
+		client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).workflows.create(workflow, function (err, workflowFromApi) {
 			if (err) {
 				callback(err)
 			} else {
