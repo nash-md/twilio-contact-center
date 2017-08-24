@@ -39,8 +39,8 @@ Customer fills out video call request form -> Form submitted to server -> Task o
 
 ![Customer Journey Video](contact_center_flow_video.png)
 
-## Operational Analytics/Dashboard (future):
-Real-time display of operational contact center metrics (for example: average call handle time, agent productivity, call metrics, TaskRouter stats, and more etc.) 
+## Real-time TaskRouter Events Dashboard:
+Real-time display of operational contact center metrics (for example: average call handle time, agent productivity, call metrics, TaskRouter stats, and more etc.).  Please check out the following repo: https://github.com/ameerbadri/twilio-taskrouter-realtime-dashboard 
 
 ## Pre-requisites:
 * Basic of Twilio platform - [Twilio \<Skills\>](https://twilio.radicalskills.com/), an elearning platform that provides a guided path for getting started with Twilio.
