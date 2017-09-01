@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="/styles/default.css" type="text/css" />
   <link rel="stylesheet" href="/styles/bootstrap.css" type="text/css" />
   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"
-      type="text/css" rel="stylesheet" />
+	  type="text/css" rel="stylesheet" />
 
 </head>
 
@@ -20,159 +20,165 @@
 
   <section class="workflow-controller" ng-cloak>
 
-    <div class="panel panel-default">
+	<div class="panel panel-default">
 
-      <div class="panel-body">
+	  <div class="panel-body">
 
-        <div class="logout"><span ng-click="logout()">logout</span></div> 
-        <h3 class="name" class="page-header">{{worker.friendlyName}}&#39;s Call Agent Interface</h3>
+		<div class="logout"><span ng-click="logout()">logout</span></div>
+		<h3 class="name" class="page-header">{{worker.friendlyName}}&#39;s Call Agent Interface</h3>
 
-        <div>Status:&nbsp;<span style="font-size:1em" ng-class="{'label-success': worker.activityName == 'Idle', 'label-danger': worker.activityName == 'Busy', 'label-default': worker.activityName == 'Offline', 'label-warning': worker.activityName == 'Reserved'}" class="label">{{worker.activityName}}</span></div>
+		<div>Status:&nbsp;<span style="font-size:1em" ng-class="{'label-success': worker.activityName == 'Idle', 'label-danger': worker.activityName == 'Busy', 'label-default': worker.activityName == 'Offline', 'label-warning': worker.activityName == 'Reserved'}" class="label">{{worker.activityName}}</span></div>
 
-      <div class="reservations">
+	  <div class="reservations">
 
-      <!-- reservation is waiting for acceptance -->
-      <div class="panel panel-default agent-reservation" ng-show="reservation != null">
-        <div class="panel-heading">
-          <h3 class="panel-title">Reservation</h3>
-        </div>
-        <div class="panel-body">
+	  <!-- reservation is waiting for acceptance -->
+	  <div class="panel panel-default agent-reservation" ng-show="reservation != null">
+		<div class="panel-heading">
+		  <h3 class="panel-title">Reservation</h3>
+		</div>
+		<div class="panel-body">
 
-          <table>
-          <tr>
-            <td>
-             <div class="title">{{reservation.task.attributes.title}} from {{reservation.task.attributes.name}}</div>
-             <div class="timer" ng-class='{"invisible": !reservationCounter}'>created {{ reservationCounter | TaskWaitingTime }} ago</div>
-             </td>
-            <td class="accept-panel"><button ng-click="acceptReservation(reservation)">Accept</button></td>
-          </tr>
-          </table>
+		  <table>
+		  <tr>
+			<td>
+			 <div class="title">{{reservation.task.attributes.title}} from {{reservation.task.attributes.name}}</div>
+			 <div class="timer" ng-class='{"invisible": !reservationCounter}'>created {{ reservationCounter | TaskWaitingTime }} ago</div>
+			 </td>
+			<td class="accept-panel"><button ng-click="acceptReservation(reservation)">Accept</button></td>
+		  </tr>
+		  </table>
 
-        </div>
-      </div>
-      <!-- reservation is waiting for acceptance -->
+		</div>
+	  </div>
+	  <!-- reservation is waiting for acceptance -->
 
-      <!-- agent is waiting for new reservation -->
-      <div class="panel panel-default agent-waiting" ng-show="reservation == null && task == null">
-        <div class="panel-heading">
-          <h4 class="panel-title">Waiting for new task ...</h4>
-        </div>
-      </div>
-      <!-- agent is waiting for new reservation -->
+	  <!-- agent is waiting for new reservation -->
+	  <div class="panel panel-default agent-waiting" ng-show="reservation == null && task == null">
+		<div class="panel-heading">
+		  <h4 class="panel-title">Waiting for new task ...</h4>
+		</div>
+	  </div>
+	  <!-- agent is waiting for new reservation -->
+	  <!--<button ng-hide="verified" class="btn btn-primary onetouch-user" ng-click="openModal()">Open Modal</button>-->
 
-      <!-- agent is working on a task -->
-      <div class="panel panel-default agent-task" ng-show="task != null"> 
+	  <!-- agent is working on a task -->
+	  <div class="panel panel-default agent-task" ng-show="task != null">
 
-        <div class="panel-heading">
+		<div class="panel-heading">
+		  <button ng-hide="verified" class="btn btn-primary authy-user" ng-click="openModal('lg')">Verify User</button>
 
-          <button ng-show="task != null"  class="btn btn-primary complete-task" ng-click="complete()">Complete Task</button>
+		  <button ng-show="verified" class="btn btn-success verify-user">User Verified</button>
+		  <button ng-show="verified && !approved && !denied && newAuthyId"
+				  class="btn btn-primary verify-user" ng-click="startOneTouch()">OneTouch Request</button>
+          <button ng-show="verified && approved" class="btn btn-success verify-user">Request APPROVED</button>
+          <button ng-show="verified && denied" class="btn btn-danger verify-user">Request DENIED</button>
+		  <button ng-show="task != null"  class="btn btn-primary complete-task" ng-click="complete()" style="float: right">Complete Task</button>
+		</div>
 
-        </div>
+		<div class="panel-body">
+			<div class="description">{{task.attributes.title}} from
+			  <span ng-show="!task.attributes.nameIsPhoneNumber">{{task.attributes.name}}</span>
 
-        <div class="panel-body">
-            <div class="description">{{task.attributes.title}} from 
-              <span ng-show="!task.attributes.nameIsPhoneNumber">{{task.attributes.name}}</span>
-              
-              <a href="#" ng-click="callPhoneNumber('{{task.attributes.name}}')"" ng-show="task.attributes.nameIsPhoneNumber">{{task.attributes.name}}</a>
-            </div>
-            {{task.attributes.text}}
-        </div>
+			  <a href="#" ng-click="callPhoneNumber('{{task.attributes.name}}')" ng-show="task.attributes.nameIsPhoneNumber">{{task.attributes.name}}</a>
+			</div>
+			{{task.attributes.text}}
+		</div>
 
-        <!-- video -->
-        <section class="agent-video-canvas" id="remote-media" ng-controller="VideoController" ng-cloak>
-        </section>
-        <!-- video -->
+		<!-- video -->
+		<section class="agent-video-canvas" id="remote-media" ng-controller="VideoController" ng-cloak>
+		</section>
+		<!-- video -->
 
-        <!-- chat -->
-        <section ng-show="session.channelSid" class="chat-controller" ng-controller="ChatController" ng-cloak>
-          
-           <div class="load-indicator" ng-show="session.isLoading">
-              <i class="fa fa-refresh fa-spin"></i>
-           </div>
+		<!-- chat -->
+		<section ng-show="session.channelSid" class="chat-controller" ng-controller="ChatController" ng-cloak>
 
-            <div ng-show="session.isInitialized">
+		   <div class="load-indicator" ng-show="session.isLoading">
+			  <i class="fa fa-refresh fa-spin"></i>
+		   </div>
 
-            <div class="chat-canvas" scroll-glue>
+			<div ng-show="session.isInitialized">
 
-              <ul class="message-list" >
+			<div class="chat-canvas" scroll-glue>
 
-                <li ng-class="{'me': message.author == session.identity}" class="message" ng-repeat="message in messages">
+			  <ul class="message-list" >
 
-                  <div>
+				<li ng-class="{'me': message.author == session.identity}" class="message" ng-repeat="message in messages">
 
-                    <div class="body">
-                      <div class="needle"></div>
-                      <p dynamic="message.body">{{message.body}}</p>
-                    </div>
-                    <div class="footer">
-                      <div class="author">{{message.author}}</div>
-                      <div class="time"><i class="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{{message.timestamp | time}}</div>
-                    </div>
+				  <div>
 
-                  </div>
+					<div class="body">
+					  <div class="needle"></div>
+					  <p dynamic="message.body">{{message.body}}</p>
+					</div>
+					<div class="footer">
+					  <div class="author">{{message.author}}</div>
+					  <div class="time"><i class="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{{message.timestamp | time}}</div>
+					</div>
 
-                </li>
+				  </div>
 
-              </ul>
-              <div id="bottom"></div>
+				</li>
 
-            </div>
+			  </ul>
+			  <div id="bottom"></div>
 
-            <div class="typing-notification"><span>{{typingNotification}}</span></div>
+			</div>
 
-            <form class="chat-message-form form-horizontal" name="chatMessageForm">
-              <div class="form-group">
-                <div class="col-xs-8">
-                  <input ng-model="message" ng-model-options="{ debounce: 250 }" ng-required="true" autocomplete="off" ng-focus="focused()" name="text" type="text" class="form-control" placeholder="say something">
-                </div>
-                <div class="col-xs-4">
-                  <button ng-disabled="chatMessageForm.$invalid || chatMessageForm.$pristine" class="btn btn-primary" ng-click="send()">Send</button>
-                </div>
-              </div>
-            </form>
+			<div class="typing-notification"><span>{{typingNotification}}</span></div>
 
-          </div>  
+			<form class="chat-message-form form-horizontal" name="chatMessageForm">
+			  <div class="form-group">
+				<div class="col-xs-8">
+				  <input ng-model="message" ng-model-options="{ debounce: 250 }" ng-required="true" autocomplete="off" ng-focus="focused()" name="text" type="text" class="form-control" placeholder="say something">
+				</div>
+				<div class="col-xs-4">
+				  <button ng-disabled="chatMessageForm.$invalid || chatMessageForm.$pristine" class="btn btn-primary" ng-click="send()">Send</button>
+				</div>
+			  </div>
+			</form>
 
-        </section>
-        <!-- chat -->
+		  </div>
 
-      </div>
-      <!-- agent is working on a task -->
+		</section>
+		<!-- chat -->
 
-    </div>
-     
-    <section ng-controller="PhoneController" ng-cloak class="phone-controller" >
+	  </div>
+	  <!-- agent is working on a task -->
 
-      <input style="font-size:2em; padding-left:10px;" ng-show="isActive == false" ng-model="phoneNumber" type="text" name="phoneNumber" placeholder="+.." />
-      <div class="phone-number" style="font-size:2em; padding-left:10px" ng-if="isActive == true" />{{phoneNumber}}</div>
+	</div>
 
-      <div class="keypad">
+	<section ng-controller="PhoneController" ng-cloak class="phone-controller" >
 
-        <div ng-click="addDigit('1')" class="digit">1</div>
-        <div ng-click="addDigit('2')" class="digit">2</div>
-        <div ng-click="addDigit('3')" class="digit">3</div>
+	  <input style="font-size:2em; padding-left:10px;" ng-show="isActive == false" ng-model="phoneNumber" type="text" name="phoneNumber" placeholder="+.." />
+	  <div class="phone-number" style="font-size:2em; padding-left:10px" ng-if="isActive == true">{{phoneNumber}}</div>
 
-        <div ng-click="addDigit('4')" class="digit">4</div>
-        <div ng-click="addDigit('5')" class="digit">5</div>
-        <div ng-click="addDigit('6')" class="digit">6</div>
+	  <div class="keypad">
 
-        <div ng-click="addDigit('7')" class="digit">7</div>
-        <div ng-click="addDigit('8')" class="digit">8</div>
-        <div ng-click="addDigit('9')" class="digit">9</div>
+		<div ng-click="addDigit('1')" class="digit">1</div>
+		<div ng-click="addDigit('2')" class="digit">2</div>
+		<div ng-click="addDigit('3')" class="digit">3</div>
 
-        <div ng-click="addDigit('*')"class="digit">*</div>
-        <div ng-click="addDigit('0')" class="digit">0</div>
-        <div ng-click="addDigit('#')" class="digit">#</div>
+		<div ng-click="addDigit('4')" class="digit">4</div>
+		<div ng-click="addDigit('5')" class="digit">5</div>
+		<div ng-click="addDigit('6')" class="digit">6</div>
 
-      </div>
+		<div ng-click="addDigit('7')" class="digit">7</div>
+		<div ng-click="addDigit('8')" class="digit">8</div>
+		<div ng-click="addDigit('9')" class="digit">9</div>
 
-      <button class="button-call" ng-if="isActive == false" ng-click="call(phoneNumber)">CALL</button>
-      <button class="button-hangup" ng-if="isActive == true" ng-click="hangup()">HANGUP</button>
-      <span class="status">Status: {{status}}</span>
-      <span ng-if="error != null" class="status">Error: {{error}}</span>
-    </section>
+		<div ng-click="addDigit('*')"class="digit">*</div>
+		<div ng-click="addDigit('0')" class="digit">0</div>
+		<div ng-click="addDigit('#')" class="digit">#</div>
 
-    </div>
+	  </div>
+
+	  <button class="button-call" ng-if="isActive == false" ng-click="call(phoneNumber)">CALL</button>
+	  <button class="button-hangup" ng-if="isActive == true" ng-click="hangup()">HANGUP</button>
+	  <span class="status">Status: {{status}}</span>
+	  <span ng-if="error != null" class="status">Error: {{error}}</span>
+	</section>
+
+	</div>
 
    </div>
 
@@ -186,10 +192,12 @@
   <script src="https://media.twiliocdn.com/sdk/rtc/js/ip-messaging/v0.10/twilio-ip-messaging.js"></script>
   <script src="//media.twiliocdn.com/sdk/js/video/v1/twilio-video.min.js"></script>
   <script src="/scripts/angular.min.js"></script>
+  <script src="/scripts/ui-bootstrap-tpls-1.3.3.min.js"></script>
   <script src="/scripts/angular-messages.min.js"></script>
   <script src="/scripts/angular-scrollglue.js"></script>
   <script src="/scripts/moment.min.js"></script>
   <script src="WorkflowController.js"></script>
+  <script src="AuthyController.js"></script>
   <script src="PhoneController.js"></script>
   <script src="ChatController.js"></script>
   <script src="VideoController.js"></script>
