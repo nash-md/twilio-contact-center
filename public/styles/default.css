@@ -144,6 +144,11 @@
 	float: right;
 }
 
+.workflow-controller .reservations .agent-task button.authy-user
+{
+	float: left;
+}
+
 .phone-controller 
 {
 	float:right;

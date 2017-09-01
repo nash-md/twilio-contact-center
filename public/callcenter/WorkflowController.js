@@ -1,6 +1,7 @@
-var app = angular.module('callcenterApplication', ['ngMessages', 'glue.directives']);
+var app = angular.module('callcenterApplication', ['ngMessages', 'glue.directives', 'ui.bootstrap']);
 
-app.controller('WorkflowController', function ($scope, $rootScope, $http, $interval, $log, $window) {
+
+app.controller('WorkflowController', function ($scope, $rootScope, $http, $interval, $log, $window, $uibModal) {
 
 	/* misc configuration data, for instance callerId for outbound calls */
 	$scope.configuration;
@@ -15,11 +16,18 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 	/* TaskRouter Worker */
 	$scope.workerJS;
 
+	/* User verified */
+	$scope.verified = false;
+
+	/* UUID for requested OneTouch */
+	$scope.uuid;
+	$scope.animationsEnabled = true;
+
 	/* UI */
-	$scope.UI = { warning: { browser: null, worker: null}};
+	$scope.UI = {warning: {browser: null, worker: null}};
 
 	if ($window.location.protocol !== 'https:') {
-		let message =  `Depending on your browser and/or settings capturing audio and video 
+		let message = `Depending on your browser and/or settings capturing audio and video 
 										requires a secure (HTTPS) page. The demo may not work.`;
 		$scope.UI.warning.browser = message;
 	}
@@ -37,13 +45,16 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 				$scope.initWorker(response.data.tokens.worker);
 
 				/* initialize Twilio client with token received from the backend */
-				$scope.$broadcast('InitializePhone', { token: response.data.tokens.phone});
+				$scope.$broadcast('InitializePhone', {token: response.data.tokens.phone});
 
 				/* initialize Twilio Chat client with token received from the backend */
-				$scope.$broadcast('InitializeChat', { token: response.data.tokens.chatAndVideo, identity: response.data.worker.friendlyName});
+				$scope.$broadcast('InitializeChat', {
+					token: response.data.tokens.chatAndVideo,
+					identity: response.data.worker.friendlyName
+				});
 
 				// initialize Twilio Video client
-				$scope.$broadcast('InitializeVideo', { token: response.data.tokens.chatAndVideo });
+				$scope.$broadcast('InitializeVideo', {token: response.data.tokens.chatAndVideo});
 
 			}, function onError (response) {
 				/* session is not valid anymore */
@@ -96,6 +107,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 
 			if (pattern.test($scope.task.attributes.name) === true) {
 				$scope.task.attributes.nameIsPhoneNumber = true;
+				$scope.orig_pn = $scope.task.attributes.name;
 			}
 
 			$scope.task.completed = false;
@@ -193,7 +205,6 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 		if (reservation.task.attributes.channel === 'video') {
 
 			reservation.accept(
-
 				function (err, reservation) {
 
 					if (err) {
@@ -201,7 +212,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 						return;
 					}
 
-					$scope.$broadcast('ActivateVideo', { roomName: reservation.task.attributes.roomName });
+					$scope.$broadcast('ActivateVideo', {roomName: reservation.task.attributes.roomName});
 
 				});
 
@@ -210,7 +221,6 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 		if (reservation.task.attributes.channel === 'chat') {
 
 			reservation.accept(
-
 				function (err, reservation) {
 
 					if (err) {
@@ -218,7 +228,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 						return;
 					}
 
-					$scope.$broadcast('ActivateChat', { channelSid: reservation.task.attributes.channelSid });
+					$scope.$broadcast('ActivateChat', {channelSid: reservation.task.attributes.channelSid});
 
 				});
 
@@ -235,7 +245,6 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 		if (reservation.task.attributes.channel === 'phone' && reservation.task.attributes.type === 'callback_request') {
 
 			reservation.accept(
-
 				function (err, reservation) {
 
 					if (err) {
@@ -243,7 +252,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 						return;
 					}
 
-					$scope.$broadcast('CallPhoneNumber', { phoneNumber: reservation.task.attributes.phone });
+					$scope.$broadcast('CallPhoneNumber', {phoneNumber: reservation.task.attributes.phone});
 
 				});
 		}
@@ -252,14 +261,14 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 	$scope.complete = function (reservation) {
 
 		switch ($scope.task.attributes.channel) {
-		case 'video':
-			$scope.$broadcast('DestroyVideo');
-			break;
-		case 'chat':
-			$scope.$broadcast('DestroyChat');
-			break;
-		default:
-		// do nothing
+			case 'video':
+				$scope.$broadcast('DestroyVideo');
+				break;
+			case 'chat':
+				$scope.$broadcast('DestroyChat');
+				break;
+			default:
+			// do nothing
 		}
 
 		$scope.workerJS.update('ActivitySid', $scope.configuration.twilio.workerIdleActivitySid, function (err, worker) {
@@ -278,7 +287,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 	};
 
 	$scope.callPhoneNumber = function (phoneNumber) {
-		$rootScope.$broadcast('CallPhoneNumber', { phoneNumber: phoneNumber });
+		$rootScope.$broadcast('CallPhoneNumber', {phoneNumber: phoneNumber});
 	};
 
 	$scope.logout = function () {
@@ -312,4 +321,33 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 
 	};
 
+	$scope.openModal = function (size) {
+
+		const modalInstance = $uibModal.open({
+			animation: $scope.animationsEnabled,
+			templateUrl: '/callcenter/authymodal.html',
+			controller: 'AuthyModalController',
+			size: size,
+			resolve: {
+				verified: function () {
+					return $scope.verified;
+				},
+				orig_pn: function () {
+					return $scope.orig_pn;
+				}
+			}
+		});
+
+		modalInstance.result.then(function (verified) {
+			$scope.verified = verified;
+		}, function () {
+			$log.info('Modal dismissed at: ' + new Date());
+		});
+	};
+
+	$scope.toggleAnimation = function () {
+		$scope.animationsEnabled = !$scope.animationsEnabled;
+	};
+
 });
+

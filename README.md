@@ -96,6 +96,9 @@ For video calls you need to set Twilio API Keys:
 - `TWILIO_API_KEY_SID`
 - `TWILIO_API_KEY_SECRET`
 
+For user verification you will need to create an [Authy App in the console](https://www.twilio.com/user/account/taskrouter/workspaces) and set
+- `TWILIO_AUTHY_KEY`
+
 Start the application
 
 `node app.js`
