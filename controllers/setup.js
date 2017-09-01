@@ -27,6 +27,7 @@ module.exports.update = function (req, res) {
 
 			module.exports.createOrUpdateApplication(config, req, function (err, application) {
 				if (err) {
+					console.log('Setup Failure: Error setting up Twilio client application.')
 					callback(err)
 				} else {
 					config.twilio.applicationSid = application.sid
@@ -39,6 +40,7 @@ module.exports.update = function (req, res) {
 
 			module.exports.updateMessagingService(req, config, function (err) {
 				if (err) {
+					console.log('Setup Failure: Error updating messaging service.')
 					callback(err)
 				} else {
 					callback(null, config)
@@ -49,6 +51,7 @@ module.exports.update = function (req, res) {
 
 			module.exports.syncQueues(config, function (err) {
 				if (err) {
+					console.log('Setup Failure: Error establishing queues.')
 					callback(err)
 				} else {
 					callback(null, config)
@@ -80,6 +83,7 @@ module.exports.update = function (req, res) {
 			module.exports.createOrUpdateWorkflow(workflow, function (err, workflow) {
 
 				if (err) {
+					console.log('Setup Failure: Error setting up workflows.')
 					callback(err)
 				} else {
 					config.twilio.workflowSid = workflow.sid
@@ -124,6 +128,7 @@ module.exports.syncQueues = function (config, callback) {
 
 		module.exports.createOrUpdateQueue(queueForSync, function (err, queueFromApi) {
 			if (err) {
+				console.log('Queue Setup Failure: Problem setting up specific queue.')
 				callback(err)
 			} else {
 				queue.taskQueueSid = queueFromApi.sid
