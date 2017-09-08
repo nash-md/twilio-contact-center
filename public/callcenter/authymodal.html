@@ -4,28 +4,30 @@
 </div>
 <div class="modal-body">
 	<button class="btn btn-primary authy-user"
+			ng-show="authyId"
 			ng-click="requestVerify(); sms=true; authy=false; register = false;">
 		SMS Phone Verification
 	</button>
-	<button class="btn btn-primary authy-user" ng-click="authy=true; sms=false; register=false;">
+	<button class="btn btn-primary authy-user"
+			ng-show="authyId"
+			ng-click="authy=true; sms=false; register=false;">
 		OneTouch or SoftToken Verification
 	</button>
-	<button class="btn btn-warning complete-task" ng-click="authy=false; sms=false; register=true;">
+	<button class="btn btn-warning complete-task"
+			ng-show="!authyId"
+			ng-click="authy=false; sms=false; register=true;">
 		Register Authy User
 	</button>
 
 	<div ng-show="authy">
 		<h3>OneTouch or SoftToken Verification</h3>
-		<p ng-hide="authyId">
-			You need to make sure the user is registered with Authy first.
-		</p>
 		<p>Authy ID: {{authyId}}</p>
-		<p ng-show="authyId">
+		<p>
 			<button class="btn btn-primary authy-user" ng-click="startOneTouch()">Send
 				OneTouch
 			</button>
 		</p>
-		<p ng-show="authyId">
+		<p>
 			<input ng-model="token" autocomplete="off" ng-focus="focused()" name="text" type="text"
 				   class="form-control" placeholder="123456">
 			<button class="btn btn-primary authy-user" ng-click="softTokenVerify()">

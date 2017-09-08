@@ -66,7 +66,7 @@ module.exports.startOneTouch = function (req, res) {
 			res: 'low',
 			url: 'https://example.com/logos/low.png'
 		}],
-		message: 'Please verify your identity for the Twilio Contact Center',
+		message: req.body.message,
 	}, {
 		ttl: 120
 	}).then(function (response) {

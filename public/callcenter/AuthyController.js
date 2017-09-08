@@ -20,9 +20,17 @@ app.controller('AuthyModalController', function ($scope, $uibModalInstance, $int
 	/* original E164 number */
 	$scope.orig_pn = orig_pn;
 
-	$scope.ok = function () {
-		$uibModalInstance.close($scope.selected.item);
-	};
+	$scope.ok = verifiedDone;
+
+	function verifiedDone () {
+
+		var info = {
+			id: $scope.authyId,
+			verified: $scope.verified
+		};
+
+		$uibModalInstance.close(info);
+	}
 
 	$scope.cancel = function () {
 		$uibModalInstance.dismiss('cancel');
@@ -99,7 +107,8 @@ app.controller('AuthyModalController', function ($scope, $uibModalInstance, $int
 	$scope.startOneTouch = function () {
 		$scope.verified = false;
 		$http.post('/api/onetouch/start', {
-			'authyId': $scope.authyId
+			'authyId': $scope.authyId,
+			'message': 'Please verify your identity for the Twilio Contact Center'
 		}).then(function onSuccess (response) {
 			$scope.pollingID = $interval(checkOneTouchStatus, 4000, 30);
 			$scope.uuid = response.data.uuid;
@@ -119,16 +128,6 @@ app.controller('AuthyModalController', function ($scope, $uibModalInstance, $int
 				$log.error(error);
 			});
 	};
-
-	$scope.ok = verifiedDone;
-
-	$scope.cancel = function () {
-		$uibModalInstance.dismiss('cancel');
-	};
-
-	function verifiedDone () {
-		$uibModalInstance.close($scope.verified);
-	}
 
 	/* Take the caller phone number and do a lookup to get the country code and nationally formatted number */
 	executeLookup();

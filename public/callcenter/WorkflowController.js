@@ -1,7 +1,7 @@
 var app = angular.module('callcenterApplication', ['ngMessages', 'glue.directives', 'ui.bootstrap']);
 
 
-app.controller('WorkflowController', function ($scope, $rootScope, $http, $interval, $log, $window, $uibModal) {
+app.controller('WorkflowController', function ($scope, $rootScope, $http, $interval, $log, $window, $uibModal, $timeout) {
 
 	/* misc configuration data, for instance callerId for outbound calls */
 	$scope.configuration;
@@ -19,9 +19,18 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 	/* User verified */
 	$scope.verified = false;
 
+	/* User Action Approval */
+	$scope.approved = false;
+	$scope.denied = false;
+
 	/* UUID for requested OneTouch */
 	$scope.uuid;
 	$scope.animationsEnabled = true;
+
+	$scope.newAuthyId;
+
+	/* OneTouch polling ID */
+	$scope.pollingID = 0;
 
 	/* UI */
 	$scope.UI = {warning: {browser: null, worker: null}};
@@ -281,9 +290,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 			$scope.reservation = null;
 			$scope.task = null;
 			$scope.$apply();
-
 		});
-
 	};
 
 	$scope.callPhoneNumber = function (phoneNumber) {
@@ -338,8 +345,9 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 			}
 		});
 
-		modalInstance.result.then(function (verified) {
-			$scope.verified = verified;
+		modalInstance.result.then(function (info) {
+			$scope.verified = info.verified;
+			$scope.newAuthyId = info.id;
 		}, function () {
 			$log.info('Modal dismissed at: ' + new Date());
 		});
@@ -349,5 +357,42 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 		$scope.animationsEnabled = !$scope.animationsEnabled;
 	};
 
+	/**
+	 * Polling against OneTouch UUID
+	 */
+	function checkOneTouchStatus () {
+		$http.post('/api/onetouch/status', {
+			'uuid': $scope.uuid
+		}).then(function onSuccess (response) {
+			if (response.data.response.status === 'approved') {
+				$interval.cancel($scope.pollingID);
+				$scope.approved = true;
+				$timeout(function () {
+					$scope.approved = false;
+				}, 5000);
+			} else if (response.data.response.status === 'denied') {
+				$scope.denied = true;
+				$interval.cancel($scope.pollingID);
+				$timeout(function () {
+					$scope.denied = false;
+				}, 5000);
+
+			}
+		}, function onError (error) {
+			$log.error(error);
+		});
+	}
+
+	$scope.startOneTouch = function () {
+		$http.post('/api/onetouch/start', {
+			'authyId': $scope.newAuthyId,
+			'message': 'Please confirm this account action...'
+		}).then(function onSuccess (response) {
+			$scope.pollingID = $interval(checkOneTouchStatus, 4000, 30);
+			$scope.uuid = response.data.uuid;
+		}, function onError (error) {
+			$log.error(error);
+		});
+	};
 });
 
