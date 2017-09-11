@@ -269,6 +269,9 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 
 	$scope.complete = function (reservation) {
 
+		resetUserVerification();
+
+		$scope.authyId = null;
 		switch ($scope.task.attributes.channel) {
 			case 'video':
 				$scope.$broadcast('DestroyVideo');
@@ -366,6 +369,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 		}).then(function onSuccess (response) {
 			if (response.data.response.status === 'approved') {
 				$interval.cancel($scope.pollingID);
+				$scope.pollingID = 0;
 				$scope.approved = true;
 				$timeout(function () {
 					$scope.approved = false;
@@ -373,6 +377,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 			} else if (response.data.response.status === 'denied') {
 				$scope.denied = true;
 				$interval.cancel($scope.pollingID);
+				$scope.pollingID = 0;
 				$timeout(function () {
 					$scope.denied = false;
 				}, 5000);
@@ -394,5 +399,23 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 			$log.error(error);
 		});
 	};
+
+	function resetUserVerification () {
+
+		$scope.newAuthyId = null;
+		$scope.verified = false;
+		/* User verified */
+		$scope.verified = false;
+
+		/* User Action Approval */
+		$scope.approved = false;
+		$scope.denied = false;
+
+		/* UUID for requested OneTouch */
+		$scope.uuid = null;
+
+		/* OneTouch polling ID */
+		$scope.pollingID = 0;
+	}
 });
 

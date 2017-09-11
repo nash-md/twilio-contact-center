@@ -92,6 +92,7 @@ app.use('/', function (req, res, next) {
 
 var router = express.Router()
 
+
 var setup = require('./controllers/setup.js')
 
 router.route('/setup').get(setup.get)
@@ -154,6 +155,9 @@ router.route('/authy/register').post(authy.registerUser)
 router.route('/authy/verify').post(authy.verifySoftToken)
 router.route('/onetouch/start').post(authy.startOneTouch)
 router.route('/onetouch/status').post(authy.statusOneTouch)
+router.route('/authy/setusers').post(authy.setAuthyUsers)
+router.route('/authy/getusers').get(authy.getAuthyUsers)
+
 
 app.use('/api', router)
 app.use('/', express.static(__dirname + '/public'))

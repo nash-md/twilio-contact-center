@@ -68,10 +68,11 @@
 		  <button ng-hide="verified" class="btn btn-primary authy-user" ng-click="openModal('lg')">Open Modal</button>
 
 		  <button ng-show="verified" class="btn btn-success verify-user">User Verified</button>
-		  <button ng-show="verified && !approved && !denied" class="btn btn-primary verify-user" ng-click="startOneTouch()">User Approve Change</button>
-          <button ng-show="verified && approved" class="btn btn-primary verify-user">Change Approved by User</button>
-          <button ng-show="verified && denied" class="btn btn-danger verify-user">Change DENIED by User</button>
-		  <button ng-show="task != null"  class="btn btn-primary complete-task" ng-click="complete()">Complete Task</button>
+		  <button ng-show="verified && !approved && !denied && newAuthyId"
+				  class="btn btn-primary verify-user" ng-click="startOneTouch()">OneTouch Request</button>
+          <button ng-show="verified && approved" class="btn btn-success verify-user">Request APPROVED</button>
+          <button ng-show="verified && denied" class="btn btn-danger verify-user">Request DENIED</button>
+		  <button ng-show="task != null"  class="btn btn-primary complete-task" ng-click="complete()" style="float: right">Complete Task</button>
 		</div>
 
 		<div class="panel-body">

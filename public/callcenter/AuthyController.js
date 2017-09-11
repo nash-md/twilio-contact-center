@@ -20,6 +20,9 @@ app.controller('AuthyModalController', function ($scope, $uibModalInstance, $int
 	/* original E164 number */
 	$scope.orig_pn = orig_pn;
 
+	/* authy users */
+	$scope.authy_users = {};
+
 	$scope.ok = verifiedDone;
 
 	function verifiedDone () {
@@ -59,20 +62,9 @@ app.controller('AuthyModalController', function ($scope, $uibModalInstance, $int
 			});
 	};
 
-	function executeLookup () {
-		$http.post('/api/lookup', {'pn': $scope.orig_pn})
-			.then(function onSuccess (response) {
-				// removing national number formatting
-				const authyNumber = response.data.national_format.replace(/\D+/g, '');
-				$scope.lookup = response.data;
-				$scope.lookup.national_format = authyNumber;
-				$scope.lookup.email = '';
-			}, function onError (error) {
-				$log.error(error);
-			});
-	}
+	$scope.registerAuthyUser = authyRegisterUser;
 
-	$scope.registerAuthyUser = function () {
+	function authyRegisterUser () {
 		$http.post('/api/authy/register', {
 			'cc': $scope.lookup.cc,
 			'pn': $scope.lookup.national_format,
@@ -82,10 +74,11 @@ app.controller('AuthyModalController', function ($scope, $uibModalInstance, $int
 			$scope.sms = false;
 			$scope.register = false;
 			$scope.authy = true;
+			saveAuthyUser(response.data.authyId);
 		}, function onError (error) {
 			$log.error(error);
 		});
-	};
+	}
 
 	/**
 	 * Polling against OneTouch UUID
@@ -118,7 +111,6 @@ app.controller('AuthyModalController', function ($scope, $uibModalInstance, $int
 	};
 
 	$scope.softTokenVerify = function () {
-
 		$http.post('/api/authy/verify', {'authyId': $scope.authyId, 'token': $scope.token})
 			.then(function onSuccess (response) {
 				$scope.token = '';
@@ -129,6 +121,47 @@ app.controller('AuthyModalController', function ($scope, $uibModalInstance, $int
 			});
 	};
 
-	/* Take the caller phone number and do a lookup to get the country code and nationally formatted number */
-	executeLookup();
+	function saveAuthyUser (authyId) {
+		$scope.authy_users[orig_pn] = authyId;
+		$http.post('/api/authy/setusers', {'authy_users': $scope.authy_users})
+			.then(function onSuccess (response) {
+				console.log('users saved: ', response);
+			}, function onError (error) {
+				$log.error(error);
+			});
+	}
+
+	function executeLookup () {
+		$http.post('/api/lookup', {'pn': $scope.orig_pn})
+			.then(function onSuccess (response) {
+				// removing national number formatting
+				const authyNumber = response.data.national_format.replace(/\D+/g, '');
+				$scope.lookup = response.data;
+				$scope.lookup.national_format = authyNumber;
+				$scope.lookup.email = '';
+
+				// check to see if we already have that number.
+				if ($scope.authy_users[orig_pn]) {
+					$scope.authyId = $scope.authy_users[orig_pn];
+				}
+			}, function onError (error) {
+				$log.error(error);
+			});
+	}
+
+
+	function getAuthyUsers () {
+		$http.get('/api/authy/getusers')
+			.then(function onSuccess (response) {
+				$scope.authy_users = response.data;
+				/* Take the caller phone number and do a lookup to get the country code
+				 and nationally formatted number */
+				executeLookup();
+			}, function onError (error) {
+				$log.error(error);
+			});
+	}
+
+	getAuthyUsers();
+
 });

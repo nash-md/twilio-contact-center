@@ -4,6 +4,58 @@ const client = new Client({key: process.env.TWILIO_AUTHY_KEY})
 const accountSid = process.env.TWILIO_ACCOUNT_SID
 const authToken = process.env.TWILIO_AUTH_TOKEN
 const twilio = require('twilio')(accountSid, authToken)
+const fs = require('fs')
+
+module.exports.getAuthyUsers = function (req, res) {
+
+	fs.readFile('authyusers.json', 'utf8', function (err, data) {
+		if (err) {
+			console.log('Error reading authyusers.json file: ', err)
+			res.status(500).send()
+		}
+
+		try {
+			var configuration = JSON.parse(data)
+			res.status(200).json(configuration)
+		} catch (exception) {
+			console.error('Error parsing authyusers.json file: ', exception)
+			console.error('Lets just create a new empty json object... ')
+			writeBlankJSONFile(function (status) {
+				if (status) {
+					res.status(200).json({})
+				} else {
+					res.status(500).send()
+				}
+			})
+		}
+	})
+}
+
+function writeBlankJSONFile (cb) {
+	fs.writeFile('authyusers.json', '{}', function (err) {
+		if (err) {
+			console.error('Error writing authyusers.json file: ', err)
+			cb(false)
+		} else {
+			cb(true)
+		}
+	});
+}
+
+
+module.exports.setAuthyUsers = function (req, res) {
+	const configurationAsString = JSON.stringify(req.body.authy_users, null, 4)
+
+	fs.writeFile('authyusers.json', configurationAsString, function (err) {
+		if (err) {
+			console.error('Error writing authyusers.json file: ', err)
+			res.status(500).send()
+		} else {
+			res.status(200).send()
+		}
+	})
+}
+
 
 module.exports.registerUser = function (req, res) {
 	client.registerUser({countryCode: req.body.cc, email: req.body.email, phone: req.body.pn})

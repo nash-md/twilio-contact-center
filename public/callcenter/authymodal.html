@@ -4,7 +4,6 @@
 </div>
 <div class="modal-body">
 	<button class="btn btn-primary authy-user"
-			ng-show="authyId"
 			ng-click="requestVerify(); sms=true; authy=false; register = false;">
 		SMS Phone Verification
 	</button>
@@ -14,7 +13,7 @@
 		OneTouch or SoftToken Verification
 	</button>
 	<button class="btn btn-warning complete-task"
-			ng-show="!authyId"
+			ng-show="!authyId" style="float: right"
 			ng-click="authy=false; sms=false; register=true;">
 		Register Authy User
 	</button>
@@ -45,16 +44,14 @@
 		</p>
 	</div>
 	<div ng-show="register">
-		<h3>Register Authy User</h3>
+		<h3>Authy User Registration</h3>
 		<p>
 			<input type="text" ng-model="lookup.cc" value="" placeholder="US" disabled="disabled">
 			<input type="text" ng-model="lookup.national_format" placeholder="5555551234" disabled="disabled">
 			<input type="email" ng-model="lookup.email" placeholder="you@yours.com">
 		</p>
 		<p>
-			<button class="btn btn-primary authy-user" ng-click="registerAuthyUser()">Register
-				Authy User
-			</button>
+			<button class="btn btn-primary authy-user" ng-click="registerAuthyUser()">Registration</button>
 		</p>
 	</div>
 
