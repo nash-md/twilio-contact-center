@@ -56,6 +56,7 @@ After confirming your user's identity, you may also want to confirm account chan
 * [Twilio Client](https://www.twilio.com/docs/quickstart/ruby/client)
 * [Twilio Programmable Chat](https://www.twilio.com/docs/api/chat)
 * [Twilio Programmable Video](https://www.twilio.com/docs/api/video/getting-started)
+* [Twilio Authy App](https://www.twilio.com/console/authy/)
 * Working knowledge of Angular.js, Bootstrap and Node.js
 
 # Installation
