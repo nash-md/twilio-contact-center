@@ -33,7 +33,7 @@
 				<div ng-if="setup == 'INVALID'" class="alert alert-dismissible alert-danger">
 					<strong>Oh snap!</strong><br />
 
-					<span ng-if="code == 'SERVER_TIMEOUT'">Timeout occured, We could not talk to the server? is it running is your connection to twilio slow?</span>
+					<span ng-if="code == 'SERVER_TIMEOUT'">A connection timeout occured. Your browser could not retrieve data. Please check if your server is up and running.</span>
 					
 					<span ng-if="code == 'TWILIO_ACCOUNT_SID_INVALID'">The environment variable TWILIO_ACCOUNT_SID is not set or incorrect. If you are on Heroku please update your application settings.</span>
 					
