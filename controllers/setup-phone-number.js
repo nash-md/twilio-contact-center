@@ -17,6 +17,7 @@ module.exports.update = function (req, res) {
 	}).then(phoneNumber => {
 		res.status(200).end()
 	}).catch(error => {
+		console.log('Setup Failure: Error setting up URLs for voice and SMS channels.')
 		res.status(500).send(res.convertErrorToJSON(error))
 	})
 
