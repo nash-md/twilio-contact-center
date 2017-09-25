@@ -9,6 +9,9 @@ npm-debug.log*
 # API Keys
 .env
 
+#
+configuration.json
+
 # Runtime data
 pids
 *.pid

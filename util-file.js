@@ -1,5 +1,5 @@
-var fs = require('fs')
-var uc = require('./util-common.js')
+const fs = require('fs')
+const uc = require('./util-common.js')
 
 module.exports.convertToString = function (err) {
 	return uc.convertToString(err)
@@ -27,8 +27,8 @@ module.exports.getConfiguration = function (callback) {
 
 }
 
-exports.setConfiguration = function (configuration, callback) {
-	var configurationAsString =  JSON.stringify(configuration, null, 4)
+module.exports.setConfiguration = function (configuration, callback) {
+	const configurationAsString =  JSON.stringify(configuration, null, 4)
 
 	fs.writeFile('configuration.json', configurationAsString, function (err) {
 		if (err) {
@@ -39,3 +39,4 @@ exports.setConfiguration = function (configuration, callback) {
 	})
 
 }
+

@@ -27,9 +27,7 @@ module.exports.getConfiguration = function (callback) {
 			}
 
 		})
-
 	})
-
 }
 
 exports.setConfiguration = function (configuration, callback) {

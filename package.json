@@ -25,6 +25,7 @@
   ],
   "dependencies": {
     "async": "^1.5.2",
+    "authy-client": "^1.0.10",
     "body-parser": "^1.15.1",
     "compression": "^1.6.2",
     "express": "^4.13.4",

@@ -15,6 +15,7 @@ This application is provided as-is. Twilio does not officially support it.
 * Twilio Programmable SMS
 * Twilio Programmable Video
 * Twilio TaskRouter
+* Twilio Account Security
 * Twilio REST APIs
 
 # Customer Journey Flows:
@@ -42,12 +43,20 @@ Customer fills out video call request form -> Form submitted to server -> Task o
 ## Real-time TaskRouter Events Dashboard:
 Real-time display of operational contact center metrics (for example: average call handle time, agent productivity, call metrics, TaskRouter stats, and more etc.).  Please check out the following repo: https://github.com/ameerbadri/twilio-taskrouter-realtime-dashboard 
 
+## Authy User Verification and Approval Change
+Before providing support, you'll want to confirm the identity of the caller on the phone.  Outlined below is a flow that allows your agents to confirm the identity of your customers.
+
+After confirming your user's identity, you may also want to confirm account changes with your customers.  Request customer's to Approve or Deny account changes before making the change in your system.
+![Authy OneTouch Customer Identity Confirmation and Account Change Approval](contact_center_flow_authy.png)
+
+
 ## Pre-requisites:
 * Basic of Twilio platform - [Twilio \<Skills\>](https://twilio.radicalskills.com/), an elearning platform that provides a guided path for getting started with Twilio.
 * [Twilio TaskRouter](https://www.twilio.com/docs/quickstart/ruby/taskrouter)
 * [Twilio Client](https://www.twilio.com/docs/quickstart/ruby/client)
 * [Twilio Programmable Chat](https://www.twilio.com/docs/api/chat)
 * [Twilio Programmable Video](https://www.twilio.com/docs/api/video/getting-started)
+* [Twilio Authy App](https://www.twilio.com/console/authy/)
 * Working knowledge of Angular.js, Bootstrap and Node.js
 
 # Installation
@@ -95,6 +104,9 @@ For video calls you need to set Twilio API Keys:
 
 - `TWILIO_API_KEY_SID`
 - `TWILIO_API_KEY_SECRET`
+
+For user verification you will need to create an [Authy App in the console](https://www.twilio.com/user/account/taskrouter/workspaces) and set
+- `TWILIO_AUTHY_KEY`
 
 Start the application
 

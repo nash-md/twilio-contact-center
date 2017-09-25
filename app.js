@@ -92,6 +92,7 @@ app.use('/', function (req, res, next) {
 
 var router = express.Router()
 
+
 var setup = require('./controllers/setup.js')
 
 router.route('/setup').get(setup.get)
@@ -144,6 +145,19 @@ var messagingAdapter = require('./controllers/messaging-adapter.js')
 
 router.route('/messaging-adapter/inbound').post(messagingAdapter.inbound)
 router.route('/messaging-adapter/outbound').post(messagingAdapter.outbound)
+
+var authy = require('./controllers/authy.js')
+
+router.route('/verify/request').post(authy.verifyRequest)
+router.route('/verify/otp').post(authy.otpVerify)
+router.route('/lookup').post(authy.executeLookup)
+router.route('/authy/register').post(authy.registerUser)
+router.route('/authy/verify').post(authy.verifySoftToken)
+router.route('/onetouch/start').post(authy.startOneTouch)
+router.route('/onetouch/status').post(authy.statusOneTouch)
+router.route('/authy/setusers').post(authy.setAuthyUsers)
+router.route('/authy/getusers').get(authy.getAuthyUsers)
+
 
 app.use('/api', router)
 app.use('/', express.static(__dirname + '/public'))
