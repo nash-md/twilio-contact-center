@@ -96,7 +96,7 @@ module.exports.selectTeam = function (req, res) {
 			team: team.id
 		}
 
-		twiml.enqueueTask({
+		twiml.enqueue({
 			workflowSid: req.configuration.twilio.workflowSid,
 		}).task({priority: 1, timeout: 3600}, JSON.stringify(attributes));
 

@@ -2,7 +2,7 @@ const Twilio 	= require('twilio')
 
 const AccessToken 	= Twilio.jwt.AccessToken
 const VideoGrant 		= Twilio.jwt.AccessToken.VideoGrant
-const ChatGrant 		= Twilio.jwt.AccessToken.IpMessagingGrant
+const ChatGrant 		= Twilio.jwt.AccessToken.ChatGrant
 
 const client = new Twilio(
 	process.env.TWILIO_ACCOUNT_SID,
