@@ -227,7 +227,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 		if (reservation.task.attributes.channel === 'phone' && reservation.task.attributes.type === 'inbound_call') {
 
 			$log.log('dequeue reservation with  callerId: ' + $scope.configuration.twilio.callerId);
-			reservation.conference($scope.configuration.twilio.callerId, undefined, undefined, function (err, reservation){
+			reservation.conference($scope.configuration.twilio.callerId, undefined, undefined, function (err, reservation) {
 
 				if (err) {
 					$log.error(err);
@@ -268,6 +268,16 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 		default:
 		// do nothing
 		}
+
+		$scope.workerJS.completeTask($scope.task.sid, function (error, completedTask) {
+			if (error) {
+				$log.error(error.code);
+				$log.error(error.message);
+				return;
+			}
+			$log.log('Completed Task: ' + completedTask.assignmentStatus);
+
+		});
 
 		$scope.workerJS.update('ActivitySid', $scope.configuration.twilio.workerIdleActivitySid, function (err, worker) {
 
