@@ -213,17 +213,17 @@ var forwardMessage = function (to, body, req) {
 		}
 
 		client.messages.create({
-	    to: to,
+			to: to,
 			from: from,
 			body: body
-	  })
-	  .then(message => {
+		})
+		.then(message => {
 			console.log(req.direction + 'message ' + message.sid + ' create, body is "' + body + '" sent to endpoint ' + to + ', sender is ' + from)
-	  	resolve(message)
-	  }).catch(error => {
-	  	console.error(req.direction + ' sending message failed: %s', JSON.stringify(err, Object.getOwnPropertyNames(err)))
-	  	reject(error)
-	  })
+			resolve(message)
+		}).catch(error => {
+			console.error(req.direction + ' sending message failed: %s', JSON.stringify(error, Object.getOwnPropertyNames(error)))
+			reject(error)
+		})
 
 	})
 
