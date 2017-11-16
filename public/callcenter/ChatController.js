@@ -61,8 +61,8 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 
 	$scope.setupClient = function (channelSid) {
 
-		$log.log('setup channel: ' + channelSid);
-		var accessManager = new Twilio.AccessManager($scope.session.token);
+		$log.log('Initiate Twilio Chat, channelSid: ' + channelSid);
+		const accessManager = new Twilio.AccessManager($scope.session.token);
 
 		/**
 		 * you'll want to be sure to listen to the tokenExpired event either update
@@ -70,23 +70,23 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 		 * the chat is not active anymore
 		**/
 		accessManager.on('tokenExpired', function () {
-			$log.error('live chat token expired');
+			$log.warn('token expired');
+			$scope.session.expired = true;
+			$scope.$apply();
 		});
 
-		accessManager.on('error', function () {
+		accessManager.on('error', function (err) {
 			$log.error('An error occurred');
+			$log.error(err);
 		});
 
-		var messagingClient = new Twilio.IPMessaging.Client(accessManager);
-
-		var promise = messagingClient.getChannelBySid (channelSid);
-
-		promise.then(function (channel) {
-			$log.log('channel is: ' + channel.uniqueName);
+		Twilio.Chat.Client.create($scope.session.token, { logLevel: 'debug'}).then((client) => {
+			return client.getChannelBySid(channelSid);
+		}).then((channel) => {
 			$scope.setupChannel(channel);
-		}, function (reason) {
-			/* client could not access the channel */
-			$log.error(reason);
+		}).catch((error) => {
+			$log.error('Setting up chat client failed');
+			$log.error(error);
 		});
 
 	};
