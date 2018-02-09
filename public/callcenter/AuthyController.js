@@ -101,7 +101,7 @@ app.controller('AuthyModalController', function ($scope, $uibModalInstance, $int
 		$scope.verified = false;
 		$http.post('/api/onetouch/start', {
 			'authyId': $scope.authyId,
-			'message': 'Please verify your identity for the Twilio Contact Center'
+			'message': 'Please verify your identity for the Twilio Protected Call Center.'
 		}).then(function onSuccess (response) {
 			$scope.pollingID = $interval(checkOneTouchStatus, 4000, 30);
 			$scope.uuid = response.data.uuid;

@@ -67,7 +67,7 @@
 		<div class="panel-heading">
 		  <button ng-hide="verified" class="btn btn-primary authy-user" ng-click="openModal('lg')">Verify User</button>
 
-		  <button ng-show="verified" class="btn btn-success verify-user">User Verified</button>
+		  <button ng-show="verified" class="btn btn-success verify-user" ng-click="openModal('lg')">User Verified</button>
 		  <button ng-show="verified && !approved && !denied && newAuthyId"
 				  class="btn btn-primary verify-user" ng-click="startOneTouch()">OneTouch Request</button>
           <button ng-show="verified && approved" class="btn btn-success verify-user">Request APPROVED</button>
