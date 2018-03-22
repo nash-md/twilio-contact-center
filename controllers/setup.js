@@ -190,14 +190,14 @@ module.exports.createOrUpdateWorkflow = function (workflow, callback) {
 }
 
 module.exports.createOrUpdateApplication = function (configuration, req, callback) {
-	const url =  req.protocol + '://' + req.hostname + '/api/agents/call'
+	const url =  req.protocol + '://' + req.hostname + '/api/phone/call'
 
 	if (configuration.twilio.applicationSid) {
 
 		client.applications(configuration.twilio.applicationSid).update({
 			friendlyName: 'Twilio Contact Center Demo',
 			voiceUrl: url,
-			voiceMethod: 'GET'
+			voiceMethod: 'POST'
 		}, function (err, application) {
 			if (err) {
 				callback(err)
@@ -211,7 +211,7 @@ module.exports.createOrUpdateApplication = function (configuration, req, callbac
 		client.applications.create({
 			friendlyName: 'Twilio Contact Center Demo',
 			voiceUrl: url,
-			voiceMethod: 'GET'
+			voiceMethod: 'POST'
 		}, function (err, application) {
 			if (err) {
 				callback(err)
