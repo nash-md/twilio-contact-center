@@ -16,7 +16,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 	$scope.workerJS;
 
 	/* UI */
-	$scope.UI = { warning: { browser: null, worker: null}};
+	$scope.UI = { warning: { browser: null, worker: null, phone: null}};
 
 	if ($window.location.protocol !== 'https:') {
 		let message =  `Depending on your browser and/or settings capturing audio and video 
@@ -227,7 +227,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 		if (reservation.task.attributes.channel === 'phone' && reservation.task.attributes.type === 'inbound_call') {
 
 			$log.log('dequeue reservation with  callerId: ' + $scope.configuration.twilio.callerId);
-			reservation.conference($scope.configuration.twilio.callerId, undefined, undefined, function (err, reservation){
+			reservation.conference($scope.configuration.twilio.callerId, undefined, undefined, function (err, reservation) {
 
 				if (err) {
 					$log.error(err);
@@ -287,6 +287,18 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 	$scope.callPhoneNumber = function (phoneNumber) {
 		$rootScope.$broadcast('CallPhoneNumber', { phoneNumber: phoneNumber });
 	};
+
+	$scope.$on('ShowCallQualityWarning', function (event, data) {
+		console.log('event: ShowCallQualityWarning');
+		$scope.UI.warning.phone = data.message;
+		$scope.$apply();
+	});
+
+	$scope.$on('HideCallQualityWarning', function (event, data) {
+		console.log('event: HideCallQualityWarning');
+		$scope.UI.warning.phone = null;
+		$scope.$apply();
+	});
 
 	$scope.logout = function () {
 
