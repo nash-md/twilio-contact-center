@@ -118,7 +118,13 @@ var agents = require('./controllers/agents.js')
 router.route('/agents/login').post(agents.login)
 router.route('/agents/logout').post(agents.logout)
 router.route('/agents/session').get(agents.getSession)
-router.route('/agents/call').get(agents.call)
+
+var phone = require('./controllers/phone.js')
+
+router.route('/phone/call').post(phone.call)
+router.route('/phone/call/:sid/add-participant/:phone').post(phone.addParticipant)
+router.route('/phone/call/:sid/conference').post(phone.getConference)
+router.route('/phone/hold').post(phone.hold)
 
 /* routes for IVR */
 var ivr = require('./controllers/ivr.js')

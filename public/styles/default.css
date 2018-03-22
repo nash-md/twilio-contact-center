@@ -144,10 +144,14 @@
 	float: right;
 }
 
-.phone-controller 
+.phone-controller
 {
 	float:right;
 	width:280px;
+}
+
+.phone-controller .phone
+{
 	margin-top: 10px;
 	background-color:#f5f5f5;
 	border: 1px solid transparent;
@@ -210,6 +214,28 @@
 .phone-controller .digit:hover{
 	background-color: #787878;
 	color:white;
+}
+
+.phone-controller .call-control
+{
+	text-align: center;
+	padding-bottom: 10px;
+}
+
+.phone-controller .call-control button
+{
+	background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit; 
+	cursor: pointer;
+	display:inline-block;
+	width: 50px;
+	height: 50px;
+	outline: inherit;
+	background-position: center center;
+	background-repeat: no-repeat;
 }
 
 .phone-controller .button-call 
