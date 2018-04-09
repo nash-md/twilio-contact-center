@@ -63,14 +63,19 @@ module.exports.update = function (req, res) {
 
 			for (let i = 0; i < config.queues.length; i++) {
 				let target = {
-					targets: [{
-						queue: config.queues[i].taskQueueSid,
-						expression: config.queues[i].targetWorkerExpression
-					}],
+					queue: config.queues[i].taskQueueSid
+				}
+
+				if(config.queues[i].targetWorkerExpression) {
+					target.expression = config.queues[i].targetWorkerExpression
+				}
+
+				let item = {			
+					targets: [target],
 					expression: config.queues[i].expression
 				}
 
-				workflowConfiguration.task_routing.filters.push(target)
+				workflowConfiguration.task_routing.filters.push(item)
 			}
 
 			const workflow = {
@@ -143,7 +148,7 @@ module.exports.syncQueues = function (config, callback) {
 module.exports.createOrUpdateQueue = function (queue, callback) {
 	if (queue.sid) {
 
-		client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).taskQueues(queue.sid).update(queue, function (err) {
+		client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).taskQueues(queue.sid).update(queue, function (err) {
 			if (err) {
 				callback(err)
 			} else {
@@ -153,7 +158,7 @@ module.exports.createOrUpdateQueue = function (queue, callback) {
 
 	} else  {
 
-		client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).taskQueues.create(queue, function (err, queueFromApi) {
+		client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).taskQueues.create(queue, function (err, queueFromApi) {
 			if (err) {
 				callback(err)
 			} else {
@@ -167,7 +172,7 @@ module.exports.createOrUpdateQueue = function (queue, callback) {
 module.exports.createOrUpdateWorkflow = function (workflow, callback) {
 	if (workflow.sid) {
 
-		client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).workflows(workflow.sid).update(workflow, function (err) {
+		client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).workflows(workflow.sid).update(workflow, function (err) {
 			if (err) {
 				callback(err)
 			} else {
@@ -177,7 +182,7 @@ module.exports.createOrUpdateWorkflow = function (workflow, callback) {
 
 	} else  {
 
-		client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).workflows.create(workflow, function (err, workflowFromApi) {
+		client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).workflows.create(workflow, function (err, workflowFromApi) {
 			if (err) {
 				callback(err)
 			} else {
