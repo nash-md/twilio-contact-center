@@ -270,6 +270,16 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 		// do nothing
 		}
 
+		$scope.workerJS.completeTask($scope.task.sid, function (error, completedTask) {
+			if (error) {
+				$log.error(error.code);
+				$log.error(error.message);
+				return;
+			}
+			$log.log('Completed Task: ' + completedTask.assignmentStatus);
+
+		});
+
 		$scope.workerJS.update('ActivitySid', $scope.configuration.twilio.workerIdleActivitySid, function (err, worker) {
 
 			if (err) {
