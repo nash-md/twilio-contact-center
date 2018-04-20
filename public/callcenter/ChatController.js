@@ -1,5 +1,6 @@
 app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $compile, $log) {
 
+	$scope.client;
 	$scope.channel;
 	$scope.messages = [];
 	$scope.session = {
@@ -19,6 +20,8 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 			$scope.channel = null;
 		});
 
+		$scope.client.shutdown();
+
 		$scope.messages = [];
 		$scope.session.isInitialized = false;
 		$scope.session.channelSid = null;
@@ -31,6 +34,7 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 		$log.log(data);
 
 		/* clean up  */
+		$scope.client = null;
 		$scope.message = null;
 		$scope.channel = null;
 		$scope.messages = [];
@@ -44,11 +48,9 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 
 		$scope.session.token = data.token;
 		$scope.session.identity = data.identity;
-
 	});
 
 	$scope.$on('ActivateChat', function (event, data) {
-
 		$log.log('ActivateChat event received');
 		$log.log(data);
 
@@ -81,6 +83,8 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 		});
 
 		Twilio.Chat.Client.create($scope.session.token, { logLevel: 'debug'}).then((client) => {
+			$scope.client = client;
+
 			return client.getChannelBySid(channelSid);
 		}).then((channel) => {
 			$scope.setupChannel(channel);
@@ -116,6 +120,8 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 
 			});
 
+		}).catch(function (error) {
+			$log.error(error);
 		});
 
 		channel.on('messageAdded', function (message) {
@@ -211,4 +217,3 @@ app.filter('time', function () {
 		return moment(value).format('HH:mm');
 	};
 });
-
