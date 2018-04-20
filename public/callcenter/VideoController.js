@@ -24,8 +24,8 @@ function VideoController ($scope, $rootScope, $http, $timeout, $log) {
 			$scope.room.participants.forEach(function (participant) {
 				$log.log('Already in Room: ' + participant.identity);
 
-				var tracks = Array.from(participant.tracks.values());
-				var remoteMediaContainer = document.getElementById('remote-media');
+				const tracks = Array.from(participant.tracks.values());
+				const remoteMediaContainer = document.getElementById('remote-media');
 
 				tracks.forEach(function (track) {
 					remoteMediaContainer.appendChild(track.attach());
@@ -53,11 +53,27 @@ function VideoController ($scope, $rootScope, $http, $timeout, $log) {
 
 			room.on('disconnected', function () {
 				$log.log('Disconnect from Room complete');
-				var tracks = Array.from($scope.room.localParticipant.tracks.values());
+				const tracks = Array.from($scope.room.localParticipant.tracks.values());
 
 				tracks.forEach(function (track) {
+					track.detach().forEach(function (detachedElement) {
+						detachedElement.remove();
+					});
+
 					track.disable();
 					track.stop();
+				});
+
+				/* clean up remote tracks */
+				$scope.room.participants.forEach(function (participant) {
+					const remoteTracks = Array.from(participant.tracks.values());
+
+					remoteTracks.forEach(function (track) {
+						track.detach().forEach(function (detachedElement) {
+							detachedElement.remove();
+						});
+					});
+
 				});
 
 			});
