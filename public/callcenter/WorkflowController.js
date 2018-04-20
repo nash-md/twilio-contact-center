@@ -69,6 +69,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 			$log.log('TaskRouter Worker: ready');
 
 			$scope.worker = worker;
+			$scope.$apply();
 
 		});
 
