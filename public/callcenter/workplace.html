@@ -81,7 +81,7 @@
                 <div class="description">{{task.attributes.title}} from
                   <span ng-show="!task.attributes.nameIsPhoneNumber">{{task.attributes.name}}</span>
 
-                  <a href="#" ng-click="callPhoneNumber('{{task.attributes.name}}')" ng-show="task.attributes.nameIsPhoneNumber">{{task.attributes.name}}</a>
+                  <a href="#" ng-click="callPhoneNumber(task.attributes.name)" ng-show="task.attributes.nameIsPhoneNumber">{{task.attributes.name}}</a>
                 </div>
                 {{task.attributes.text}}
               </div>
