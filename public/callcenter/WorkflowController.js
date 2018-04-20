@@ -300,13 +300,13 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 	};
 
 	$scope.$on('ShowCallQualityWarning', function (event, data) {
-		console.log('event: ShowCallQualityWarning');
+		$log.log('event: ShowCallQualityWarning');
 		$scope.UI.warning.phone = data.message;
 		$scope.$apply();
 	});
 
 	$scope.$on('HideCallQualityWarning', function (event, data) {
-		console.log('event: HideCallQualityWarning');
+		$log.log('event: HideCallQualityWarning');
 		$scope.UI.warning.phone = null;
 		$scope.$apply();
 	});
