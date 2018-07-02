@@ -66,13 +66,14 @@ module.exports.update = function (req, res) {
 					queue: config.queues[i].taskQueueSid
 				}
 
-				if(config.queues[i].targetWorkerExpression) {
+				if (config.queues[i].targetWorkerExpression) {
 					target.expression = config.queues[i].targetWorkerExpression
 				}
 
-				let item = {			
+				let item = {
 					targets: [target],
-					expression: config.queues[i].expression
+					expression: config.queues[i].expression,
+					filterFriendlyName: config.queues[i].filterFriendlyName
 				}
 
 				workflowConfiguration.task_routing.filters.push(item)
