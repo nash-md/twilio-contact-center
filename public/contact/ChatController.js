@@ -18,14 +18,10 @@ app.controller('ChatController', function ($scope, $http, $timeout, $log) {
 		$http.get('/api/setup')
 
 			.then(function onSuccess (response) {
-
 				$scope.configuration = response.data;
-
 			}, function onError (response) {
-
 				$log.error('error loading configuration');
 				$log.error(response);
-
 			});
 
 	};
@@ -89,7 +85,7 @@ app.controller('ChatController', function ($scope, $http, $timeout, $log) {
 			$log.error(err);
 		});
 
-		Twilio.Chat.Client.create($scope.session.token, { logLevel: 'debug'}).then((client) => {
+		Twilio.Chat.Client.create($scope.session.token, { logLevel: 'debug' }).then((client) => {
 			return client.getChannelBySid(channelSid);
 		}).then((channel) => {
 			$scope.setupChannel(channel);
@@ -103,6 +99,12 @@ app.controller('ChatController', function ($scope, $http, $timeout, $log) {
 	$scope.setupChannel = function (channel) {
 
 		channel.join().then(function (member) {
+			return member;
+		}).catch(function (error) {
+			$log.error(error);
+
+			return;
+		}).then(() => {
 			$scope.messages.push({
 				body: 'An agent will be available shortly',
 				author: 'System'

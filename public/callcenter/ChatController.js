@@ -82,7 +82,7 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 			$log.error(err);
 		});
 
-		Twilio.Chat.Client.create($scope.session.token, { logLevel: 'debug'}).then((client) => {
+		Twilio.Chat.Client.create($scope.session.token, { logLevel: 'debug' }).then((client) => {
 			$scope.client = client;
 
 			return client.getChannelBySid(channelSid);
@@ -97,31 +97,35 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 
 	$scope.setupChannel = function (channel) {
 
+		/* let the agent join the channel */
 		channel.join().then(function (member) {
+			return member;
+		}).catch(function (error) {
+			$log.error(error);
 
-			/* first we read the history of this channel, afterwards we join */
+			return;
+		}).then(() => {
+
+			/* read the message history of this channel */
 			channel.getMessages().then(function (messages) {
-				for (var i = 0; i < messages.length; i++) {
-					var message = messages[i];
+				$log.log('Recent Messages in Channel:' + messages.items.length);
+
+				messages.items.map((message) => {
 					$scope.addMessage(message);
-				}
-				$log.log('Total Messages in Channel:' + messages.length);
+				});
 
 				$scope.messages.push({
 					body: 'You are now connected to the customer',
 					author: 'System'
 				});
 
-				/* use now joined the channel, display canvas */
+				/* display chat canvas */
 				$scope.session.isInitialized = true;
 				$scope.session.isLoading = false;
 
 				$scope.$apply();
-
 			});
 
-		}).catch(function (error) {
-			$log.error(error);
 		});
 
 		channel.on('messageAdded', function (message) {
@@ -189,7 +193,7 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 			m = message.body.replace(pattern, template);
 		}
 
-		$scope.messages.push({body: m, author: message.author, timestamp: message.timestamp});
+		$scope.messages.push({ body: m, author: message.author, timestamp: message.timestamp });
 		$scope.$apply();
 
 	};
