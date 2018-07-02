@@ -17,6 +17,7 @@
 	"queues": [
 		{
 			"friendlyName": "Chat Queue",
+			"filterFriendlyName": "Chat",
 			"id": "chat",
 			"taskQueueSid": null,
 			"expression": "channel == \"chat\"",
@@ -24,6 +25,7 @@
 		},
 		{
 			"friendlyName": "Phone Queue",
+			"filterFriendlyName": "Phone",
 			"id": "phone",
 			"taskQueueSid": null,
 			"expression": "channel == \"phone\"",
@@ -31,6 +33,7 @@
 		},
 		{
 			"friendlyName": "Video Queue",
+			"filterFriendlyName": "Video",
 			"id": "video",
 			"taskQueueSid": null,
 			"expression": "channel == \"video\"",
