@@ -7,7 +7,7 @@ const client = new Twilio(
 module.exports.delete = function (req, res) {
 	let id = req.params.id
 
-	client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).workers(id).remove()
+	client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).workers(id).remove()
 		.then(worker => {
 			res.status(200).end()
 		}).catch(error => {
@@ -22,7 +22,7 @@ module.exports.create = function (req, res) {
 		attributes: req.body.attributes
 	}
 
-	client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).workers.create(worker)
+	client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).workers.create(worker)
 		.then(worker => {
 			const payload = {
 				sid: worker.sid,
@@ -40,7 +40,7 @@ module.exports.create = function (req, res) {
 
 module.exports.list = function (req, res) {
 
-	client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).workers.list()
+	client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).workers.list()
 		.then(workers => {
 			let payload =[]
 
