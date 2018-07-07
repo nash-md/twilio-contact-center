@@ -115,7 +115,7 @@ function AdministrationController ($scope, $http, $log, $q) {
 			$log.log('worker successfully created');
 			$scope.UI.isSaving = false;
 			$scope.UI.showForm = false;
-            // reset agent field
+      // reset agent field
 			$scope.agent.friendlyName = null;
 			$scope.agent.contact_uri = null;
 			$scope.agent.team = null;
