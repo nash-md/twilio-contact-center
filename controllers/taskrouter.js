@@ -6,7 +6,7 @@ const client = new Twilio(
 
 module.exports.getWorkspace = function (req, res) {
 
-	client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).fetch()
+	client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).fetch()
 		.then(workspace => {
 			let payload = {
 				sid: workspace.sid,
@@ -22,7 +22,7 @@ module.exports.getWorkspace = function (req, res) {
 
 module.exports.getActivities = function (req, res) {
 
-	client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).activities.list()
+	client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).activities.list()
 		.then(activities => {
 			let payload =[]
 
