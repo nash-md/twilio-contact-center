@@ -123,7 +123,7 @@ var phone = require('./controllers/phone.js')
 
 router.route('/phone/call').post(phone.call)
 router.route('/phone/call/:sid/add-participant/:phone').post(phone.addParticipant)
-router.route('/phone/call/:sid/conference').get(phone.getConference) // changed to GET!!!
+router.route('/phone/call/:sid/conference').get(phone.getConference)
 router.route('/phone/hold').post(phone.hold)
 
 var phoneTransfer = require('./controllers/phone-transfer.js')
