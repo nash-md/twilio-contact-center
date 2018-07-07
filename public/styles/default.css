@@ -314,6 +314,46 @@
 	display: block
 }
 
+.phone-controller .devices > div
+{
+	overflow: auto;
+	margin-top:5px;
+	margin-bottom: 5px;
+}
+
+.phone-controller .devices-panel  > div:first-child
+{
+	overflow: auto;
+	margin-top:5px;
+	margin-bottom: 5px
+}
+
+.phone-controller .devices-panel .button-toggle-device-panel
+{
+	background-image:url(/images/icon-setup.svg);
+	background-position: center center;
+	background-repeat: no-repeat;
+	display:block;
+	float:right; width: 25px; height: 25px;
+	background-size: contain; border: none;
+	cursor: pointer;
+	opacity: 0.6;
+}
+
+.phone-controller .devices-panel .audio-device-list
+{
+	border-radius: 4px;
+	border: 1px solid; 
+	border-color: rgb(221, 221, 221);
+	padding: 10px;
+}
+
+.phone-controller .devices-panel .audio-device-list select
+{
+	width:100%;
+	font-size: 16px;
+}
+
 /* support chat */
 .typing-notification
 {

@@ -221,7 +221,30 @@
         <button class="button-hangup" ng-if="UI.state == 'busy'" ng-click="hangUp()">HANGUP</button>
         <span class="status">Status: {{debug}}</span>
         <span ng-if="error != null" class="status">Error: {{error}}</span>
+
         </section>
+
+        <div class="devices-panel">
+
+          <div class="buttons">
+            <div class="button-toggle-device-panel" ng-click="toggleAudioDevicePanel()" aria-label="devices"></div>
+          </div>
+  
+          <div class="audio-device-list" ng-if="UI.devices">
+
+            <div>Input</div>
+            <select ng-change="selectInputDevice(devices.input.selected)" class="form-control input-devices-list" ng-model="devices.input.selected">
+              <option ng-repeat="device in devices.available.input track by device.id" value="{{device.id}}">{{device.label}}</option>
+            </select>
+
+            <div style="margin-top:10px">Output</div>
+            <select ng-change="selectOutputDevice(devices.output.selected)" class="form-control output-devices-list" ng-model="devices.output.selected">
+              <option ng-repeat="device in devices.available.output track by device.id" value="{{device.id}}">{{device.label}}</option>
+            </select>
+
+          </div>
+          
+        </div>
 
         </section>
 
