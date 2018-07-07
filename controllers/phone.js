@@ -49,7 +49,12 @@ module.exports.call = function (req, res) {
 		},
 		name
 	)
-	res.set('Content-Type', 'text/xml')
+
+	res.set({
+		'Content-Type': 'application/xml',
+		'Cache-Control': 'public, max-age=0',
+	})
+
 	res.send(twiml.toString())
 }
 
@@ -68,9 +73,12 @@ module.exports.addParticipant = function (req, res) {
 				res.status(200).end()
 			})
 			.catch(error => {
+				console.error(error)
 				res.status(500).end()
 			})
 
+	} else {
+		res.status(200).end()
 	}
 
 }
