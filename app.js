@@ -80,7 +80,7 @@ app.use('/', function (req, res, next) {
 	}
 
 	/* override content type for twiml routes */
-	if (req.path.includes('/api/ivr') || req.path.includes('/agents/call')) {
+	if (req.path.includes('/api/ivr')) {
 		res.set({
 			'Content-Type': 'application/xml',
 			'Cache-Control': 'public, max-age=0',
@@ -123,8 +123,14 @@ var phone = require('./controllers/phone.js')
 
 router.route('/phone/call').post(phone.call)
 router.route('/phone/call/:sid/add-participant/:phone').post(phone.addParticipant)
-router.route('/phone/call/:sid/conference').post(phone.getConference)
+router.route('/phone/call/:sid/conference').get(phone.getConference) // changed to GET!!!
 router.route('/phone/hold').post(phone.hold)
+
+var phoneTransfer = require('./controllers/phone-transfer.js')
+
+router.route('/phone/transfer/available-workers').get(phoneTransfer.getAvailableWorkers)
+router.route('/phone/transfer/:sid').post(phoneTransfer.create)
+router.route('/phone/transfer/:sid/forward/:to/initiated-by/:from').post(phoneTransfer.forward)
 
 /* routes for IVR */
 var ivr = require('./controllers/ivr.js')
