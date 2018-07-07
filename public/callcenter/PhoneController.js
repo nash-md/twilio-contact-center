@@ -8,8 +8,12 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout,
 		to: null,
 		isLoading: false
 	};
+	$scope.devices = {
+		available: { input: [], output: [] },
+		selected: {input: null, output: null }
+	};
 
-	$scope.UI = { hold: false, mute: false, transfer: false, state: 'idle'};
+	$scope.UI = { devices: false, hold: false, mute: false, transfer: false, state: 'idle'};
 
 	$scope.$on('InitializePhone', function (event, data) {
 		$log.log('InitializePhone event received');
@@ -64,7 +68,12 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout,
 
 			$scope.registerConnectionHandler($scope.connection);
 		});
-
+		/*
+		Twilio.Device.audio.on('deviceChange', (lostActiveDevices) => {
+			$log.error('active device lost: ')
+			$log.error(lostActiveDevices)
+		})
+*/
 	});
 
 	$scope.hangUp = function (reservation) {
@@ -202,6 +211,50 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout,
 		$log.info('Phone: set mute: ' + $scope.UI.mute);
 
 		$scope.connection.mute($scope.UI.mute);
+	};
+
+	$scope.toggleAudioDevicePanel = function () {
+		$scope.UI.devices = !$scope.UI.devices;
+
+		$scope.devices.available.output = [];
+		$scope.devices.available.input = [];
+
+		Twilio.Device.audio.availableOutputDevices.forEach(function (device, id) {
+			$log.info(`Available Output Device: ${id} - label '${device.label}'`);
+			$scope.devices.available.output.push({id: id, label: device.label});
+		});
+
+		Twilio.Device.audio.availableInputDevices.forEach(function (device, id) {
+			$log.info(`Available Input Device: ${id} - label '${device.label}'`);
+			$scope.devices.available.input.push({id: id, label: device.label});
+		});
+
+	};
+
+	$scope.selectInputDevice = function (id) {
+		$log.info(`Audio Device: ${id} - selected`);
+
+		Twilio.Device.audio.setInputDevice(id).then(function () {
+			$log.info(`Twilio Device: ${id} successfully set`);
+		}).catch((error) => {
+			$log.error(error);
+		});
+	};
+
+	$scope.selectOutputDevice = function (id) {
+		$log.info(`Audio Device: ${id} - selected`);
+
+		Twilio.Device.audio.speakerDevices.set(id).then(function () {
+			$log.info(`Twilio Device: ${id} successfully set`);
+		}).catch((error) => {
+			$log.error(error);
+		});
+
+		Twilio.Device.audio.ringtoneDevices.set(id).then(function () {
+			$log.info(`Twilio Device: ${id} successfully set`);
+		}).catch((error) => {
+			$log.error(error);
+		});
 	};
 
 	$scope.addDigit = function (digit) {
