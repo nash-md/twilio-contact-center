@@ -3,8 +3,13 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout,
 	$scope.phoneNumber = '';
 	$scope.connection = null;
 	$scope.direction = null;
+	$scope.transfer = {
+		workers: [],
+		to: null,
+		isLoading: false
+	};
 
-	$scope.UI = { hold: false, mute: false, state: 'idle'};
+	$scope.UI = { hold: false, mute: false, transfer: false, state: 'idle'};
 
 	$scope.$on('InitializePhone', function (event, data) {
 		$log.log('InitializePhone event received');
@@ -93,7 +98,7 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout,
 
 		if ($scope.direction === 'outbound') {
 
-			$http.post('/api/phone/call/' + callSid + '/conference')
+			$http.get('/api/phone/call/' + callSid + '/conference')
 			.then(function onSuccess (response) {
 				deferred.resolve(response.data);
 			}).catch(function (error) {
@@ -109,6 +114,62 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout,
 		}
 
 		return deferred.promise;
+	};
+
+	$scope.transfer = function () {
+		$scope.transfer.isLoading = true;
+
+		getConference($scope.connection.parameters.CallSid).then(function (payload) {
+			const request = {
+				to: $scope.transfer.to
+			};
+
+			$scope.transfer.to = null;
+
+			$http.post(`/api/phone/transfer/${payload.callSid}`, request)
+				.then(function onSuccess (response) {
+					$log.info('Phone: transfer: ' + $scope.UI.transfer);
+					$scope.transfer.isLoading = false;
+					$scope.UI.transfer = false;
+					$scope.transfer.workers = [];
+					$scope.transfer.to = null;
+
+					$timeout(function () {
+						Twilio.Device.disconnectAll();
+					});
+
+				}).catch(function (error) {
+					$log.info('Phone: transfer failed');
+					$log.error(error);
+				});
+
+		}).catch(error => {
+			$log.error(error);
+		});
+
+	};
+
+	$scope.toggleTransferPanel = function () {
+		$scope.UI.transfer = !$scope.UI.transfer;
+
+		if ($scope.UI.transfer) {
+			$scope.transfer.isLoading = true;
+
+			$http.get('/api/phone/transfer/available-workers').then(function (response) {
+				$scope.transfer.workers = response.data;
+				$scope.transfer.isLoading = false;
+
+				/* always select the first worker */
+				if ($scope.transfer.workers[0]) {
+					$scope.transfer.to = $scope.transfer.workers[0].sid;
+				}
+			}, function (error) {
+				$log.error(error);
+			});
+		} else {
+			$scope.transfer.workers = [];
+		}
+
 	};
 
 	$scope.toggleHold = function () {
@@ -130,7 +191,7 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout,
 				});
 
 		}).catch(error => {
-			console.log(error);
+			$log.error(error);
 		});
 
 	};

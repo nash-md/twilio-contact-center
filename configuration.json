@@ -29,7 +29,7 @@
 			"id": "phone",
 			"taskQueueSid": null,
 			"expression": "channel == \"phone\"",
-			"targetWorkerExpression": "task.team == worker.team"
+			"targetWorkerExpression": "task.team == worker.team OR task.transferToWorkerSid = worker.sid"
 		},
 		{
 			"friendlyName": "Video Queue",
