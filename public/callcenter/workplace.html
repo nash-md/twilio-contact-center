@@ -72,9 +72,7 @@
             <div class="panel panel-default agent-task" ng-show="task != null">
 
               <div class="panel-heading">
-
                 <button ng-show="task != null" class="btn btn-primary complete-task" ng-click="complete()">Complete Task</button>
-
               </div>
 
               <div class="panel-body">
@@ -86,8 +84,19 @@
                 {{task.attributes.text}}
               </div>
 
-              <!-- video -->
-              <section class="agent-video-canvas" id="remote-media" ng-controller="VideoController" ng-cloak>
+              <section class="agent-video-canvas" ng-controller="VideoController" ng-cloak>
+                <div>
+
+                  <div id="remote-media"></div>
+            
+                  <div style="text-align: center" ng-show="UI.state == 'WAITING_FOR_CUSTOMER'" class="load-indicator">
+                    <i class="fa fa-refresh fa-spin"></i>
+                  </div>
+                
+                  <div ng-show="UI.state == 'CONVERSATION_ACTIVE'">connected...</div>
+                  <div ng-show="UI.state == 'CLOSED'" class="panel-title state-closed-panel">Customer left the conversation</div>
+        
+                </div>
               </section>
               <!-- video -->
 
