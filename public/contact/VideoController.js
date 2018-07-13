@@ -11,7 +11,7 @@ function VideoController ($scope, $http, $timeout, $log, $window) {
 	$scope.UI = { warning: null, state: null };
 
 	if ($window.location.protocol !== 'https:') {
-		let message =  `Depending on your browser and/or settings capturing audio and video 
+		let message = `Depending on your browser and/or settings capturing audio and video 
 										requires a secure (HTTPS) page. The demo may not work.`;
 		$scope.UI.warning = message;
 	}
@@ -45,7 +45,7 @@ function VideoController ($scope, $http, $timeout, $log, $window) {
 	$scope.enterRoom = function (token, roomName) {
 		let options = {
 			name: roomName,
-			tracks: [ $scope.localVideoTrack, $scope.localAudioTrack ]
+			tracks: [$scope.localVideoTrack, $scope.localAudioTrack]
 		};
 
 		Twilio.Video.connect(token, options).then(room => {
@@ -56,28 +56,41 @@ function VideoController ($scope, $http, $timeout, $log, $window) {
 
 			$scope.$apply();
 
-			$scope.room.participants.forEach(function (participant) {
-				$log.log('Already in Room: ' + participant.identity);
+			$scope.participantConnected = function (participant) {
+				console.log('Participant "%s" connected', participant.identity);
 
-				var tracks = Array.from(participant.tracks.values());
-				var remoteMediaContainer = document.getElementById('remote-media');
+				$scope.UI.state = 'CONVERSATION_ACTIVE';
 
-				tracks.forEach(function (track) {
-					remoteMediaContainer.appendChild(track.attach());
+				participant.on('trackAdded', track => $scope.addTrack(participant, track));
+				participant.on('trackRemoved', track => $scope.removeTrack(participant, track));
+
+				$timeout(function () {
+					$scope.$apply();
 				});
+			};
 
-			});
-
-			$scope.room.on('trackAdded', function (track, participant) {
+			$scope.addTrack = function (participant, track) {
 				$log.log(participant.identity + ' added track: ' + track.kind);
 
 				document.getElementById('remote-media').appendChild(track.attach());
-			});
+
+				$timeout(function () {
+					$scope.$apply();
+				});
+			};
+
+			$scope.removeTrack = function (participant, track) {
+				$log.log(participant.identity + ' removed track: ' + track.kind);
+
+				track.detach().forEach(element => element.remove());
+
+				$timeout(function () {
+					$scope.$apply();
+				});
+			};
 
 			$scope.room.on('participantConnected', participant => {
-				$log.log('Participant "%s" connected', participant.identity);
-				$scope.UI.state = 'CONVERSATION_ACTIVE';
-				$scope.$apply();
+				$scope.participantConnected(participant);
 			});
 
 			$scope.room.on('participantDisconnected', participant => {
@@ -105,6 +118,13 @@ function VideoController ($scope, $http, $timeout, $log, $window) {
 					$scope.$apply();
 				});
 			});
+
+			$scope.room.participants.forEach(function (participant) {
+				$log.log(`${participant.identity} is already in room`);
+
+				$scope.participantConnected(participant);
+			});
+
 
 		}).catch(function (error) {
 			$log.error('Connect to Room failed, %o', error);
@@ -145,12 +165,21 @@ function VideoController ($scope, $http, $timeout, $log, $window) {
 		});
 	};
 
-	$scope.toggleMediaStream = function () {
-		console.log('isEnabled: ' + $scope.localVideoTrack.isEnabled);
+	$scope.toggleVideoStream = function () {
+		$log.log('toggle video, current status is: ' + $scope.localVideoTrack.isEnabled);
 		if ($scope.localVideoTrack.isEnabled) {
 			$scope.localVideoTrack.disable();
 		} else {
 			$scope.localVideoTrack.enable();
+		}
+	};
+
+	$scope.toggleAudioStream = function () {
+		$log.log('toggle audio, current status is: ' + $scope.localAudioTrack.isEnabled);
+		if ($scope.localAudioTrack.isEnabled) {
+			$scope.localAudioTrack.disable();
+		} else {
+			$scope.localAudioTrack.enable();
 		}
 	};
 

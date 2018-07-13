@@ -61,7 +61,9 @@
 					<div class="video-canvas tab-pane" ng-show="UI.state == 'WAITING_FOR_AGENT' || UI.state == 'CONVERSATION_ACTIVE'">
 
 						<div>
-							<div class="button-toggle-media" ng-click="toggleMediaStream()" ng-class="{'media-enabled': localVideoTrack.isEnabled == true, 'media-disabled': localVideoTrack.isEnabled == false }"></div>
+							<div class="button-toggle-video" ng-click="toggleVideoStream()" ng-class="{'video-enabled': localVideoTrack.isEnabled == true, 'video-disabled': localVideoTrack.isEnabled == false }"></div>
+							<div class="button-toggle-audio" ng-click="toggleAudioStream()" ng-class="{'audio-enabled': localAudioTrack.isEnabled == true, 'audio-disabled': localAudioTrack.isEnabled == false }"></div>
+
 							<div class="button-leave-room" ng-click="leaveRoom()"></div>
 
 							<div class="waiting-for-agent" ng-show="UI.state == 'WAITING_FOR_AGENT'"> 
