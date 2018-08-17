@@ -3,7 +3,12 @@
   "description": "A simple omni channel contact center using Twilio WebRTC Client, Video, SMS, Chat and Taskrouter",
   "version": "1.9.0",
   "author": "Matthias Damm",
-  "contributors": [],
+  "contributors": [
+    {
+      "name" : "Hunter Rancourt",
+      "url" : "https://github.com/skwid138"
+    }
+  ],
   "license": "MIT",
   "repository": "nash-md/twilio-contact-center",
   "main": "app.js",

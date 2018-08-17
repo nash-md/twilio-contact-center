@@ -17,7 +17,7 @@
 
   <section style="margin: auto; width:750px;">
 
-    <h2 class="page-header">Twilio Contact Center: Setup</h2>
+    <h2 class="page-header">Twilio Contact Center: Setup<a href="/" class="header-home-link">Back Home</a></h2>
 
     <h4>Workspace: {{workspace.sid}} - {{workspace.friendlyName}}</h4>
 
@@ -92,7 +92,7 @@
 
       <div style="margin-top:10px" ng-if="phoneNumber.isValid == false" class="alert alert-dismissible alert-danger">
           <strong>Oh snap!</strong><br />
-          
+
           <span ng-if="phoneNumber.code == 'TWILIO_UNKNOWN_ERROR'">{{ message | json}}</span>
 
           <span ng-if="phoneNumber.code == 'TWILIO_PHONE_NUMBER_NOT_FOUND'">The phone number could not be found in your Twilio account.</span>
@@ -105,7 +105,7 @@
 
        <div style="margin-top:10px" ng-if="error != null" class="alert alert-dismissible alert-danger">
           <strong>Oh snap!</strong><br />
-          
+
           <span>{{ error | json}}</span>
 
       </div>
@@ -113,7 +113,7 @@
       <br>
 
     </div>
-  
+
   </form>
 
 </section>

@@ -1,774 +1,699 @@
 /* prevent angularjs flicker */
 [ng\:cloak], [ng-cloak], .ng-cloak {
-  display: none !important;
+    display: none !important;
 }
 
-.tab-pane{
-  background: #fff;
-  padding-top: 10px;
-  padding-bottom:10px;
-  border: 1px solid #ddd;
-  margin-top: -1px;
+a.header-home-link {
+    float: right;
+    font-size: small;
+    margin-top: 5%;
 }
 
-.workflow-controller
-{
-	margin-top: 10px;
+.tab-pane {
+    background: #fff;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: 1px solid #ddd;
+    margin-top: -1px;
 }
 
-.workflow-controller .logout
-{
-	text-align:right;
-	font-size:0.9em;
-	cursor:pointer;
+.workflow-controller {
+    margin-top: 10px;
 }
 
-.workflow-controller .name
-{
-	margin-top: 15px;
+.workflow-controller .logout {
+    text-align: right;
+    font-size: 0.9em;
+    cursor: pointer;
 }
 
-.workflow-controller .reservations
-{
-	float: left;
-	width:505px;
-	margin-top: 10px;
+.workflow-controller .name {
+    margin-top: 15px;
 }
 
-.workflow-controller .reservations .agent-reservation
-{
-	border: 1px solid transparent;
-	border-radius: 4px;
-	border-color: rgb(221, 221, 221);
-	box-shadow: none;
+.workflow-controller .panel .panel-body #worker-status span.label {
+    font-size: 1.5rem;
+    vertical-align: middle;
 }
 
-.workflow-controller .reservations .agent-reservation table
-{
-	width:100%;
-	font-size: 1.2em;
+.workflow-controller .panel .panel-body #worker-status .btn-group select.form-control {
+    text-align-last: center;
 }
 
-.workflow-controller .reservations .agent-reservation .accept-panel
-{
-	width: 80px;
-	text-align:right;
+.workflow-controller .reservations {
+    float: left;
+    width: 505px;
+    margin-top: 10px;
 }
 
-.workflow-controller .reservations .agent-reservation .accept-panel button
-{
-  -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
-  -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
-  box-shadow:inset 0px 1px 0px 0px #ffffff;
-  background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #f6f6f6));
-  background:-moz-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
-  background:-webkit-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
-  background:-o-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
-  background:-ms-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
-  background:linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
-  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0);
-  background-color:#ffffff;
-  -moz-border-radius:4px;
-  -webkit-border-radius:4px;
-  border-radius:4px;
-  border:1px solid #dcdcdc;
-  display:inline-block;
-  cursor:pointer;
-  color:#666666;
-  font-size:15px;
-  font-weight:bold;
-  height: 34px;
-  padding-left: 12px;
-  padding-right: 12px;
-  text-decoration:none;
-  text-shadow:0px 1px 0px #ffffff;
+.workflow-controller .reservations .agent-reservation {
+    border: 1px solid transparent;
+    border-radius: 4px;
+    border-color: rgb(221, 221, 221);
+    box-shadow: none;
+}
+
+.workflow-controller .reservations .agent-reservation table {
+    width: 100%;
+    font-size: 1.2em;
+}
+
+.workflow-controller .reservations .agent-reservation .accept-panel {
+    width: 80px;
+    text-align: right;
+}
+
+.workflow-controller .reservations .agent-reservation .accept-panel button {
+    -moz-box-shadow: inset 0px 1px 0px 0px #ffffff;
+    -webkit-box-shadow: inset 0px 1px 0px 0px #ffffff;
+    box-shadow: inset 0px 1px 0px 0px #ffffff;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #f6f6f6));
+    background: -moz-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+    background: -webkit-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+    background: -o-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+    background: -ms-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+    background: linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f6f6f6', GradientType=0);
+    background-color: #ffffff;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    border: 1px solid #dcdcdc;
+    display: inline-block;
+    cursor: pointer;
+    color: #666666;
+    font-size: 15px;
+    font-weight: bold;
+    height: 34px;
+    padding-left: 12px;
+    padding-right: 12px;
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #ffffff;
 }
 
 .workflow-controller .reservations .agent-reservation .accept-panel button:hover {
-  background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #f6f6f6), color-stop(1, #ffffff));
-  background:-moz-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
-  background:-webkit-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
-  background:-o-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
-  background:-ms-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
-  background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
-  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f6f6f6', endColorstr='#ffffff',GradientType=0);
-  background-color:#f6f6f6;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #f6f6f6), color-stop(1, #ffffff));
+    background: -moz-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+    background: -webkit-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+    background: -o-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+    background: -ms-linear-gradient(top, #f6f6f6 5%, #ffffff 100%);
+    background: linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f6f6f6', endColorstr='#ffffff', GradientType=0);
+    background-color: #f6f6f6;
 }
 
-.workflow-controller .reservations .agent-reservation .timer
-{
-	font-size: 0.8em
+.workflow-controller .reservations .agent-reservation .timer {
+    font-size: 0.8em
 }
 
-.workflow-controller .reservations .agent-reservation .title
-{
-	font-weight: bold;
+.workflow-controller .reservations .agent-reservation .title {
+    font-weight: bold;
 }
 
-.workflow-controller .reservations .agent-waiting
-{
-	border: 1px solid transparent;
-	border-radius: 4px;
-	border-color: rgb(221, 221, 221);
-	box-shadow: none;
+.workflow-controller .reservations .agent-waiting {
+    border: 1px solid transparent;
+    border-radius: 4px;
+    border-color: rgb(221, 221, 221);
+    box-shadow: none;
 }
 
-.workflow-controller .reservations .agent-waiting .panel-title
-{	
-	text-align:center;
-	font-size:1.4em;
-	color: #787878;
+.workflow-controller .reservations .agent-waiting .panel-title {
+    text-align: center;
+    font-size: 1.4em;
+    color: #787878;
 }
 
-.workflow-controller .reservations .agent-task
-{
-	border: 1px solid transparent;
-	border-radius: 4px;
-	border-color: rgb(221, 221, 221);
-	box-shadow: none;
+.workflow-controller .reservations .agent-task {
+    border: 1px solid transparent;
+    border-radius: 4px;
+    border-color: rgb(221, 221, 221);
+    box-shadow: none;
 }
 
-.workflow-controller .reservations .agent-task .description
-{
-	font-size: 1.2em;
-	font-weight: bold;
+.workflow-controller .reservations .agent-task .description {
+    font-size: 1.2em;
+    font-weight: bold;
 }
 
-.workflow-controller .reservations .agent-task .panel-heading
-{
-	overflow: auto;
+.workflow-controller .reservations .agent-task .panel-heading {
+    overflow: auto;
 }
 
-.workflow-controller .reservations .agent-task button.complete-task
-{
-	float: right;
+.workflow-controller .reservations .agent-task button.complete-task {
+    float: right;
 }
 
-.phone-controller
-{
-	float:right;
-	width:280px;
+.phone-controller {
+    float: right;
+    width: 280px;
 }
 
-.phone-controller .phone
-{
-	margin-top: 10px;
-	background-color:#f5f5f5;
-	border: 1px solid transparent;
-	border-radius: 4px;
-	border-color: rgb(221, 221, 221); 
-	padding: 10px;
+.phone-controller .phone {
+    margin-top: 10px;
+    background-color: #f5f5f5;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    border-color: rgb(221, 221, 221);
+    padding: 10px;
 }
 
-.phone-controller input
-{
-	box-sizing: border-box; 
-	width: 100%;
-	font-size: 1.8em;
-	color: #333333;
-	padding: 5px 15px 5px 15px;
-	border:0;
+.phone-controller input {
+    box-sizing: border-box;
+    width: 100%;
+    font-size: 1.8em;
+    color: #333333;
+    padding: 5px 15px 5px 15px;
+    border: 0;
 }
 
-.phone-controller .phone-number
-{
-	box-sizing: border-box; 
-	width: 100%;
-	font-size: 1.8em;
-	padding: 5px 15px 5px 15px;
-	color:#333333;
-	overflow: hidden;
+.phone-controller .phone-number {
+    box-sizing: border-box;
+    width: 100%;
+    font-size: 1.8em;
+    padding: 5px 15px 5px 15px;
+    color: #333333;
+    overflow: hidden;
 }
 
-.phone-controller .keypad
-{
-	overflow: auto;
-	padding: 10px 30px 10px 30px;
+.phone-controller .keypad {
+    overflow: auto;
+    padding: 10px 30px 10px 30px;
 }
 
-.phone-controller .keypad .digit
-{
-	float: left;
-	width: 60px;
-	height: 60px;
-	line-height: 60px;
-	text-align: center;
-	border: 1px solid #ddd;
-	font-size: 1.6em;
-	margin-left: 5px;
-	margin-bottom: 5px;
-	font-weight: bold;
-	cursor: pointer;
-	color: #787878;
-	border-radius: 3px;
+.phone-controller .keypad .digit {
+    float: left;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    border: 1px solid #ddd;
+    font-size: 1.6em;
+    margin-left: 5px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #787878;
+    border-radius: 3px;
 }
 
-.phone-controller .digit:nth-child(3n +1){
+.phone-controller .digit:nth-child(3n +1) {
     margin-left: 5px
 }
 
-.phone-controller .digit:nth-child(1n + 10){
+.phone-controller .digit:nth-child(1n + 10) {
     margin-bottom: 0
 }
 
-.phone-controller .digit:hover{
-	background-color: #787878;
-	color:white;
+.phone-controller .digit:hover {
+    background-color: #787878;
+    color: white;
 }
 
-.phone-controller .call-control
-{
-	text-align: center;
-	padding-bottom: 10px;
+.phone-controller .call-control {
+    text-align: center;
+    padding-bottom: 10px;
 }
 
-.phone-controller .call-control button
-{
-	background: none;
-	color: inherit;
-	border: none;
-	padding: 0;
-	font: inherit; 
-	cursor: pointer;
-	display:inline-block;
-	width: 50px;
-	height: 50px;
-	outline: inherit;
-	background-position: center center;
-	background-repeat: no-repeat;
+.phone-controller .call-control button {
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    outline: inherit;
+    background-position: center center;
+    background-repeat: no-repeat;
 }
 
-.phone-controller .button-call 
-{
-	width: 100%;
-	border-radius: 3px;
-	border:1px solid green;
-	font-size: 1.6em;
-	background-color: green;
-	color:white;
+.phone-controller .button-call {
+    width: 100%;
+    border-radius: 3px;
+    border: 1px solid green;
+    font-size: 1.6em;
+    background-color: green;
+    color: white;
 }
 
-.phone-controller .button-hangup 
-{
-	width: 100%;
-	border-radius: 3px;
-	border:1px solid red;
-	font-size: 1.6em;
-	background-color: red;
-	color:white;
+.phone-controller .button-hangup {
+    width: 100%;
+    border-radius: 3px;
+    border: 1px solid red;
+    font-size: 1.6em;
+    background-color: red;
+    color: white;
 }
 
-.phone-controller .button-transfer
-{
-	width: 100%;
-	border-radius: 3px;
-	border:1px solid rgb(33,150,243);
-	font-size: 1.2em;
-	background-color: rgb(33,150,243);
-	color:white;
+.phone-controller .button-transfer {
+    width: 100%;
+    border-radius: 3px;
+    border: 1px solid rgb(33, 150, 243);
+    font-size: 1.2em;
+    background-color: rgb(33, 150, 243);
+    color: white;
 }
 
-.phone-controller .button-transfer-disabled
-{
-	width: 100%;
-	border-radius: 3px;
-	border:1px solid#d6d4d4;
-	font-size: 1.2em;
-	background-color: #d6d4d4;
-	color:white;
+.phone-controller .button-transfer-disabled {
+    width: 100%;
+    border-radius: 3px;
+    border: 1px solid #d6d4d4;
+    font-size: 1.2em;
+    background-color: #d6d4d4;
+    color: white;
 }
 
-.phone-controller .transfer-control
-{
-	border: 1px solid #ddd;
-	padding: 20px 15px 20px 15px;
-	margin-bottom: 10px;
+.phone-controller .transfer-control {
+    border: 1px solid #ddd;
+    padding: 20px 15px 20px 15px;
+    margin-bottom: 10px;
 }
 
-.phone-controller .transfer-control .load-indicator
-{
-	width: 100%;
-	text-align: center;
-	margin-bottom: 15px;
+.phone-controller .transfer-control .load-indicator {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 15px;
 }
 
-.phone-controller .transfer-control .worker-list-empty
-{
-	width: 100%;
-	text-align: center;
-	margin-bottom: 15px;
+.phone-controller .transfer-control .worker-list-empty {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 15px;
 }
 
-.phone-controller .transfer-control .worker-list
-{
-	display: block;
-	width: 100%;
-	margin-bottom: 20px;
+.phone-controller .transfer-control .worker-list {
+    display: block;
+    width: 100%;
+    margin-bottom: 20px;
 }
 
-.phone-controller .status 
-{
-	font-size: 0.8em;
-	color: #808080;
-	padding-top: 8px;
-	display: block
+.phone-controller .status {
+    font-size: 0.8em;
+    color: #808080;
+    padding-top: 8px;
+    display: block
 }
 
-.phone-controller .devices > div
-{
-	overflow: auto;
-	margin-top:5px;
-	margin-bottom: 5px;
+.phone-controller .devices > div {
+    overflow: auto;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
-.phone-controller .devices-panel  > div:first-child
-{
-	overflow: auto;
-	margin-top:5px;
-	margin-bottom: 5px
+.phone-controller .devices-panel > div:first-child {
+    overflow: auto;
+    margin-top: 5px;
+    margin-bottom: 5px
 }
 
-.phone-controller .devices-panel .button-toggle-device-panel
-{
-	background-image:url(/images/icon-setup.svg);
-	background-position: center center;
-	background-repeat: no-repeat;
-	display:block;
-	float:right; width: 25px; height: 25px;
-	background-size: contain; border: none;
-	cursor: pointer;
-	opacity: 0.6;
+.phone-controller .devices-panel .button-toggle-device-panel {
+    background-image: url(/images/icon-setup.svg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    display: block;
+    float: right;
+    width: 25px;
+    height: 25px;
+    background-size: contain;
+    border: none;
+    cursor: pointer;
+    opacity: 0.6;
 }
 
-.phone-controller .devices-panel .audio-device-list
-{
-	border-radius: 4px;
-	border: 1px solid; 
-	border-color: rgb(221, 221, 221);
-	padding: 10px;
+.phone-controller .devices-panel .audio-device-list {
+    border-radius: 4px;
+    border: 1px solid;
+    border-color: rgb(221, 221, 221);
+    padding: 10px;
 }
 
-.phone-controller .devices-panel .audio-device-list select
-{
-	width:100%;
-	font-size: 16px;
+.phone-controller .devices-panel .audio-device-list select {
+    width: 100%;
+    font-size: 16px;
 }
 
 /* support chat */
-.typing-notification
-{
-	color: #808080; 
-	height: 2em;
-	font-size: 0.8em;
-	line-height: 2em;
-	padding-left: 10px;
+.typing-notification {
+    color: #808080;
+    height: 2em;
+    font-size: 0.8em;
+    line-height: 2em;
+    padding-left: 10px;
 }
 
-.chat-controller .load-indicator
-{
-	text-align: center;
-	margin-top: 10px;
-	margin-bottom: 20px;
+.chat-controller .load-indicator {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
-.chat-controller .typing-notification
-{
-	color: #808080; 
-	height: 2em;
-	font-size: 0.8em;
-	line-height: 2em;
+.chat-controller .typing-notification {
+    color: #808080;
+    height: 2em;
+    font-size: 0.8em;
+    line-height: 2em;
 }
 
-.support-chat-form input[name="identity"]
-{
-	width: 250px;
+.support-chat-form input[name="identity"] {
+    width: 250px;
 }
 
-.support-chat-form .initiate > span
-{
-	padding-right:8px;
+.support-chat-form .initiate > span {
+    padding-right: 8px;
 }
 
-.chat-controller
-{
-	border-top: 1px solid #ddd;
-	padding-top: 10px;
+.chat-controller {
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
 }
 
-.chat-canvas
-{
+.chat-canvas {
     height: 400px;
     margin: 0;
     overflow-y: scroll;
 }
 
-.chat-canvas .message-list
-{
-	list-style: none;
-	padding-left: 10px;
-	margin-right: 10px;
+.chat-canvas .message-list {
+    list-style: none;
+    padding-left: 10px;
+    margin-right: 10px;
 }
 
-.chat-canvas .message-list .message
-{
-	list-style: none;
-	overflow: auto;
-	clear:both;
-	padding: 0 8px 8px 8px;
+.chat-canvas .message-list .message {
+    list-style: none;
+    overflow: auto;
+    clear: both;
+    padding: 0 8px 8px 8px;
 }
 
-.message > div
-{
-	float: left;
-}
-
-.message .body
-{
-  color: #fff;
-  background-color: #00b0ff;
-  font-size: 16px;
-  position: relative;
-  display: inline-block;
-  clear: both;
-  padding: 8px 14px 8px 14px;
-  vertical-align: top;
-  border-radius: 5px;
-  z-index: 1;
-}
-
-.message .body .needle
-{
-	position: absolute;
-	top: 0;
-	left: 0;
-}
-
-.message .body .needle:after
-{
-	font-family: FontAwesome;
-	color: #00b0ff;
-	position: absolute;
-	z-index: -1;
-  top: 10px;
-  left:12px;
-  display: block;
-  width: 8px;
-  height: 6px;
-  content: '\f04d';
-  -webkit-transform: rotate(29deg) skew(-35deg);
-  transform: rotate(29deg) skew(-35deg);
-}
-
-.message .body p
-{
-	margin:0;
-	font-size: 14px;
-}
-
-.message.me > div
-{
-	float: right;
-}
-
-.message.me .body
-{
-  color: #1a1a1a;
-  background-color: #eceff1;
-  -webkit-align-self: flex-end;
-  -ms-flex-item-align: end;
-  float: right;
-}
-
-.message.me .body .needle
-{
-	position: absolute;
-	top: 0;
-	right: 0;
-	left: auto;
-}
-
-.message.me .body .needle:after
-{
-	color: #eceff1;
-  right: -10px;
-  left:auto;
-}
-
-.message .footer
-{
-	overflow:auto;
-	clear: both;
-}
-
-.message .footer .author
-{
-	font-size: 0.9em;
-	float:left;
-	padding-right: 8px;
-}
-
-.message.me .footer .author
-{
-	float:right;
-	padding-left: 8px;
-	padding-right: 0;
-}
-
-.message .footer .time
-{
-	font-size: 0.9em;
-}
-
-.message .footer .time
-{
-    float: right;
-}
-
-.message.me .footer .time
-{
+.message > div {
     float: left;
 }
 
-.chat-message-form
-{
-	padding-left: 10px;
+.message .body {
+    color: #fff;
+    background-color: #00b0ff;
+    font-size: 16px;
+    position: relative;
+    display: inline-block;
+    clear: both;
+    padding: 8px 14px 8px 14px;
+    vertical-align: top;
+    border-radius: 5px;
+    z-index: 1;
 }
 
-.chat-message-form input
-{
-	width:100%;
+.message .body .needle {
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
-.chat-message-form button
-{
-	padding-left: 15px;
-	padding-right: 15px;
-	margin-top: 5px;
+.message .body .needle:after {
+    font-family: FontAwesome;
+    color: #00b0ff;
+    position: absolute;
+    z-index: -1;
+    top: 10px;
+    left: 12px;
+    display: block;
+    width: 8px;
+    height: 6px;
+    content: '\f04d';
+    -webkit-transform: rotate(29deg) skew(-35deg);
+    transform: rotate(29deg) skew(-35deg);
 }
 
-.message .chat-inline-number
-{
-	color: white;
-	cursor: pointer;
-	text-decoration: underline;
+.message .body p {
+    margin: 0;
+    font-size: 14px;
 }
 
-.message.me .chat-inline-number
-{
-	color: #1a1a1a;
+.message.me > div {
+    float: right;
+}
+
+.message.me .body {
+    color: #1a1a1a;
+    background-color: #eceff1;
+    -webkit-align-self: flex-end;
+    -ms-flex-item-align: end;
+    float: right;
+}
+
+.message.me .body .needle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: auto;
+}
+
+.message.me .body .needle:after {
+    color: #eceff1;
+    right: -10px;
+    left: auto;
+}
+
+.message .footer {
+    overflow: auto;
+    clear: both;
+}
+
+.message .footer .author {
+    font-size: 0.9em;
+    float: left;
+    padding-right: 8px;
+}
+
+.message.me .footer .author {
+    float: right;
+    padding-left: 8px;
+    padding-right: 0;
+}
+
+.message .footer .time {
+    font-size: 0.9em;
+}
+
+.message .footer .time {
+    float: right;
+}
+
+.message.me .footer .time {
+    float: left;
+}
+
+.chat-message-form {
+    padding-left: 10px;
+}
+
+.chat-message-form input {
+    width: 100%;
+}
+
+.chat-message-form button {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-top: 5px;
+}
+
+.message .chat-inline-number {
+    color: white;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.message.me .chat-inline-number {
+    color: #1a1a1a;
 }
 
 /* task overview */
-.task-list
-{
-	width: 100%;
+.task-list {
+    width: 100%;
 }
 
-.task-list .label
-{
-	font-size:1em;
+.task-list .label {
+    font-size: 1em;
 }
 
 /* Twilio Video */
-.video-support-form input[name="identity"]
-{
-	width: 250px;
+.video-support-form input[name="identity"] {
+    width: 250px;
 }
 
-.video-support-form .initiate > span
-{
-	padding-right:8px;
+.video-support-form .initiate > span {
+    padding-right: 8px;
 }
 
-.video-canvas
-{
-	position: relative;
-	width: 100%;
-	padding-top: 75%;
+.video-canvas {
+    position: relative;
+    width: 100%;
+    padding-top: 75%;
 }
 
-.video-canvas > div
-{
-	position: absolute;
-	top: 0;
-	left: 0;
-	bottom: 0;
-	right: 0;
-	z-index: 100;
+.video-canvas > div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 100;
 }
 
-.video-canvas .button-toggle-video
-{
-	background-color: rgba(0,0,0,0.7);
-	padding: 0px;
-	cursor: pointer;
-	height: 60px;
-	width: 60px; 
-	border-radius: 30px;
-	left: 50%;
-	margin-left: -30px;
-	background-repeat: no-repeat;
-	background-size: 50%;
-	bottom: 15px;
-	background-position: center center;
-	position: absolute;
+.video-canvas .button-toggle-video {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 0px;
+    cursor: pointer;
+    height: 60px;
+    width: 60px;
+    border-radius: 30px;
+    left: 50%;
+    margin-left: -30px;
+    background-repeat: no-repeat;
+    background-size: 50%;
+    bottom: 15px;
+    background-position: center center;
+    position: absolute;
 }
 
-.video-canvas .video-enabled
-{
-	background-image: url(/images/icon_camera.svg);
+.video-canvas .video-enabled {
+    background-image: url(/images/icon_camera.svg);
 }
 
-.video-canvas .video-disabled
-{
-	background-image: url(/images/icon_camera_off.svg);
+.video-canvas .video-disabled {
+    background-image: url(/images/icon_camera_off.svg);
 }
 
-.video-canvas .button-toggle-audio
-{
-	background-color: rgba(0,0,0,0.7);
-	padding: 0px;
-	cursor: pointer;
-	height: 60px;
-	width: 60px; 
-	border-radius: 30px;
-	left: 50%;
-	margin-left: 60px;
-	background-repeat: no-repeat;
-	background-size: 50%;
-	bottom: 15px;
-	background-position: center center;
-	position: absolute;
+.video-canvas .button-toggle-audio {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 0px;
+    cursor: pointer;
+    height: 60px;
+    width: 60px;
+    border-radius: 30px;
+    left: 50%;
+    margin-left: 60px;
+    background-repeat: no-repeat;
+    background-size: 50%;
+    bottom: 15px;
+    background-position: center center;
+    position: absolute;
 }
 
-.video-canvas .audio-enabled
-{
-	background-image: url(/images/icon-microphone.svg);
+.video-canvas .audio-enabled {
+    background-image: url(/images/icon-microphone.svg);
 }
 
-.video-canvas .audio-disabled
-{
-	background-image: url(/images/icon-microphone-off.svg);
+.video-canvas .audio-disabled {
+    background-image: url(/images/icon-microphone-off.svg);
 }
 
-.video-canvas .button-leave-room
-{
-	background-color: rgba(0,0,0,0.7);
-	background-image: url(/images/icon_leave_room.svg);
-	padding: 0px;
-	cursor: pointer;
-	height: 60px;
-	width: 60px;
-	border-radius: 30px;
-	left: 50%;
-	margin-left: -120px;
-	background-repeat: no-repeat;
-	background-size: 50%;
-	bottom: 15px;
-	background-position: center center;
-	position: absolute;
+.video-canvas .button-leave-room {
+    background-color: rgba(0, 0, 0, 0.7);
+    background-image: url(/images/icon_leave_room.svg);
+    padding: 0px;
+    cursor: pointer;
+    height: 60px;
+    width: 60px;
+    border-radius: 30px;
+    left: 50%;
+    margin-left: -120px;
+    background-repeat: no-repeat;
+    background-size: 50%;
+    bottom: 15px;
+    background-position: center center;
+    position: absolute;
 }
 
-.video-canvas .waiting-for-agent
-{
-	position: absolute;
-	z-index: -1;
-	width: 100%;
-	height: 100%;
+.video-canvas .waiting-for-agent {
+    position: absolute;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
 }
 
-.video-canvas .waiting-for-agent > div
-{
-	position: absolute;
-	top: 45%;
-	text-align: center;
-	width: 100%;
+.video-canvas .waiting-for-agent > div {
+    position: absolute;
+    top: 45%;
+    text-align: center;
+    width: 100%;
 }
 
-.video-canvas .waiting-for-agent > div i
-{
-	font-size: 2.6em;
+.video-canvas .waiting-for-agent > div i {
+    font-size: 2.6em;
 }
 
-.video-canvas #remote-media
-{
-	width: 100%;
-	line-height:0px;
-	position: absolute;
-	z-index: -1;
+.video-canvas #remote-media {
+    width: 100%;
+    line-height: 0px;
+    position: absolute;
+    z-index: -1;
 }
 
-.video-canvas #remote-media video
-{
-	width: 100%
+.video-canvas #remote-media video {
+    width: 100%
 }
 
-.video-canvas #local-media
-{
-	width: 33%;
-	left: 0px;
-	top: 0px;
-	position: absolute;
-	box-sizing: border-box;
+.video-canvas #local-media {
+    width: 33%;
+    left: 0px;
+    top: 0px;
+    position: absolute;
+    box-sizing: border-box;
 }
 
-.video-canvas #local-media video
-{
-	-webkit-box-shadow: 3px 3px 5px -2px rgba(0,0,0,0.39);
-	-moz-box-shadow: 3px 3px 5px -2px rgba(0,0,0,0.39);
-	box-shadow: 3px 3px 5px -2px rgba(0,0,0,0.39);
-	object-fit: contain;
-	width: 100%;
-	height: 100%;
+.video-canvas #local-media video {
+    -webkit-box-shadow: 3px 3px 5px -2px rgba(0, 0, 0, 0.39);
+    -moz-box-shadow: 3px 3px 5px -2px rgba(0, 0, 0, 0.39);
+    box-shadow: 3px 3px 5px -2px rgba(0, 0, 0, 0.39);
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
 }
 
-.agent-video-canvas
-{
-	position: relative;
-	width: 100%;
-	background-color: #f5f5f5;
+.agent-video-canvas {
+    position: relative;
+    width: 100%;
+    background-color: #f5f5f5;
 }
 
-.agent-video-canvas > div
-{
-	width:100%;
-	padding: 5px;
+.agent-video-canvas > div {
+    width: 100%;
+    padding: 5px;
 }
 
-.agent-video-canvas video
-{
-	object-fit: contain;
-	width: 100%;
-	height: 100%;
+.agent-video-canvas video {
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
 }
 
-.agent-video-canvas video
-{
-	object-fit: contain;
-	width: 100%;
-	height: 100%;
+.agent-video-canvas video {
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
 }
 
-.agent-video-canvas .state-closed-panel
-{
-	text-align: center;
-	font-size: 1.4em;
-	color: #787878
+.agent-video-canvas .state-closed-panel {
+    text-align: center;
+    font-size: 1.4em;
+    color: #787878
 }
 
-.ui-warning
-{
-  background-color: #ff2c33 !important;
-  color: white !important;
-  line-height: 26px;
-  vertical-align: middle;
-  font-weight: 500;
-  letter-spacing: .01em;
-  font-size: 14px;
-  align-items: center;
-  text-align: center;
-  box-sizing: border-box;
-  margin-bottom: 5px !important;
-  border-radius: 0 !important;
-  padding: 5px;
-} 
+.ui-warning {
+    background-color: #ff2c33 !important;
+    color: white !important;
+    line-height: 26px;
+    vertical-align: middle;
+    font-weight: 500;
+    letter-spacing: .01em;
+    font-size: 14px;
+    align-items: center;
+    text-align: center;
+    box-sizing: border-box;
+    margin-bottom: 5px !important;
+    border-radius: 0 !important;
+    padding: 5px;
+}

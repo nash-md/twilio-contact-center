@@ -213,6 +213,27 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout,
 		$scope.connection.mute($scope.UI.mute);
 	};
 
+	/**
+	 * Prompts the user for access to audio devices
+	 * Currently only tested on Chrome v. 68.0.3440.106
+	 */
+	$scope.unknownDevices = function () {
+		navigator.mediaDevices.getUserMedia({audio: true});
+	};
+
+	/**
+	 * Checks for Chrome, Firefox, and Safari
+	 * The prompt works on OSX Chrome, Firefox, Safari, and iOS Safari (not iOS Chrome)
+	 * @returns {boolean}
+	 */
+	$scope.showAudioPrompt = function () {
+		var isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+		var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+		var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+		return isChrome || (isFirefox || isSafari);
+	};
+
 	$scope.toggleAudioDevicePanel = function () {
 		$scope.UI.devices = !$scope.UI.devices;
 
