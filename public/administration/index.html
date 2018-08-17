@@ -19,7 +19,7 @@
 
     <section class="row" ng-init="init()" ng-cloak>
 
-      <h2 class="page-header">Twilio Contact Center: Administration</h2>
+      <h2 class="page-header">Twilio Contact Center: Administration<a href="/" class="header-home-link">Back Home</a></h2>
 
       <ul class="nav nav-tabs">
         <li role="presentation"  ng-click="showTab('agents')" ng-class="{active: UI.tab == 'agents'}"><a href="#">Call Agents</a></li>
@@ -97,7 +97,7 @@
       <div class="panel panel-default" style="margin-top:10px">
 
         <div class="panel-heading">Teams</div>
-       
+
         <ul class="list-group">
           <li ng-repeat="option in configuration.ivr.options track by $index" class="list-group-item">
             <div class="form-inline">

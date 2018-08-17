@@ -1,6 +1,6 @@
 var app = angular.module('callcenterApplication', ['ngMessages', 'glue.directives']);
 
-app.controller('WorkflowController', function ($scope, $rootScope, $http, $interval, $log, $window) {
+app.controller('WorkflowController', function ($scope, $rootScope, $http, $interval, $log, $window, $q) {
 
 	/* misc configuration data, for instance callerId for outbound calls */
 	$scope.configuration;
@@ -56,6 +56,11 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 				}
 
 			});
+
+		$http.get('/api/taskrouter/activities')
+			.then(function (response) {
+				$scope.activities = response.data;
+			}, function (response) {});
 
 	};
 
@@ -342,4 +347,14 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 
 	};
 
+	$scope.updateActivity = function () {
+		$scope.workerJS.update('ActivitySid', $scope.worker.selectedActivitySid, function (error, worker) {
+			if (error) {
+				console.log(error.code);
+				console.log(error.message);
+			} else {
+				console.log(worker.activityName);
+			}
+		});
+	};
 });
