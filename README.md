@@ -64,6 +64,7 @@ We recommend you create a separate sub-account within Twilio and install this ap
 * For creating a new Chat Services or re-using an existing one, click here: https://www.twilio.com/console/chat/services
 * For creating a new Video Configuration Profile or re-using an existing one, click here: https://www.twilio.com/console/video/configure
 * For Twilio API Key SID and Twilio API Key Secret, click here: https://www.twilio.com/console/dev-tools/api-keys
+* For Outbound calls enable AGENT CONFERENCE setting, click here: https://www.twilio.com/console/voice/conferences/settings
 
 ## One Click Install - Heroku
 
