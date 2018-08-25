@@ -20,11 +20,11 @@
 		<div class="row">
 
 			<div class="page-header hidden-sm hidden-xs">
-				<h2>Twilio Contact Center: Live Chat</h2>
+				<h2>Twilio Contact Center: Live Chat<a href="/" class="header-home-link">Back Home</a></h2>
 			</div>
 
 			<div class="col-xs-12">
-				<h3 class="hidden-md hidden-lg">Live Chat</h3>
+				<h3 class="hidden-md hidden-lg">Live Chat<a href="/" class="header-home-link">Back Home</a></h3>
 			</div>
 
 		</div>
@@ -46,7 +46,7 @@
 			        <div class="form-group">
 			          <button type="submit" ng-disabled="session.isLoading || supportChatForm.$invalid || supportChatForm.$pristine" class="initiate btn btn-primary" ng-click="initChat()" ><span style="margin-right: 10px;" ng-show="session.isLoading == true"><i class="fa fa-refresh fa-spin"></i></span>Go</button>
 			        </div>
-							
+
 							<div ng-messages="supportChatForm.identity.$error" role="alert">
 								<div ng-message="minlength"  class="alert alert-danger">Name is too short</div>
 								<div ng-message="maxlength" class="alert alert-danger">Name is too long</div>
@@ -98,7 +98,7 @@
 							</div>
 						</form>
 
-					</div>  
+					</div>
 
 				</section>
 

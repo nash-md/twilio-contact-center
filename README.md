@@ -43,7 +43,7 @@ Customer fills out video call request form -> Form submitted to server -> Task o
 Real-time display of operational contact center metrics (for example: average call handle time, agent productivity, call metrics, TaskRouter stats, and more etc.).  Please check out the following repo: https://github.com/ameerbadri/twilio-taskrouter-realtime-dashboard 
 
 ## Pre-requisites:
-* Basic of Twilio platform - [Twilio \<Skills\>](https://twilio.radicalskills.com/), an elearning platform that provides a guided path for getting started with Twilio.
+* Basic knowledge of Twilio platform - [Twilio \<Skills\>](https://twilio.radicalskills.com/), an elearning platform that provides a guided path for getting started with Twilio.
 * [Twilio TaskRouter](https://www.twilio.com/docs/quickstart/ruby/taskrouter)
 * [Twilio Client](https://www.twilio.com/docs/quickstart/ruby/client)
 * [Twilio Programmable Chat](https://www.twilio.com/docs/api/chat)
@@ -62,8 +62,9 @@ We recommend you create a separate sub-account within Twilio and install this ap
 * Buy a phone number or use an existing one (the application will configure the number for you later)
 * Create a new Twilio [TaskRouter Workspace](https://www.twilio.com/user/account/taskrouter/workspaces)
 * For creating a new Chat Services or re-using an existing one, click here: https://www.twilio.com/console/chat/services
-* For creating a new Video Configuration Profile or re-using an existing one, click here: https://www.twilio.com/console/video/profiles
+* For creating a new Video Configuration Profile or re-using an existing one, click here: https://www.twilio.com/console/video/configure
 * For Twilio API Key SID and Twilio API Key Secret, click here: https://www.twilio.com/console/dev-tools/api-keys
+* For Outbound calls enable AGENT CONFERENCE setting, click here: https://www.twilio.com/console/voice/conferences/settings
 
 ## One Click Install - Heroku
 
@@ -78,6 +79,14 @@ After the installation has completed please open `https://<your_application_name
 Fork and clone the repository. Then, install dependencies with
 
 `npm install`
+
+Install Dotenv package to handle local environment variables
+
+`npm install dotenv --save`
+
+In the root directory create a file called '.env', then add the following to top of app.js
+
+`require('dotenv').load()`
 
 In order to run the demo you will need to set the following environment variables:
 
@@ -103,6 +112,35 @@ Start the application
 Before you can use the demo please open `http://<your_application_name>/setup` and configure the application. The demo overview will be accessible at `http://<your_application_name>`. Please note, if process.env.PORT is not set the applications runs on port 5000.
 
 If you are running the demo locally please remember that Twilio needs a publically-accessible address for webhooks, and the setup process registers these with Twilio. As such, you'll need to run something like ngrok instead of just hitting http://localhost:5000/. As you get new addresses from ngrok you'll need to also rerun the setup process to register the updated address with Twilio.
+
+**ngrok Setup**
+
+- System Wide Install
+    - [Download and install from ngrok](https://ngrok.com/download)
+    - Install with NPM `npm install ngrok -g`
+    - Run ngrok (if PORT is defined in your .env update accordingly)
+    
+      `./ngrok http 5000`
+      
+- Project Only Install
+
+    - Install ngrok package
+    
+      `npm install ngrok --dev`
+    
+    - Add the following to the top of app.js
+    
+      ````
+      const ngrok = require('ngrok')
+      
+      const ngrokUrl = async function () {
+       	const url = await ngrok.connect((process.env.PORT || 5000))
+       	console.log('ngrok url ->', url)
+      }
+       
+   - In app.js call ngrokUrl in app.listen to log the ngrok url on server spin up
+   
+	   `ngrokUrl()`
 
 **Note:** On Google Chrome a secure HTTPS connection is required to do phone calls via WebRTC. Use a tunnel that supports HTTPS such as ngrok, which can forward the traffic to your webserver.
 

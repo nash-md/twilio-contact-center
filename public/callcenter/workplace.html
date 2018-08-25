@@ -1,25 +1,25 @@
 <!DOCTYPE HTML>
 <html>
 
-<head>
-  <meta charset="utf-8">
-  <title>Twilio Omni Channel Contact Center - Call Agent Interface</title>
+  <head>
+    <meta charset="utf-8">
+    <title>Twilio Omni Channel Contact Center - Call Agent Interface</title>
 
-  <link rel="stylesheet" href="/styles/default.css" type="text/css" />
-  <link rel="stylesheet" href="/styles/bootstrap.css" type="text/css" />
-  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles/default.css" type="text/css" />
+    <link rel="stylesheet" href="/styles/bootstrap.css" type="text/css" />
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
 
 </head>
 
-<body ng-app="callcenterApplication" ng-controller="WorkflowController" data-ng-init="init()">
+  <body ng-app="callcenterApplication" ng-controller="WorkflowController" data-ng-init="init()">
 
-  <div ng-show="UI.warning.browser" class="panel panel-default ui-warning" ng-cloak>{{UI.warning.browser}}</div>
-  <div ng-show="UI.warning.worker" class="panel panel-default ui-warning" ng-cloak>{{UI.warning.worker}}</div>
-  <div ng-show="UI.warning.phone" class="panel panel-default ui-warning" ng-cloak>{{UI.warning.phone}}</div>
+    <div ng-show="UI.warning.browser" class="panel panel-default ui-warning" ng-cloak>{{UI.warning.browser}}</div>
+    <div ng-show="UI.warning.worker" class="panel panel-default ui-warning" ng-cloak>{{UI.warning.worker}}</div>
+    <div ng-show="UI.warning.phone" class="panel panel-default ui-warning" ng-cloak>{{UI.warning.phone}}</div>
 
-  <div class="container" style="width:860px">
+    <div class="container" style="width:860px">
 
-    <section class="workflow-controller" ng-cloak>
+      <section class="workflow-controller" ng-cloak>
 
       <div class="panel panel-default">
 
@@ -28,11 +28,25 @@
           <div class="logout">
             <span ng-click="logout()">logout</span>
           </div>
+
           <h3 class="name" class="page-header">{{worker.friendlyName}}&#39;s Call Agent Interface</h3>
 
-          <div>Status:&nbsp;
-            <span style="font-size:1em" ng-class="{'label-success': worker.activityName == 'Idle', 'label-danger': worker.activityName == 'Busy', 'label-default': worker.activityName == 'Offline', 'label-warning': worker.activityName == 'Reserved'}"
-              class="label">{{worker.activityName}}</span>
+          <div id="worker-status">
+
+            <span class="label" ng-class="{
+                  'label-success': worker.activityName == 'Idle',
+                  'label-danger': worker.activityName == 'Busy',
+                  'label-default': worker.activityName == 'Offline',
+                  'label-warning': worker.activityName == 'Reserved'
+                  }">Status:</span>
+
+            <div class="btn-group">
+              <select ng-model="worker.selectedActivitySid" class="form-control" ng-change="updateActivity()">
+
+                <option ng-repeat="activity in activities" value="{{ activity.sid }}" ng-selected="worker.activityName == activity.friendlyName">{{ activity.friendlyName }}</option>
+
+              </select>
+            </div>
           </div>
 
           <div class="reservations">
@@ -88,14 +102,14 @@
                 <div>
 
                   <div id="remote-media"></div>
-            
+
                   <div style="text-align: center" ng-show="UI.state == 'WAITING_FOR_CUSTOMER'" class="load-indicator">
                     <i class="fa fa-refresh fa-spin"></i>
                   </div>
-                
+
                   <div ng-show="UI.state == 'CONVERSATION_ACTIVE'">connected...</div>
                   <div ng-show="UI.state == 'CLOSED'" class="panel-title state-closed-panel">Customer left the conversation</div>
-        
+
                 </div>
               </section>
               <!-- video -->
@@ -168,42 +182,42 @@
 
               <input style="font-size:2em; padding-left:10px;" ng-show="UI.state == 'idle'" ng-model="phoneNumber" type="text" name="phoneNumber"
                 placeholder="+.." />
-              <div class="phone-number" style="font-size:2em; padding-left:10px" ng-if="UI.state == 'busy'" />{{phoneNumber}}</div>
+              <div class="phone-number" style="font-size:2em; padding-left:10px" ng-if="UI.state == 'busy'">{{phoneNumber}}</div>
 
-        <div class="keypad">
+              <div class="keypad">
 
-          <div ng-click="addDigit('1')" class="digit">1</div>
-          <div ng-click="addDigit('2')" class="digit">2</div>
-          <div ng-click="addDigit('3')" class="digit">3</div>
+                <div ng-click="addDigit('1')" class="digit">1</div>
+                <div ng-click="addDigit('2')" class="digit">2</div>
+                <div ng-click="addDigit('3')" class="digit">3</div>
 
-          <div ng-click="addDigit('4')" class="digit">4</div>
-          <div ng-click="addDigit('5')" class="digit">5</div>
-          <div ng-click="addDigit('6')" class="digit">6</div>
+                <div ng-click="addDigit('4')" class="digit">4</div>
+                <div ng-click="addDigit('5')" class="digit">5</div>
+                <div ng-click="addDigit('6')" class="digit">6</div>
 
-          <div ng-click="addDigit('7')" class="digit">7</div>
-          <div ng-click="addDigit('8')" class="digit">8</div>
-          <div ng-click="addDigit('9')" class="digit">9</div>
+                <div ng-click="addDigit('7')" class="digit">7</div>
+                <div ng-click="addDigit('8')" class="digit">8</div>
+                <div ng-click="addDigit('9')" class="digit">9</div>
 
-          <div ng-click="addDigit('*')" class="digit">*</div>
-          <div ng-click="addDigit('0')" class="digit">0</div>
-          <div ng-click="addDigit('#')" class="digit">#</div>
+                <div ng-click="addDigit('*')" class="digit">*</div>
+                <div ng-click="addDigit('0')" class="digit">0</div>
+                <div ng-click="addDigit('#')" class="digit">#</div>
 
-        </div>
+              </div>
 
-        <div ng-if="UI.state == 'busy'" class="call-control">
+              <div ng-if="UI.state == 'busy'" class="call-control">
 
-          <button ng-show="!UI.mute" ng-click="toggleMute()" aria-label="mute" style="background-image:url(/images/icon-mute-off.svg)"></button>
-          <button ng-show="UI.mute" ng-click="toggleMute()" aria-label="unmute" style="background-image:url(/images/icon-mute.svg)"></button>
+                <button ng-show="!UI.mute" ng-click="toggleMute()" aria-label="mute" style="background-image:url(/images/icon-mute-off.svg)"></button>
+                <button ng-show="UI.mute" ng-click="toggleMute()" aria-label="unmute" style="background-image:url(/images/icon-mute.svg)"></button>
 
-          <button ng-show="!UI.hold" ng-click="toggleHold()" aria-label="hold" style="background-image:url(/images/icon-hold-off.svg)"></button>
-          <button ng-show="UI.hold" ng-click="toggleHold()" aria-label="unhold" style="background-image:url(/images/icon-hold.svg)"></button>
+                <button ng-show="!UI.hold" ng-click="toggleHold()" aria-label="hold" style="background-image:url(/images/icon-hold-off.svg)"></button>
+                <button ng-show="UI.hold" ng-click="toggleHold()" aria-label="unhold" style="background-image:url(/images/icon-hold.svg)"></button>
 
-          <button ng-show="!UI.transfer" ng-click="toggleTransferPanel()" aria-label="tansfer" style="background-image:url(/images/icon-transfer-off.svg)"></button>
-          <button ng-show="UI.transfer" ng-click="toggleTransferPanel()" aria-label="cancel-transfer" style="background-image:url(/images/icon-transfer.svg)"></button>
+                <button ng-show="!UI.transfer" ng-click="toggleTransferPanel()" aria-label="tansfer" style="background-image:url(/images/icon-transfer-off.svg)"></button>
+                <button ng-show="UI.transfer" ng-click="toggleTransferPanel()" aria-label="cancel-transfer" style="background-image:url(/images/icon-transfer.svg)"></button>
 
-        </div>
+              </div>
 
-        <div class="transfer-control" ng-if="UI.transfer" class="transfer">
+              <div class="transfer-control" ng-if="UI.transfer" class="transfer">
 
           <div class="load-indicator" ng-show="transfer.isLoading">
             <i class="fa fa-refresh fa-spin"></i>
@@ -221,66 +235,60 @@
 
         </div>
 
-        <div>
+              <button class="button-call" ng-if="UI.state == 'idle'" ng-click="call(phoneNumber)">CALL</button>
+              <button class="button-hangup" ng-if="UI.state == 'busy'" ng-click="hangUp()">HANGUP</button>
+              <span class="status">Status: {{debug}}</span>
+              <span ng-if="error != null" class="status">Error: {{error}}</span>
 
+            </section>
+
+            <div class="devices-panel">
+
+              <div class="buttons">
+                <div class="button-toggle-device-panel" ng-click="toggleAudioDevicePanel()" aria-label="devices"></div>
+              </div>
+
+              <div class="audio-device-list" ng-if="UI.devices">
+
+                <a id="get-devices" title="Allow browser to use audio devices" ng-if="showAudioPrompt()" ng-click="unknownDevices(); toggleAudioDevicePanel();">Seeing unknown devices?</a>
+
+                <div>Input</div>
+                <select ng-change="selectInputDevice(devices.input.selected)" class="form-control input-devices-list" ng-model="devices.input.selected">
+                  <option ng-repeat="device in devices.available.input track by device.id" value="{{device.id}}">{{device.label}}</option>
+                </select>
+
+                <div style="margin-top:10px">Output</div>
+                <select ng-change="selectOutputDevice(devices.output.selected)" class="form-control output-devices-list" ng-model="devices.output.selected">
+                  <option ng-repeat="device in devices.available.output track by device.id" value="{{device.id}}">{{device.label}}</option>
+                </select>
+
+              </div>
+
+            </div>
+
+          </section>
 
         </div>
-
-        <button class="button-call" ng-if="UI.state == 'idle'" ng-click="call(phoneNumber)">CALL</button>
-        <button class="button-hangup" ng-if="UI.state == 'busy'" ng-click="hangUp()">HANGUP</button>
-        <span class="status">Status: {{debug}}</span>
-        <span ng-if="error != null" class="status">Error: {{error}}</span>
-
-        </section>
-
-        <div class="devices-panel">
-
-          <div class="buttons">
-            <div class="button-toggle-device-panel" ng-click="toggleAudioDevicePanel()" aria-label="devices"></div>
-          </div>
-  
-          <div class="audio-device-list" ng-if="UI.devices">
-
-            <div>Input</div>
-            <select ng-change="selectInputDevice(devices.input.selected)" class="form-control input-devices-list" ng-model="devices.input.selected">
-              <option ng-repeat="device in devices.available.input track by device.id" value="{{device.id}}">{{device.label}}</option>
-            </select>
-
-            <div style="margin-top:10px">Output</div>
-            <select ng-change="selectOutputDevice(devices.output.selected)" class="form-control output-devices-list" ng-model="devices.output.selected">
-              <option ng-repeat="device in devices.available.output track by device.id" value="{{device.id}}">{{device.label}}</option>
-            </select>
-
-          </div>
-          
-        </div>
-
-        </section>
-
       </div>
-
+    </section>
   </div>
 
-  </section>
+    <script src="//media.twiliocdn.com/sdk/js/client/v1.4/twilio.min.js"></script>
+    <script src="//media.twiliocdn.com/taskrouter/js/v1.13/taskrouter.min.js"></script>
+    <script src="//media.twiliocdn.com/sdk/js/common/v0.1/twilio-common.min.js"></script>
+    <script src="//media.twiliocdn.com/sdk/js/chat/v3.0/twilio-chat.min.js"></script>
 
-  </div>
+    <script src="//media.twiliocdn.com/sdk/js/video/v1/twilio-video.min.js"></script>
+    <script src="/scripts/angular.min.js"></script>
+    <script src="/scripts/angular-messages.min.js"></script>
+    <script src="/scripts/angular-scrollglue.js"></script>
+    <script src="/scripts/moment.min.js"></script>
+    <script src="WorkflowController.js"></script>
+    <script src="PhoneController.js"></script>
+    <script src="ChatController.js"></script>
+    <script src="VideoController.js"></script>
+    <script src="/scripts/directives/TaskWaitingTimeFilter.js"></script>
 
-  <script src="//media.twiliocdn.com/sdk/js/client/v1.4/twilio.min.js"></script>
-  <script src="//media.twiliocdn.com/taskrouter/js/v1.13/taskrouter.min.js"></script>
-  <script src="//media.twiliocdn.com/sdk/js/common/v0.1/twilio-common.min.js"></script>
-  <script src="//media.twiliocdn.com/sdk/js/chat/v3.0/twilio-chat.min.js"></script>
-
-  <script src="//media.twiliocdn.com/sdk/js/video/v1/twilio-video.min.js"></script>
-  <script src="/scripts/angular.min.js"></script>
-  <script src="/scripts/angular-messages.min.js"></script>
-  <script src="/scripts/angular-scrollglue.js"></script>
-  <script src="/scripts/moment.min.js"></script>
-  <script src="WorkflowController.js"></script>
-  <script src="PhoneController.js"></script>
-  <script src="ChatController.js"></script>
-  <script src="VideoController.js"></script>
-  <script src="/scripts/directives/TaskWaitingTimeFilter.js"></script>
-
-</body>
+  </body>
 
 </html>

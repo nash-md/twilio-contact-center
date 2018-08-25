@@ -125,7 +125,6 @@ function VideoController ($scope, $http, $timeout, $log, $window) {
 				$scope.participantConnected(participant);
 			});
 
-
 		}).catch(function (error) {
 			$log.error('Connect to Room failed, %o', error);
 			$scope.UI.warning = 'Connect to Room failed, check JavaScript console';
