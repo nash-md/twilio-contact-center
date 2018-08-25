@@ -43,7 +43,7 @@ Customer fills out video call request form -> Form submitted to server -> Task o
 Real-time display of operational contact center metrics (for example: average call handle time, agent productivity, call metrics, TaskRouter stats, and more etc.).  Please check out the following repo: https://github.com/ameerbadri/twilio-taskrouter-realtime-dashboard 
 
 ## Pre-requisites:
-* Basic knowledge of Twilio platform - [Twilio \<Skills\>](https://twilio.radicalskills.com/), an elearning platform that provides a guided path for getting started with Twilio.
+* Basic knowledge of Twilio platform - [TwilioQuest](https://www.twilio.com/quest/), an interactive, self-paced game where you learn how to Twilio.
 * [Twilio TaskRouter](https://www.twilio.com/docs/quickstart/ruby/taskrouter)
 * [Twilio Client](https://www.twilio.com/docs/quickstart/ruby/client)
 * [Twilio Programmable Chat](https://www.twilio.com/docs/api/chat)
@@ -61,8 +61,10 @@ We recommend you create a separate sub-account within Twilio and install this ap
 * For Account SID and Auth Token please click here:  https://www.twilio.com/console
 * Buy a phone number or use an existing one (the application will configure the number for you later)
 * Create a new Twilio [TaskRouter Workspace](https://www.twilio.com/user/account/taskrouter/workspaces)
+
+This project does not support agents handling multiple tasks simultaneously. After you have created your Workspace open settings on the Twilio Console and disable multitasking.
+
 * For creating a new Chat Services or re-using an existing one, click here: https://www.twilio.com/console/chat/services
-* For creating a new Video Configuration Profile or re-using an existing one, click here: https://www.twilio.com/console/video/configure
 * For Twilio API Key SID and Twilio API Key Secret, click here: https://www.twilio.com/console/dev-tools/api-keys
 * For Outbound calls enable AGENT CONFERENCE setting, click here: https://www.twilio.com/console/voice/conferences/settings
 
