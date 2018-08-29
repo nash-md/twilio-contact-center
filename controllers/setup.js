@@ -5,15 +5,6 @@ const client = new Twilio(
 	process.env.TWILIO_ACCOUNT_SID,
 	process.env.TWILIO_AUTH_TOKEN)
 
-/* check if the application runs on heroku */
-var util
-
-if (process.env.DYNO) {
-	util = require('../util-pg.js')
-} else {
-	util = require('../util-file.js')
-}
-
 module.exports.get = function (req, res) {
 	res.status(200).json(req.configuration)
 }
@@ -99,7 +90,7 @@ module.exports.update = function (req, res) {
 
 		}, function (config, callback) {
 
-			util.setConfiguration(config, function (err) {
+			req.util.setConfiguration(config, function (err) {
 				if (err) {
 					callback(err)
 				} else {
