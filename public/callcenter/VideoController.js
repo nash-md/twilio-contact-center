@@ -6,7 +6,10 @@ function VideoController ($scope, $rootScope, $http, $timeout, $log) {
 
 	$scope.$on('DestroyVideo', function (event) {
 		$log.log('DestroyVideo event received');
-		$scope.room.disconnect();
+
+		if ($scope.room) {
+			$scope.room.disconnect();
+		}
 
 		$scope.UI = { warning: null, state: null };
 	});
