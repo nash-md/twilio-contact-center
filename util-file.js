@@ -1,41 +1,43 @@
-var fs = require('fs')
-var uc = require('./util-common.js')
+const util = require('util')
+const fs = require('fs')
+const path = require('path')
+const { convertToString, generateSessionExirationDate } = require('./util-common.js')
 
-module.exports.convertToString = function (err) {
-	return uc.convertToString(err)
+const readConfigurationFromFile = () => {
+	const readFile = util.promisify(fs.readFile)
+
+	return readFile(path.join(process.cwd(), './configuration.json'))
 }
 
-module.exports.generateSessionExirationDate = function (seconds) {
-	return uc.generateSessionExirationDate(seconds)
+const writeConfigurationToFile = (configuration) => {
+	const configurationAsString =  JSON.stringify(configuration, null, 4)
+	const writeFile = util.promisify(fs.writeFile)
+
+	return writeFile(path.join(process.cwd(), './configuration.json'), configurationAsString)
 }
 
-module.exports.getConfiguration = function (callback) {
-
-	fs.readFile('configuration.json', 'utf8', function (err, data) {
-		if (err) {
-			return callback(err)
-		}
-
-		try {
-			var configuration = JSON.parse(data)
-		} catch (exception) {
-			return callback(exception)
-		}
-
-		callback(null, configuration)
+const getConfiguration = (callback) => {
+	readConfigurationFromFile().then((data) => {
+		callback(null, JSON.parse(data.toString()))
+	}).catch((error) => {
+		console.log(error)
+		return callback(error)
 	})
-
 }
 
-exports.setConfiguration = function (configuration, callback) {
-	var configurationAsString =  JSON.stringify(configuration, null, 4)
-
-	fs.writeFile('configuration.json', configurationAsString, function (err) {
-		if (err) {
-			callback(err)
-		} else {
-			callback(null)
-		}
+const setConfiguration = (configuration, callback) => {
+	writeConfigurationToFile(configuration).then(() => {
+		callback(null)
+	}).catch((error) => {
+		return callback(error)
 	})
+}
 
+module.exports = {
+	convertToString,
+	generateSessionExirationDate,
+	readConfigurationFromFile,
+	writeConfigurationToFile,
+	getConfiguration,
+	setConfiguration
 }

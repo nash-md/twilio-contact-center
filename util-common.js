@@ -1,12 +1,16 @@
-module.exports.generateSessionExirationDate = function (seconds) {
-	// TODO, throw exception is parameter is not set
-	var now = new Date()
-	var offset = (now.getTimezoneOffset() * 60 * 1000) * -1
-	var date = new Date(now.getTime() + offset + (seconds * 1000))
+const generateSessionExirationDate = (seconds) => {
+	const now = new Date()
+	const offset = (now.getTimezoneOffset() * 60 * 1000) * -1
+	const date = new Date(now.getTime() + offset + (seconds * 1000))
 
 	return date
 }
 
-module.exports.convertToString = function (err) {
-	return JSON.stringify(err, Object.getOwnPropertyNames(err))
+const convertToString = (error) => {
+	return JSON.stringify(error, Object.getOwnPropertyNames(error))
+}
+
+module.exports = {
+	generateSessionExirationDate,
+	convertToString
 }

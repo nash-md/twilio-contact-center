@@ -1,65 +1,75 @@
-var pg = require('pg')
-var uc = require('./util-common.js')
+const { Client } = require('pg')
+const { convertToString, generateSessionExirationDate } = require('./util-common.js')
 
-module.exports.convertToString = function (err) {
-	return uc.convertToString(err)
-}
+const getConfiguration = (callback) => {
+	const client = createClient()
 
-module.exports.generateSessionExirationDate = function (seconds) {
-	return uc.generateSessionExirationDate(seconds)
-}
-
-module.exports.getConfiguration = function (callback) {
-
-	pg.connect(process.env.DATABASE_URL, function (err, client, done) {
-
-		client.query('SELECT * FROM configuration', function (err, result) {
-			done()
-
-			if (err) {
-				return callback(err)
-			} else {
-				if (result.rows.length) {
-					callback(null, JSON.parse(result.rows[0].data))
-				} else {
-					callback(new Error('configuration database is empty'))
-				}
-			}
-
-		})
-
+	client.connect().then(() => {
+		return readConfiguration(client)
+	}).then((result) => {
+		if (result.rows.length === 1) {
+			callback(null, JSON.parse(result.rows[0].data))
+		} else {
+			callback(new Error(`configuration invalid, ${result.rows.length} rows found`))
+		}
+	}).catch((error) => {
+		return callback(error)
 	})
 
 }
 
-exports.setConfiguration = function (configuration, callback) {
-	var configurationAsString =  JSON.stringify(configuration, null, 4)
+const setConfiguration = (configuration, callback) => {
+	const configurationAsString =  JSON.stringify(configuration, null, 4)
 
-	pg.connect(process.env.DATABASE_URL, function (err, client, done) {
+	const client = createClient()
 
-		client.query('TRUNCATE configuration', function (err, result) {
-
-			if (err) {
-				return callback (err)
-			} else {
-
-				client.query('INSERT INTO configuration(data) values($1)', [configurationAsString],
-					function (err, result) {
-						done()
-
-						if (err) {
-							callback(err)
-						} else {
-							callback(null)
-						}
-
-					}
-				)
-
-			}
-
-		})
-
+	client.connect().then(() => {
+		return truncateTable(client)
+	}).then((result) => {
+		return writeConfiguration(client, configurationAsString)
+	}).then((result) => {
+		return callback(null)
+	}).catch((error) => {
+		console.log(error)
+		return callback(error)
 	})
+}
 
+const createClient = () => {
+	return new Client({
+		connectionString: process.env.DATABASE_URL,
+	})
+}
+
+const createTableIfNotExists = (client) => {
+	return client.query('CREATE TABLE IF NOT EXISTS configuration (id serial, data text)')
+}
+
+const truncateTable = (client) => {
+	return client.query('TRUNCATE configuration')
+}
+
+const writeConfiguration = (client, configuration) => {
+	const query = {
+		text: 'INSERT INTO configuration(data) values($1)',
+		values: [configuration],
+	}
+
+	return client.query(query)
+}
+
+const readConfiguration = (client) => {
+	return client.query('SELECT * FROM configuration')
+}
+
+module.exports = {
+	convertToString,
+	generateSessionExirationDate,
+	createClient,
+	createTableIfNotExists,
+	truncateTable,
+	writeConfiguration,
+	readConfiguration,
+	getConfiguration,
+	setConfiguration
 }

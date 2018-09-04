@@ -1,12 +1,12 @@
 {
   "name": "twilio-contact-center",
   "description": "A simple omni channel contact center using Twilio WebRTC Client, Video, SMS, Chat and Taskrouter",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "author": "Matthias Damm",
   "contributors": [
     {
-      "name" : "Hunter Rancourt",
-      "url" : "https://github.com/skwid138"
+      "name": "Hunter Rancourt",
+      "url": "https://github.com/skwid138"
     }
   ],
   "license": "MIT",
@@ -29,19 +29,19 @@
     "contact centre"
   ],
   "dependencies": {
-    "async": "^2.5.0",
+    "async": "^2.6.1",
     "body-parser": "^1.18.2",
-    "compression": "^1.7.1",
+    "compression": "^1.7.3",
     "express": "^4.16.2",
     "express-session": "^1.13.0",
-    "pg": "^4.5.6",
-    "twilio": "^3.13.1"
+    "pg": "^7.4.3",
+    "twilio": "^3.19.2"
   },
   "devDependencies": {
     "eslint": "^3.5.x"
   },
   "engines": {
-    "node": "^6.5.x"
+    "node": "8.9.x"
   },
   "files": [
     "README.md",
