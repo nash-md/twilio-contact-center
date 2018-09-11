@@ -14,7 +14,7 @@ const getConfiguration = (callback) => {
 		}
 	}).catch((error) => {
 		return callback(error)
-	})
+	}).then(() => client.end())
 
 }
 
@@ -32,7 +32,7 @@ const setConfiguration = (configuration, callback) => {
 	}).catch((error) => {
 		console.log(error)
 		return callback(error)
-	})
+	}).then(() => client.end())
 }
 
 const createClient = () => {

@@ -17,4 +17,4 @@ client.connect().then(() => {
 }).catch((error) => {
 	console.log(error)
 	process.exit(1)
-})
+}).then(() => client.end())
