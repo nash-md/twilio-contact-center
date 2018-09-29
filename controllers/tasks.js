@@ -1,10 +1,10 @@
 /* this route creates tasks for our customers */
 
-const Twilio 	= require('twilio')
+const twilio 	= require('twilio')
 
-const AccessToken 	= Twilio.jwt.AccessToken
-const VideoGrant 		= Twilio.jwt.AccessToken.VideoGrant
-const ChatGrant 		= Twilio.jwt.AccessToken.ChatGrant
+const AccessToken 	= twilio.jwt.AccessToken
+const VideoGrant 		= twilio.jwt.AccessToken.VideoGrant
+const ChatGrant 		= twilio.jwt.AccessToken.ChatGrant
 
 const taskrouterHelper = require('./helpers/taskrouter-helper.js')
 const chatHelper = require('./helpers/chat-helper.js')

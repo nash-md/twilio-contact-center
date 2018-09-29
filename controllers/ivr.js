@@ -1,9 +1,9 @@
-const Twilio 	= require('twilio')
+const twilio 	= require('twilio')
 
 const taskrouterHelper = require('./helpers/taskrouter-helper.js')
 
 module.exports.welcome = function (req, res) {
-	const twiml =  new Twilio.twiml.VoiceResponse()
+	const twiml =  new twilio.twiml.VoiceResponse()
 
 	let keywords = []
 
@@ -66,7 +66,7 @@ module.exports.selectTeam = function (req, res) {
 		team = analyzeKeypadInput(req.query.Digits, req.configuration.ivr.options)
 	}
 
-	const twiml =  new Twilio.twiml.VoiceResponse()
+	const twiml =  new twilio.twiml.VoiceResponse()
 
 	/* the caller pressed a key that does not match any team */
 	if (team === null) {
@@ -117,7 +117,7 @@ module.exports.createTask = function (req, res) {
 		team: req.query.teamId
 	}
 
-	const twiml =  new Twilio.twiml.VoiceResponse()
+	const twiml =  new twilio.twiml.VoiceResponse()
 
 	taskrouterHelper.createTask(req.configuration.twilio.workflowSid, attributes)
 		.then(task => {

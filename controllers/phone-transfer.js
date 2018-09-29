@@ -1,6 +1,6 @@
-const Twilio = require('twilio')
+const twilio = require('twilio')
 
-const client = new Twilio(
+const client = twilio(
 	process.env.TWILIO_ACCOUNT_SID,
 	process.env.TWILIO_AUTH_TOKEN
 )
@@ -46,7 +46,7 @@ module.exports.forward = function (req, res) {
 			}
 
 			/* call transfer is enqueued with a higher priority */
-			const twiml = new Twilio.twiml.VoiceResponse()
+			const twiml = new twilio.twiml.VoiceResponse()
 
 			twiml
 				.enqueue({ workflowSid: req.configuration.twilio.workflowSid })

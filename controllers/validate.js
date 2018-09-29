@@ -1,8 +1,9 @@
-const Twilio 	= require('twilio')
+const twilio 	= require('twilio')
 
-const client = new Twilio(
+const client = twilio(
 	process.env.TWILIO_ACCOUNT_SID,
-	process.env.TWILIO_AUTH_TOKEN)
+	process.env.TWILIO_AUTH_TOKEN
+)
 
 module.exports.validateSetup = function (req, res) {
 	if (!process.env.TWILIO_ACCOUNT_SID || process.env.TWILIO_ACCOUNT_SID.length !== 34) {

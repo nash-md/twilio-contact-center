@@ -1,9 +1,9 @@
-const Twilio 	= require('twilio')
+const twilio 	= require('twilio')
 const async = require('async')
 
 const taskrouterHelper = require('./helpers/taskrouter-helper.js')
 
-const client = new Twilio(
+const client = twilio(
 	process.env.TWILIO_ACCOUNT_SID,
 	process.env.TWILIO_AUTH_TOKEN)
 

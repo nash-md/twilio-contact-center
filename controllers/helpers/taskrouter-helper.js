@@ -1,8 +1,8 @@
-const Twilio 	= require('twilio')
+const twilio 	= require('twilio')
 
-const TaskRouterCapability = Twilio.jwt.taskrouter.TaskRouterCapability
+const TaskRouterCapability = twilio.jwt.taskrouter.TaskRouterCapability
 
-const client = new Twilio(
+const client = twilio(
 	process.env.TWILIO_ACCOUNT_SID,
 	process.env.TWILIO_AUTH_TOKEN)
 
@@ -35,7 +35,7 @@ module.exports.getOngoingTasks = function (name) {
 		query.assignmentStatus = 'pending,assigned,reserved'
 		query.evaluateTaskAttributes = 'name=\'' + name + '\''
 
-		client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).tasks.list(query)
+		client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).tasks.list(query)
 			.then(tasks => {
 				return resolve(tasks)
 			}).catch(error => {
@@ -60,7 +60,6 @@ const buildWorkspacePolicy = (options) => {
 }
 
 module.exports.createWorkerCapabilityToken = function (sid) {
-
 	const workerCapability = new TaskRouterCapability({
 		accountSid: process.env.TWILIO_ACCOUNT_SID,
 		authToken: process.env.TWILIO_AUTH_TOKEN,
