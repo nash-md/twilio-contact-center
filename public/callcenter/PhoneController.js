@@ -10,7 +10,7 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout,
 	};
 	$scope.devices = {
 		available: { input: [], output: [] },
-		selected: {input: null, output: null }
+		selected: { input: null, output: null }
 	};
 
 	$scope.UI = { devices: false, hold: false, mute: false, transfer: false, state: 'idle'};
@@ -22,6 +22,10 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout,
 
 		Twilio.Device.ready(function (device) {
 			$scope.debug = 'Ready';
+			
+			$timeout(function () {
+				$scope.$apply();
+			});
 		});
 
 		Twilio.Device.error(function (error) {
