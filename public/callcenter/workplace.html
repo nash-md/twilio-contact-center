@@ -25,34 +25,30 @@
 
         <div class="panel-body">
 
+        <div style="overflow:auto">
+
           <div class="logout">
             <span ng-click="logout()">logout</span>
           </div>
 
+          <div class="on-queue-toggle" style="float:right">
+            <input ng-change="toggleIsOnQueue()" ng-model="isOnQueue" type="checkbox" id="is-on-queue" /><label for="is-on-queue">toggle</label>
+            <span>&nbsp;Online</span>
+          </div>
+
+        </div>
+
           <h3 class="name" class="page-header">{{worker.friendlyName}}&#39;s Call Agent Interface</h3>
 
-          <div id="worker-status">
-
-            <span class="label" ng-class="{
-                  'label-success': worker.activityName == 'Idle',
-                  'label-danger': worker.activityName == 'Busy',
-                  'label-default': worker.activityName == 'Offline',
-                  'label-warning': worker.activityName == 'Reserved'
-                  }">Status:</span>
-
-            <div class="btn-group">
-              <select ng-model="worker.selectedActivitySid" class="form-control" ng-change="updateActivity()">
-
-                <option ng-repeat="activity in activities" value="{{ activity.sid }}" ng-selected="worker.activityName == activity.friendlyName">{{ activity.friendlyName }}</option>
-
-              </select>
-            </div>
+          <div>
+            <span style="font-size:1em" ng-class="{'label-success': worker.activityName == 'Idle', 'label-danger': worker.activityName == 'Busy', 'label-default': worker.activityName == 'Offline', 'label-warning': worker.activityName == 'Reserved'}"
+              class="label">{{worker.activityName}}</span>
           </div>
 
           <div class="reservations">
 
             <!-- reservation is waiting for acceptance -->
-            <div class="panel panel-default agent-reservation" ng-show="reservation != null">
+            <div ng-controller="WorkflowReservationController" ng-cloak class="panel panel-default agent-reservation" ng-show="reservation != null">
               <div class="panel-heading">
                 <h3 class="panel-title">Reservation</h3>
               </div>
@@ -62,10 +58,10 @@
                   <tr>
                     <td>
                       <div class="title">{{reservation.task.attributes.title}} from {{reservation.task.attributes.name}}</div>
-                      <div class="timer" ng-class='{"invisible": !reservationCounter}'>created {{ reservationCounter | TaskWaitingTime }} ago</div>
+                      <div class="timer" ng-class='{"invisible": !counter}'>created {{ counter | TaskWaitingTime }} ago</div>
                     </td>
                     <td class="accept-panel">
-                      <button ng-click="acceptReservation(reservation)">Accept</button>
+                      <button ng-click="accept(reservation)">Accept</button>
                     </td>
                   </tr>
                 </table>
@@ -75,7 +71,7 @@
             <!-- reservation is waiting for acceptance -->
 
             <!-- agent is waiting for new reservation -->
-            <div class="panel panel-default agent-waiting" ng-show="reservation == null && task == null">
+            <div class="panel panel-default agent-waiting" ng-show="reservation == null && task == null && isOnQueue == true">
               <div class="panel-heading">
                 <h4 class="panel-title">Waiting for new task ...</h4>
               </div>
@@ -284,6 +280,7 @@
     <script src="/scripts/angular-scrollglue.js"></script>
     <script src="/scripts/moment.min.js"></script>
     <script src="WorkflowController.js"></script>
+    <script src="WorkflowReservationController.js"></script>
     <script src="PhoneController.js"></script>
     <script src="ChatController.js"></script>
     <script src="VideoController.js"></script>

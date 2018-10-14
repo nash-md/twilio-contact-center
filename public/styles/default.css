@@ -22,9 +22,13 @@ a.header-home-link {
 }
 
 .workflow-controller .logout {
-    text-align: right;
+    float:left;
     font-size: 0.9em;
     cursor: pointer;
+}
+
+.workflow-controller .logout span {
+    text-decoration:underline
 }
 
 .workflow-controller .name {
@@ -232,9 +236,9 @@ a.header-home-link {
 .phone-controller .button-call {
     width: 100%;
     border-radius: 3px;
-    border: 1px solid green;
+    border: 1px solid #07ca82;
     font-size: 1.6em;
-    background-color: green;
+    background-color:#07ca82;
     color: white;
 }
 
@@ -696,4 +700,50 @@ a.header-home-link {
     margin-bottom: 5px !important;
     border-radius: 0 !important;
     padding: 5px;
+}
+
+.on-queue-toggle input[type=checkbox]{
+	height: 0;
+	width: 0;
+	visibility: hidden;
+}
+
+.on-queue-toggle label {
+	cursor: pointer;
+	text-indent: -9999px;
+	width: 40px;
+	height: 22px;
+	background: grey;
+	display: inline-block;
+	border-radius: 11px;
+	position: relative;
+}
+
+.on-queue-toggle label:after {
+	content: '';
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 18px;
+	height: 18px;
+	background: #fff;
+	border-radius: 9px;
+	transition: 0.3s;
+}
+
+.on-queue-toggle input:checked + label {
+	background: #07ca82;
+}
+
+.on-queue-toggle input:checked + label:after {
+	left: calc(100% - 2px);
+	transform: translateX(-100%);
+}
+
+.on-queue-toggle label:active:after {
+	width: 24px;
+}
+
+.label-success {
+    background-color:#07ca82 !important
 }
