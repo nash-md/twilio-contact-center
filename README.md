@@ -54,7 +54,7 @@ Real-time display of operational contact center metrics (for example: average ca
 
 Before you start the install, you’ll need the following variables from the Twilio Account Portal. If you haven't used Twilio before, welcome! You'll need to [Sign up for a Twilio account](https://www.twilio.com/try-twilio).
 
-We recommend you create a separate sub-account within Twilio and install this app using that sub-accoount credentials.
+We recommend you create a separate project within Twilio and install this app using that project.
 
 **Note:** It is recommended that you have an upgraded Twilio account to fully experience this demo.
 
@@ -62,7 +62,7 @@ We recommend you create a separate sub-account within Twilio and install this ap
 * Buy a phone number or use an existing one (the application will configure the number for you later)
 * Create a new Twilio [TaskRouter Workspace](https://www.twilio.com/user/account/taskrouter/workspaces)
 
-This project does not support agents handling multiple tasks simultaneously. After you have created your Workspace open settings on the Twilio Console and disable multitasking.
+The agent UI does not support handling of multiple tasks simultaneously, hence all tasks are routed on the same task channel with capacity of one simultaneous task. For more details please check [TaskRouter Multitasking](https://www.twilio.com/docs/taskrouter/multitasking)
 
 * For creating a new Chat Services or re-using an existing one, click here: https://www.twilio.com/console/chat/services
 * For Twilio API Key SID and Twilio API Key Secret, click here: https://www.twilio.com/console/dev-tools/api-keys
@@ -82,13 +82,13 @@ Fork and clone the repository. Then, install dependencies with
 
 `npm install`
 
-Install Dotenv package to handle local environment variables
+If you want to load environment variables from a file, install dotenv package to handle local environment variables.
 
-`npm install dotenv --save`
+`npm install dotenv`
 
 In the root directory create a file called '.env', then add the following to top of app.js
 
-`require('dotenv').load()`
+`require('dotenv').config()`
 
 In order to run the demo you will need to set the following environment variables:
 
@@ -109,7 +109,7 @@ For video calls you need to set Twilio API Keys:
 
 Start the application
 
-`node app.js`
+`npm start`
 
 Before you can use the demo please open `http://<your_application_name>/setup` and configure the application. The demo overview will be accessible at `http://<your_application_name>`. Please note, if process.env.PORT is not set the applications runs on port 5000.
 
