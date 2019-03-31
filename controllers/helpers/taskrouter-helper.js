@@ -13,11 +13,12 @@ module.exports.createTask = function (workflowSid, attributes) {
 		workflowSid: workflowSid,
 		attributes: JSON.stringify(attributes),
 		timeout: 3600,
+		taskChannel: 'voice'
 	}
 
 	return new Promise((resolve, reject) => {
 
-		client.taskrouter.v1.workspaces(process.env.TWILIO_WORKSPACE_SID).tasks.create(data)
+		client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).tasks.create(data)
 			.then(task => {
 				resolve(task)
 			}).catch(error => {

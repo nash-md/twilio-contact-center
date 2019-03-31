@@ -19,8 +19,6 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 	$scope.UI = { warning: { browser: null, worker: null, phone: null } };
 	$scope.UI.isOnQueue = false;
 
-	$scope.postReservationActivitySid = null;
-
 	if ($window.location.protocol !== 'https:') {
 		let message = `Depending on your browser and/or settings capturing audio and video 
 										requires a secure (HTTPS) page. The demo may not work.`;
@@ -115,6 +113,11 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 			$scope.resetWorkspace();
 		});
 
+		$scope.workerJS.on('reservation.rejected', function (reservation) {
+			$log.log('TaskRouter Worker: reservation.rejected');
+			$scope.resetWorkspace();
+		});
+
 		$scope.workerJS.on('task.completed', function (reservation) {
 			$log.log('TaskRouter Worker: task.completed');
 			$scope.resetWorkspace();
@@ -197,53 +200,33 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 	};
 
 	$scope.toggleIsOnQueue = function () {
-		const activitySid = $scope.isOnQueue ? $scope.configuration.twilio.workerIdleActivitySid : $scope.configuration.twilio.workerOfflineActivitySid;
+		const activitySid = $scope.UI.isOnQueue ? $scope.configuration.twilio.workerAvailableActivitySid : $scope.configuration.twilio.workerUnavailableActivitySid;
 
-		if ($scope.isAllowedToUpdateActivity($scope.worker)) {
+		console.log(`toogle to activitySid ${activitySid}`);
 
-			$scope.updateActivity(activitySid, function (error) {
-				if (error) {
-					$log.error(error);
-				}
-			});
+		$scope.updateActivity(!$scope.UI.isOnQueue, activitySid, function (error) {
+			if (error) {
+				$log.error(error);
+			}
+		});
 
-		} else {
-			$scope.postReservationActivitySid = activitySid;
-			$log.log(`TaskRouter Worker: register delayed changed to ${$scope.postReservationActivitySid}`);
+	};
+
+	$scope.updateActivity = function (isOnQueue, activitySid, callback) {
+		const payload = {
+			'ActivitySid': activitySid
+		};
+
+		if (isOnQueue) {
+			payload.RejectPendingReservations = true;
 		}
 
-	};
-
-	$scope.isAllowedToUpdateActivity = function (worker) {
-		const {
-			workerIdleActivitySid: idle,
-			workerOfflineActivitySid: offline,
-		} = $scope.configuration.twilio;
-
-		return [idle, offline].includes(worker.activitySid);
-	};
-
-	$scope.updateActivity = function (activitySid, callback) {
-		$scope.workerJS.update('ActivitySid', activitySid, function (error, worker) {
+		$scope.workerJS.update(payload, function (error, worker) {
 			callback(error);
 		});
 	};
 
 	$scope.resetWorkspace = function () {
-		let activitySid = $scope.configuration.twilio.workerIdleActivitySid;
-
-		if ($scope.postReservationActivitySid) {
-			activitySid = $scope.postReservationActivitySid;
-		}
-
-		$scope.updateActivity(activitySid, function (error) {
-			if (error) {
-				$log.log(error);
-			}
-
-			$scope.postReservationActivitySid = null;
-		});
-
 		$scope.reservation = null;
 		$scope.task = null;
 

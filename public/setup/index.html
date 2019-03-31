@@ -33,31 +33,22 @@
 
       </div>
 
-      <h6>Worker Idle Activity:</h6>
+      <h6>Worker Available Activity:</h6>
 
       <div class="btn-group" uib-dropdown>
 
-        <select ng-model="configuration.twilio.workerIdleActivitySid" class="form-control" required>
+        <select ng-model="configuration.twilio.workerAvailableActivitySid" class="form-control" required>
           <option ng-repeat="activity in activities" value="{{ activity.sid }}">{{ activity.friendlyName }}</option>
         </select>
 
       </div>
 
-      <h6>Worker Reservation Activity:</h6>
+     
+      <h6>Worker Unavailable Activity:</h6>
 
       <div class="btn-group" uib-dropdown>
 
-        <select ng-model="configuration.twilio.workerReservationActivitySid" class="form-control" required>
-          <option ng-repeat="activity in activities" value="{{ activity.sid }}">{{ activity.friendlyName }}</option>
-        </select>
-
-      </div>
-
-      <h6>Worker Assignment Activity:</h6>
-
-      <div class="btn-group" uib-dropdown>
-
-        <select ng-model="configuration.twilio.workerAssignmentActivitySid" class="form-control" required>
+        <select ng-model="configuration.twilio.workerUnavailableActivitySid" class="form-control" required>
           <option ng-repeat="activity in activities" value="{{ activity.sid }}">{{ activity.friendlyName }}</option>
         </select>
 

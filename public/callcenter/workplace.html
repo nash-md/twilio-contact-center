@@ -32,7 +32,7 @@
           </div>
 
           <div class="on-queue-toggle" style="float:right">
-            <input ng-change="toggleIsOnQueue()" ng-model="isOnQueue" type="checkbox" id="is-on-queue" /><label for="is-on-queue">toggle</label>
+            <input ng-change="toggleIsOnQueue()" ng-model="UI.isOnQueue" type="checkbox" id="is-on-queue" /><label for="is-on-queue">toggle</label>
             <span>&nbsp;Online</span>
           </div>
 
@@ -41,7 +41,7 @@
           <h3 class="name" class="page-header">{{worker.friendlyName}}&#39;s Call Agent Interface</h3>
 
           <div>
-            <span style="font-size:1em" ng-class="{'label-success': worker.activityName == 'Idle', 'label-danger': worker.activityName == 'Busy', 'label-default': worker.activityName == 'Offline', 'label-warning': worker.activityName == 'Reserved'}"
+            <span style="font-size:1em" ng-class="{'label-success': worker.activityName == 'Available', 'label-danger': worker.activityName == 'Unavailable', 'label-default': worker.activityName == 'Offline' }"
               class="label">{{worker.activityName}}</span>
           </div>
 
@@ -270,7 +270,7 @@
   </div>
 
     <script src="//media.twiliocdn.com/sdk/js/client/v1.5/twilio.min.js"></script>
-    <script src="//media.twiliocdn.com/taskrouter/js/v1.13/taskrouter.min.js"></script>
+    <script src="//media.twiliocdn.com/taskrouter/js/v1.19/taskrouter.min.js"></script>
     <script src="//media.twiliocdn.com/sdk/js/common/v0.1/twilio-common.min.js"></script>
     <script src="//media.twiliocdn.com/sdk/js/chat/v3.0/twilio-chat.min.js"></script>
 
