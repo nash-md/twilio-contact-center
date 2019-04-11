@@ -42,12 +42,11 @@
 	],
 	"twilio": {
 		"workerOfflineActivitySid": null,
-		"workerIdleActivitySid": null,
-		"workerReservationActivitySid": null,
-		"workerAssignmentActivitySid": null,
+		"workerAvailableActivitySid": null,
+		"workerUnavailableActivitySid": null,
 		"callerId": null,
 		"applicationSid": null,
 		"workflowSid": null,
-    "facebookPageId": null
+		"facebookPageId": null
 	}
 }
