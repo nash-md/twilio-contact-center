@@ -18,11 +18,14 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout,
 	$scope.$on('InitializePhone', function (event, data) {
 		$log.log('InitializePhone event received');
 
-		Twilio.Device.setup(data.token, {debug: true });
+		Twilio.Device.setup(data.token, {
+			debug: true, 
+			codecPreferences: ['opus', 'pcmu']
+		});
 
 		Twilio.Device.ready(function (device) {
 			$scope.debug = 'Ready';
-			
+
 			$timeout(function () {
 				$scope.$apply();
 			});
@@ -112,12 +115,12 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout,
 		if ($scope.direction === 'outbound') {
 
 			$http.get('/api/phone/call/' + callSid + '/conference')
-			.then(function onSuccess (response) {
-				deferred.resolve(response.data);
-			}).catch(function (error) {
-				$log.error(error);
-				deferred.reject(error);
-			});
+				.then(function onSuccess (response) {
+					deferred.resolve(response.data);
+				}).catch(function (error) {
+					$log.error(error);
+					deferred.reject(error);
+				});
 
 		} else {
 			deferred.resolve({

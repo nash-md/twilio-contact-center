@@ -1,7 +1,7 @@
 {
   "name": "twilio-contact-center",
   "description": "A simple omni channel contact center using Twilio WebRTC Client, Video, SMS, Chat and Taskrouter",
-  "version": "1.9.1",
+  "version": "1.10.0",
   "author": "Matthias Damm",
   "contributors": [
     {
@@ -38,7 +38,7 @@
     "twilio": "^3.19.2"
   },
   "devDependencies": {
-    "eslint": "^3.5.x"
+    "eslint": "^5.15.3"
   },
   "engines": {
     "node": "8.9.x"
