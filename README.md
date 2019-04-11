@@ -3,7 +3,7 @@ Essence of a modern contact center is to serve customers on multiple channels (v
 
 The Twilio Contact Center demo is reference architecture for building a modern contact center. The focus of the demo is to show how to build a Twilio platform based contact center and the various backend and frontend components needed.
 
-<img src="contact_center_flow_video.png" alt="Twilio Contact Center" width="800">
+<img src="contact-center-overview.png" alt="Twilio Contact Center" width="800">
 
 **Note:** We have done the basic work from an UX perspective and lot of opportunities remains to improve on it. It has been designed for demo purposes and has not been separately security checked.
 
