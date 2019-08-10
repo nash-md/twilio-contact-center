@@ -38,7 +38,7 @@ app.controller('WorkflowController', function ($scope, $rootScope, $http, $inter
 				$scope.initWorker(response.data.tokens.worker);
 
 				/* initialize Twilio client with token received from the backend */
-				$scope.$broadcast('InitializePhone', { token: response.data.tokens.access });
+				$scope.$broadcast('InitializePhone', { token: response.data.tokens.voice });
 
 				/* initialize Twilio Chat client with token received from the backend */
 				$scope.$broadcast('InitializeChat', { token: response.data.tokens.access, identity: response.data.worker.friendlyName });
