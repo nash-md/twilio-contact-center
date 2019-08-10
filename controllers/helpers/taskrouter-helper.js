@@ -16,17 +16,7 @@ module.exports.createTask = function (workflowSid, attributes) {
 		taskChannel: 'voice'
 	}
 
-	return new Promise((resolve, reject) => {
-
-		client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).tasks.create(data)
-			.then(task => {
-				resolve(task)
-			}).catch(error => {
-				reject(error)
-			})
-
-	})
-
+	return client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).tasks.create(data)
 }
 
 module.exports.getOngoingTasks = function (name) {
