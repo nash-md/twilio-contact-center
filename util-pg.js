@@ -1,6 +1,22 @@
 const { Client } = require('pg')
 const { convertToString, generateSessionExirationDate } = require('./util-common.js')
 
+const validateConfiguration = (callback) => {
+	const client = createClient()
+
+	client.connect().then(() => {
+		return checkIfTableExists(client)
+	}).then((result) => {
+		if (result.rows[0].exists === true) {
+			callback(null)
+		} else {
+			callback(new Error('table does not exist'))
+		}
+	}).catch((error) => {
+		return callback(error)
+	}).then(() => client.end())
+}
+
 const getConfiguration = (callback) => {
 	const client = createClient()
 
@@ -41,6 +57,10 @@ const createClient = () => {
 	})
 }
 
+const checkIfTableExists =  (client) => {
+	return client.query('SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = \'public\' AND table_name = \'configuration\')')
+}
+
 const createTableIfNotExists = (client) => {
 	return client.query('CREATE TABLE IF NOT EXISTS configuration (id serial, data text)')
 }
@@ -71,5 +91,6 @@ module.exports = {
 	writeConfiguration,
 	readConfiguration,
 	getConfiguration,
-	setConfiguration
+	setConfiguration,
+	validateConfiguration
 }
