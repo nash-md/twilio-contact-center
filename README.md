@@ -62,17 +62,45 @@ We recommend you create a separate project within Twilio and install this app us
 
 * For Account SID and Auth Token please click here:  https://www.twilio.com/console
 * Buy a phone number or use an existing one (the application will configure the number for you later)
-* Create a new Twilio [TaskRouter Workspace](https://www.twilio.com/user/account/taskrouter/workspaces)
+* Create a new Twilio [TaskRouter Workspace](https://www.twilio.com/user/account/taskrouter/workspaces) and select the custom template.
 
 The agent UI does not support handling of multiple tasks simultaneously, hence all tasks are routed on the same task channel with capacity of one simultaneous task. For more details please check [TaskRouter Multitasking](https://www.twilio.com/docs/taskrouter/multitasking)
 
 * For creating a new Chat Services or re-using an existing one, click here: https://www.twilio.com/console/chat/services
 * For Twilio API Key SID and Twilio API Key Secret, click here: https://www.twilio.com/console/dev-tools/api-keys
-* For Outbound calls enable AGENT CONFERENCE setting, click here: https://www.twilio.com/console/voice/conferences/settings
+* For outbound calls enable AGENT CONFERENCE setting, click here: https://www.twilio.com/console/voice/conferences/settings
+
+## Terraform Install - Heroku
+
+You can deploy this project with all depencendies on Heroku with Terraform, an open-source infrastructure as code software tool.
+
+Create the API key for Heroku, check the [Heroku Platform API Guide](https://devcenter.heroku.com/articles/platform-api-quickstart) for help. 
+
+Add the Heroku API key and your email address to `terraform.tfvars`.
+
+Initialize the Terraform configuration files and run
+
+`terraform  init`
+
+If you have not installed Terraform, follow the [Terraform Getting Started](https://learn.hashicorp.com/terraform/getting-started/install.html).
+
+Add the Twilio configuration to the `terraform.tfvars` variables file.
+
+Set your Heroku application name in the infrastructure description file `terraform_heroku.tf` 
+
+Create an execution plan
+
+`terraform  plan`
+
+Install the project on Heroku by executing 
+
+`terraform  apply`
+
+After the installation has completed please open `https://<your_application_name>.herokuapp.com/setup` and configure the application. The demo overview will be accessible at `https://<your_application_name>.herokuapp.com`. 
 
 ## One Click Install - Heroku
 
-This will install the application and all the dependencies on Heroku (login required) for you. As part of the installation, the Heroku app will walk you through configuration of environment variables.  Please click on the following button to deploy the application.
+This will install the application and all the dependencies on Heroku (login required) for you. As part of the installation, the Heroku app will walk you through configuration of environment variables. Please click on the following button to deploy the application.
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/nash-md/twilio-contact-center)
 

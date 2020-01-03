@@ -10,6 +10,14 @@ var util
 
 if (process.env.DYNO) {
 	util = require('./util-pg.js')
+
+	// check if configuration exists, if not create it
+	util.validateConfiguration((error) => {
+		if (error) {
+			require('./setup-database')
+		}
+	})
+
 } else {
 	util = require('./util-file.js')
 }
@@ -31,6 +39,8 @@ app.use(bodyParser.json({}))
 app.use(bodyParser.urlencoded({
 	extended: true
 }))
+
+app.enable('trust proxy')
 
 app.use(function (req, res, next) {
 

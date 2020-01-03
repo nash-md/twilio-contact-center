@@ -7,9 +7,6 @@
   "image": "heroku/nodejs",
   "repository": "https://github.com/nash-md/twilio-contact-center",
   "addons": ["heroku-postgresql:hobby-dev"],
-  "scripts": {
-    "postdeploy": "node setup-database.js"
-  },
   "success_url": "/setup",
   "env": {
     "TWILIO_ACCOUNT_SID": {
