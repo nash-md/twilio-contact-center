@@ -1,7 +1,34 @@
 const { Client } = require('pg')
-const { convertToString, generateSessionExirationDate } = require('./util-common.js')
+const { readConfigurationFromFile } = require('./util-file')
 
-const validateConfiguration = (callback) => {
+const createConfigurationIfNotExists = () => {
+
+	hasConfiguration((error) => {
+		if (error) {
+			const client = createClient()
+
+			client.connect().then(() => {
+				return createTableIfNotExists(client)
+			}).then((result) => {
+				return truncateTable(client)
+			}).then((result) => {
+				return readConfigurationFromFile()
+			}).then((configurationAsString) => {
+				return writeConfiguration(client, configurationAsString)
+			}).then((result) => {
+				console.log('table successfully created, configuration saved')
+				process.exit(0)
+			}).catch((error) => {
+				console.log(error)
+				process.exit(1)
+			}).then(() => client.end())
+
+		}
+	})
+
+}
+
+const hasConfiguration = (callback) => {
 	const client = createClient()
 
 	client.connect().then(() => {
@@ -83,14 +110,7 @@ const readConfiguration = (client) => {
 }
 
 module.exports = {
-	convertToString,
-	generateSessionExirationDate,
-	createClient,
-	createTableIfNotExists,
-	truncateTable,
-	writeConfiguration,
-	readConfiguration,
+	createConfigurationIfNotExists,
 	getConfiguration,
-	setConfiguration,
-	validateConfiguration
+	setConfiguration
 }

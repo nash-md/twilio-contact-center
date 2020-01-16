@@ -1,23 +1,19 @@
 'use-strict'
 
+require('dotenv').config()
+
 var express       = require('express')
 var bodyParser    = require('body-parser')
 var sessions      = require('express-session')
 var compression   = require('compression')
+var { isRunningOnHeroku } = require('./util-cloud-provider')
 
 /* check if the application runs on heroku */
-var util
+let util
 
-if (process.env.DYNO) {
-	util = require('./util-pg.js')
-
-	// check if configuration exists, if not create it
-	util.validateConfiguration((error) => {
-		if (error) {
-			require('./setup-database')
-		}
-	})
-
+if (isRunningOnHeroku()) {
+	util = require('./util-heroku-pg.js')
+	util.createConfigurationIfNotExists()
 } else {
 	util = require('./util-file.js')
 }
@@ -72,6 +68,7 @@ app.use(function (req, res, next) {
 	util.getConfiguration(function (err, configuration) {
 		if (err) {
 			res.status(500).json({stack: err.stack, message: err.message})
+
 		} else {
 			req.configuration = configuration
 			req.util = util
