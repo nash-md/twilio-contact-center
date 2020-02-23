@@ -1,0 +1,9 @@
+runtime: nodejs10
+
+env_variables:
+  TWILIO_ACCOUNT_SID: ""
+  TWILIO_AUTH_TOKEN: ""
+  TWILIO_API_KEY_SID: ""
+  TWILIO_API_KEY_SECRET: ""
+  TWILIO_CHAT_SERVICE_SID: ""
+  TWILIO_WORKSPACE_SID: ""

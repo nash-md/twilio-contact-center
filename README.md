@@ -10,11 +10,10 @@ The Twilio Contact Center demo is reference architecture for building a modern c
 This application is provided as-is. Twilio does not officially support it.
 
 # Features
-* Twilio Account
 * Twilio Phone Numbers
 * Twilio Programmable Voice (PSTN, Twilio WebRTC Client)
 * Twilio Programmable Chat
-* Twilio Programmable SMS
+* Twilio Programmable SMS and Facebook Messenger
 * Twilio Programmable Video
 * Twilio TaskRouter
 * Twilio REST APIs
@@ -54,20 +53,37 @@ Real-time display of operational contact center metrics (for example: average ca
 
 # Installation
 
-Before you start the install, you’ll need the following variables from the Twilio Account Portal. If you haven't used Twilio before, welcome! You'll need to [Sign up for a Twilio account](https://www.twilio.com/try-twilio).
+If you haven't used Twilio before, welcome! You'll need to [Sign up for a Twilio account](https://www.twilio.com/try-twilio).
 
 We recommend you create a separate project within Twilio and install this app using that project.
 
 **Note:** It is recommended that you have an upgraded Twilio account to fully experience this demo.
 
+## Configuration Variables
+
+Before you start the install, you’ll need to collect the following variables from the Twilio Account Portal. 
+
+- `TWILIO_ACCOUNT_SID`
+- `TWILIO_AUTH_TOKEN`
+- `TWILIO_WORKSPACE_SID`
+
 * For Account SID and Auth Token please click here:  https://www.twilio.com/console
 * Buy a phone number or use an existing one (the application will configure the number for you later)
 * Create a new Twilio [TaskRouter Workspace](https://www.twilio.com/user/account/taskrouter/workspaces) and select the custom template.
 
-The agent UI does not support handling of multiple tasks simultaneously, hence all tasks are routed on the same task channel with capacity of one simultaneous task. For more details please check [TaskRouter Multitasking](https://www.twilio.com/docs/taskrouter/multitasking)
+* For Twilio API Key SID and Twilio API Key Secret, click here: https://www.twilio.com/console/dev-tools/api-keys
+
+- `TWILIO_API_KEY_SID`
+- `TWILIO_API_KEY_SECRET`
+
+For web chat you need to set Twilio Programmable Chat environment variables:
+
+- `TWILIO_CHAT_SERVICE_SID`
 
 * For creating a new Chat Services or re-using an existing one, click here: https://www.twilio.com/console/chat/services
-* For Twilio API Key SID and Twilio API Key Secret, click here: https://www.twilio.com/console/dev-tools/api-keys
+
+The agent UI does not support handling of multiple tasks simultaneously, hence all tasks are routed on the same task channel with capacity of one simultaneous task. For more details please check [TaskRouter Multitasking](https://www.twilio.com/docs/taskrouter/multitasking)
+
 * For outbound calls enable AGENT CONFERENCE setting, click here: https://www.twilio.com/console/voice/conferences/settings
 
 ## Terraform Install - Heroku
@@ -84,7 +100,7 @@ Initialize the Terraform configuration files and run
 
 If you have not installed Terraform, follow the [Terraform Getting Started](https://learn.hashicorp.com/terraform/getting-started/install.html).
 
-Add the Twilio configuration to the `terraform.tfvars` variables file.
+Add the Twilio variables listed in section [Configuraton Variables](#configuraton-variables) to the `terraform.tfvars` variables file.
 
 Set your Heroku application name in the infrastructure description file `terraform_heroku.tf` 
 
@@ -96,7 +112,7 @@ Install the project on Heroku by executing
 
 `terraform  apply`
 
-After the installation has completed please open `https://<your_application_name>.herokuapp.com/setup` and configure the application. The demo overview will be accessible at `https://<your_application_name>.herokuapp.com`. 
+After the installation has completed please open `https://<your-application-name>.herokuapp.com/setup` and configure the application. The demo overview will be accessible at `https://<your-application-name>.herokuapp.com`. 
 
 ## One Click Install - Heroku
 
@@ -104,7 +120,31 @@ This will install the application and all the dependencies on Heroku (login requ
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/nash-md/twilio-contact-center)
 
-After the installation has completed please open `https://<your_application_name>.herokuapp.com/setup` and configure the application. The demo overview will be accessible at `https://<your_application_name>.herokuapp.com`. 
+After the installation has completed please open `https://<your-application-name>.herokuapp.com/setup` and configure the application. The demo overview will be accessible at `https://<your-application-name>.herokuapp.com`.
+
+## Google App Engine Installation
+
+Download and install the [Google Cloud SDK](https://cloud.google.com/appengine/docs/standard/nodejs/quickstart).
+
+Create a new project
+
+`gcloud projects create <your-project-id> --set-as-default`
+
+Initialize your App Engine app with your project and choose its region:
+
+`gcloud app create --project=<your-project-id>`
+
+Add the Twilio variables listed in section [Configuraton Variables](#configuraton-variables) to the `app.yaml` variables file.
+
+Deploy the app on App Engine by running the following command.
+
+`gcloud app deploy`
+
+To view your application run
+
+`gcloud app browse`
+
+After the installation has completed please open `https://<your-project-id>.appspot.com/setup` and configure the application. The demo overview will be accessible at `https://<your-project-id>.appspot.com`.
 
 ## Manual Install - On Your Own Server
 
@@ -120,22 +160,7 @@ In the root directory create a file called '.env', then add the following to top
 
 `require('dotenv').config()`
 
-In order to run the demo you will need to set the following environment variables:
-
-- `TWILIO_ACCOUNT_SID`
-- `TWILIO_AUTH_TOKEN`
-- `TWILIO_WORKSPACE_SID`
-
-For web chat you need to set Twilio Programmable Chat environment variables:
-
-- `TWILIO_CHAT_SERVICE_SID`
-- `TWILIO_API_KEY_SID`
-- `TWILIO_API_KEY_SECRET`
-
-For video calls you need to set Twilio API Keys:
-
-- `TWILIO_API_KEY_SID`
-- `TWILIO_API_KEY_SECRET`
+In order to run the demo you will need to set the environment variables liste in Configuraton Variables](#configuraton-variables)
 
 Start the application
 
