@@ -4,15 +4,21 @@ var express       = require('express')
 var bodyParser    = require('body-parser')
 var sessions      = require('express-session')
 var compression   = require('compression')
-var { isRunningOnHeroku } = require('./util-cloud-provider')
+var { isRunningOnHeroku, isRunningOnGoogle } = require('./util-cloud-provider')
 
-/* check if the application runs on heroku */
+/* check the environment the application is running on */
 let util
 
 if (isRunningOnHeroku()) {
-	util = require('./util-heroku-pg.js')
+	console.log('application is running on Heroku')
+	util = require('./util-pg.js')
+	util.createConfigurationIfNotExists()
+} else if (isRunningOnGoogle()) {
+	console.log('application is running on Google App Engine')
+	util = require('./util-google-cloud-datastore.js')
 	util.createConfigurationIfNotExists()
 } else {
+	console.log('application is running on unknown host with local configuration')
 	util = require('./util-file.js')
 }
 
