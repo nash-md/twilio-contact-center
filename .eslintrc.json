@@ -5,7 +5,8 @@
    },
     "extends": "eslint:recommended",
     "parserOptions": {
-        "sourceType": "module"
+      "ecmaVersion": 8,
+      "sourceType": "module"
     },
     "rules": {
     "strict": ["error", "global"],
@@ -35,7 +36,6 @@
     "space-before-function-paren": [2, "always"],
     "space-before-blocks": [2, "always"],
     "eqeqeq": 2,
-    "semi": [1, "never"],
     "no-unused-vars": ["error", { "args": "none" }],
     "space-in-parens": ["error", "never"]
   }
