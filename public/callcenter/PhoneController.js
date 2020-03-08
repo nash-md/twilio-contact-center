@@ -19,7 +19,7 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout,
 		$log.log('InitializePhone event received');
 
 		Twilio.Device.setup(data.token, {
-			debug: true, 
+			debug: true,
 			codecPreferences: ['opus', 'pcmu']
 		});
 
@@ -287,7 +287,12 @@ app.controller('PhoneController', function ($scope, $rootScope, $http, $timeout,
 
 	$scope.addDigit = function (digit) {
 		$log.log('Phone: send digit: ' + digit);
-		$scope.phoneNumber = $scope.phoneNumber + digit;
+
+		if ($scope.phoneNumber) {
+			$scope.phoneNumber += digit;
+		} else {
+			$scope.phoneNumber = `+${digit}`;
+		}
 
 		if ($scope.connection) {
 			$scope.connection.sendDigits(digit);

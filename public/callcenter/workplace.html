@@ -176,9 +176,15 @@
 
             <section class="phone">
 
+              <form name="phone">
+
               <input style="font-size:2em; padding-left:10px;" ng-show="UI.state == 'idle'" ng-model="phoneNumber" type="text" name="phoneNumber"
-                placeholder="+.." />
+                placeholder="" convert-to-phone-number phone-number />
               <div class="phone-number" style="font-size:2em; padding-left:10px" ng-if="UI.state == 'busy'">{{phoneNumber}}</div>
+
+              <div class="warning" ng-style="{'visibility': (phone.phoneNumber.$error.invalidPhone && phoneNumber.length > 8 )?'visible':'hidden'}">
+                Invalid phone number
+              </div>
 
               <div class="keypad">
 
@@ -231,10 +237,14 @@
 
         </div>
 
-              <button class="button-call" ng-if="UI.state == 'idle'" ng-click="call(phoneNumber)">CALL</button>
+
+              <button ng-disabled="phone.phoneNumber.$error.invalidPhone" class="button-call" ng-if="UI.state == 'idle'" ng-click="call(phoneNumber)">CALL</button>
               <button class="button-hangup" ng-if="UI.state == 'busy'" ng-click="hangUp()">HANGUP</button>
               <span class="status">Status: {{debug}}</span>
               <span ng-if="error != null" class="status">Error: {{error}}</span>
+
+
+            </form>
 
             </section>
 
@@ -279,13 +289,14 @@
     <script src="/scripts/angular-messages.min.js"></script>
     <script src="/scripts/angular-scrollglue.js"></script>
     <script src="/scripts/moment.min.js"></script>
+    <script src="/scripts/directives/ConvertToPhoneNumberDirective.js"></script>
+    <script src="/scripts/directives/PhoneNumberDirective.js"></script>
     <script src="WorkflowController.js"></script>
     <script src="WorkflowReservationController.js"></script>
     <script src="PhoneController.js"></script>
     <script src="ChatController.js"></script>
     <script src="VideoController.js"></script>
     <script src="/scripts/directives/TaskWaitingTimeFilter.js"></script>
-
   </body>
 
 </html>

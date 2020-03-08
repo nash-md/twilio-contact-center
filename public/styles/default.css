@@ -242,6 +242,16 @@ a.header-home-link {
     color: white;
 }
 
+.phone-controller .button-call[disabled] {
+    width: 100%;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    font-size: 1.6em;
+    background-color: #ddd;
+    color: white;
+}
+
+
 .phone-controller .button-hangup {
     width: 100%;
     border-radius: 3px;
