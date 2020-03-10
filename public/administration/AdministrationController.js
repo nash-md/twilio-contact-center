@@ -98,7 +98,7 @@ function AdministrationController ($scope, $http, $log, $q) {
 
 		/* create attributes which are used for TaskRouter routing */
 		let attributes = {
-			contact_uri: 'client:' + $scope.agent.friendlyName.toLowerCase(),
+			contact_uri: 'client:' + $scope.agent.friendlyName,
 			channels: $scope.agent.channels,
 			team: $scope.agent.team
 		};

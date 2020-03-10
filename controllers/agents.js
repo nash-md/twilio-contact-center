@@ -8,7 +8,6 @@ const client = twilio(
 )
 
 const taskrouterHelper = require('./helpers/taskrouter-helper.js')
-const clientHelper = require('./helpers/client-helper.js')
 
 module.exports.login = function (req, res) {
 	const friendlyName = req.body.worker.friendlyName
@@ -56,11 +55,6 @@ var createWorkerTokens = function (configuration, worker, endpoint) {
 		worker.sid
 	)
 
-	/* create a token for Twilio TaskRouter */
-	const clientAccessToken = clientHelper.createAccessToken(
-		worker.friendlyName, configuration.twilio.applicationSid, lifetime
-	)
-
 	const accessToken = new AccessToken(
 		process.env.TWILIO_ACCOUNT_SID,
 		process.env.TWILIO_API_KEY_SID,
@@ -79,13 +73,19 @@ var createWorkerTokens = function (configuration, worker, endpoint) {
 	/* grant the access token Twilio Video capabilities */
 	const videoGrant = new AccessToken.VideoGrant()
 
+	/* grant the token Twilio Client capabilities */
+	const clientGrant = new AccessToken.VoiceGrant({
+		incomingAllow: true,
+		outgoingApplicationSid: configuration.twilio.applicationSid
+	})
+
 	accessToken.addGrant(chatGrant)
 	accessToken.addGrant(videoGrant)
+	accessToken.addGrant(clientGrant)
 
 	return {
 		worker: workerCapability.toJwt(),
-		access: accessToken.toJwt(),
-		voice: clientAccessToken.toJwt()
+		access: accessToken.toJwt()
 	}
 }
 
