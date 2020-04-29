@@ -1,8 +1,8 @@
 const twilio 	= require('twilio')
 
-const client = twilio(
-	process.env.TWILIO_ACCOUNT_SID,
-	process.env.TWILIO_AUTH_TOKEN)
+const client = twilio(process.env.TWILIO_API_KEY_SID, process.env.TWILIO_API_KEY_SECRET, {
+	accountSid: process.env.TWILIO_ACCOUNT_SID
+});
 
 module.exports.delete = function (req, res) {
 	let id = req.params.id
@@ -42,18 +42,15 @@ module.exports.list = function (req, res) {
 
 	client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).workers.list()
 		.then(workers => {
-			let payload =[]
 
-			for (let i = 0; i < workers.length; i++) {
-				const worker = {
-					sid: workers[i].sid,
-					friendlyName: workers[i].friendlyName,
-					attributes: JSON.parse(workers[i].attributes),
-					activityName: workers[i].activityName
+			const payload = workers.map(worker => {
+				return { 
+					sid: worker.sid,
+					friendlyName: worker.friendlyName,
+					attributes: JSON.parse(worker.attributes),
+					activityName: worker.activityName
 				}
-
-				payload.push(worker)
-			}
+			})
 
 			res.status(200).json(payload)
 		}).catch(error => {
