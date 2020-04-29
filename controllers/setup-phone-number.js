@@ -1,8 +1,8 @@
 const twilio 	= require('twilio')
 
-const client = twilio(
-	process.env.TWILIO_ACCOUNT_SID,
-	process.env.TWILIO_AUTH_TOKEN)
+const client = twilio(process.env.TWILIO_API_KEY_SID, process.env.TWILIO_API_KEY_SECRET, {
+	accountSid: process.env.TWILIO_ACCOUNT_SID
+});
 
 module.exports.update = function (req, res) {
 	console.log('configure number: ' + req.body.sid)
