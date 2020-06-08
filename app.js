@@ -4,6 +4,9 @@ var express       = require('express')
 var bodyParser    = require('body-parser')
 var sessions      = require('express-session')
 var compression   = require('compression')
+
+const context = require('./context')
+
 var { isRunningOnHeroku, isRunningOnGoogle } = require('./util-cloud-provider')
 
 /* check the environment the application is running on */
@@ -21,6 +24,14 @@ if (isRunningOnHeroku()) {
 	console.log('application is running on unknown host with local configuration')
 	util = require('./util-file.js')
 }
+
+util.getConfiguration(function (error, configuration) {
+	if (error) {
+		console.log(error)
+	} else {
+		context.set({ configuration: configuration })
+	}
+})
 
 var app = express()
 
@@ -69,16 +80,13 @@ app.use(function (req, res, next) {
 
 app.use(function (req, res, next) {
 
-	util.getConfiguration(function (err, configuration) {
-		if (err) {
-			res.status(500).json({stack: err.stack, message: err.message})
-
-		} else {
-			req.configuration = configuration
-			req.util = util
-			next()
-		}
-	})
+	if (!context.get() || !context.get().configuration) {
+		res.status(500).send('error: configuration could not be loaded')
+	} else {
+		req.configuration = context.get().configuration
+		req.util = util
+		next()
+	}
 
 })
 

@@ -1,40 +1,31 @@
 const twilio 	= require('twilio')
+const context = require('../../context')
 
 const TaskRouterCapability = twilio.jwt.taskrouter.TaskRouterCapability
 
 const client = twilio(
 	process.env.TWILIO_ACCOUNT_SID,
 	process.env.TWILIO_AUTH_TOKEN)
+	
+module.exports.createTask = async (attributes = {}) => {
+	const configuration = context.get().configuration
 
-module.exports.createTask = function (workflowSid, attributes) {
-	attributes = attributes || {}
-
-	const data = {
-		workflowSid: workflowSid,
+	const payload = {
+		workflowSid: configuration.twilio.workflowSid,
 		attributes: JSON.stringify(attributes),
 		timeout: 3600,
 		taskChannel: 'voice'
 	}
 
-	return client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).tasks.create(data)
+	return client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).tasks.create(payload)
 }
 
-module.exports.getOngoingTasks = function (name) {
+module.exports.getOngoingTasks = (name) => {
+	let query = {}
+	query.assignmentStatus = 'pending,assigned,reserved'
+	query.evaluateTaskAttributes = 'name=\'' + name + '\''
 
-	return new Promise(function (resolve, reject) {
-		let query = {}
-		query.assignmentStatus = 'pending,assigned,reserved'
-		query.evaluateTaskAttributes = 'name=\'' + name + '\''
-
-		client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).tasks.list(query)
-			.then(tasks => {
-				return resolve(tasks)
-			}).catch(error => {
-				return reject(error)
-			})
-
-	})
-
+	return client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).tasks.list(query)
 }
 
 const buildWorkspacePolicy = (options) => {
@@ -50,7 +41,7 @@ const buildWorkspacePolicy = (options) => {
 	})
 }
 
-module.exports.createWorkerCapabilityToken = function (sid) {
+module.exports.createWorkerCapabilityToken = (sid) => {
 	const workerCapability = new TaskRouterCapability({
 		accountSid: process.env.TWILIO_ACCOUNT_SID,
 		authToken: process.env.TWILIO_AUTH_TOKEN,
@@ -77,3 +68,14 @@ module.exports.createWorkerCapabilityToken = function (sid) {
 	return workerCapability
 }
 
+module.exports.findWorker = (friendlyName) => {
+	const filter = { friendlyName: friendlyName }
+
+	return client.taskrouter
+		.workspaces(process.env.TWILIO_WORKSPACE_SID)
+		.workers.list(filter)
+		.then(workers => {
+			return workers.find(worker => worker.friendlyName === friendlyName)
+		})
+
+}

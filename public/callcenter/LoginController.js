@@ -6,9 +6,9 @@ function LoginController ($scope, $http) {
 	};
 
 	$scope.login = function () {
-		var endpoint = navigator.userAgent.toLowerCase() + Math.floor((Math.random() * 1000) + 1);
+		var endpointId = navigator.userAgent.toLowerCase() + Math.floor((Math.random() * 1000) + 1);
 
-		$http.post('/api/agents/login', { worker: $scope.worker, endpoint: endpoint })
+		$http.post('/api/agents/login', { worker: $scope.worker, endpointId: endpointId })
 
 			.then(function onSuccess (response) {
 				window.location.replace('/callcenter/workplace.html');

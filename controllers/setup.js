@@ -1,4 +1,5 @@
 const twilio = require('twilio');
+const context = require('../context')
 
 const client = twilio(process.env.TWILIO_API_KEY_SID, process.env.TWILIO_API_KEY_SECRET, {
 	accountSid: process.env.TWILIO_ACCOUNT_SID
@@ -30,6 +31,8 @@ module.exports.update = async (req, res) => {
 			if (error) {
 				throw error;
 			} else {
+				context.set({ configuration: configuration })
+
 				res.status(200).end();
 			}
 		});
