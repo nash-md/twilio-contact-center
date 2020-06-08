@@ -15,6 +15,8 @@ function WorkflowReservationController ($scope, $rootScope, $timeout, $interval,
 	$scope.$on('DestroyReservation', function (event) {
 		$log.log('DestroyReservation event received');
 		$scope.reservation = null;
+		$scope.stopCounter();
+		$scope.$apply();
 	});
 
 	$scope.startCounter = function () {
@@ -51,7 +53,7 @@ function WorkflowReservationController ($scope, $rootScope, $timeout, $interval,
 						return;
 					}
 
-					$rootScope.$broadcast('ActivateVideo', { roomName: reservation.task.attributes.roomName });
+					$rootScope.$broadcast('ActivateVideo', { roomName: reservation.task.attributes.video.roomName });
 
 				});
 
@@ -68,14 +70,14 @@ function WorkflowReservationController ($scope, $rootScope, $timeout, $interval,
 						return;
 					}
 
-					$rootScope.$broadcast('ActivateChat', { channelSid: reservation.task.attributes.channelSid });
+					$rootScope.$broadcast('ActivateChat', { channelSid: reservation.task.attributes.chat.sid });
 
 				});
 
 		}
 
-		if (reservation.task.attributes.channel === 'phone' && reservation.task.attributes.type === 'inbound_call') {
-
+		if (reservation.task.attributes.channel === 'phone') {
+			
 			reservation.conference($scope.configuration.twilio.callerId, undefined, undefined, undefined, function (error, reservation) {
 
 				if (error) {
@@ -83,12 +85,12 @@ function WorkflowReservationController ($scope, $rootScope, $timeout, $interval,
 					return;
 				}
 
-			}, { 'EndConferenceOnExit': 'true' });
+			}, { 'EndConferenceOnExit': true, 'EndConferenceOnCustomerExit': true, 'ConferenceRecord': $scope.configuration.twilio.voice.recording });
 
 		}
 
 		/* we accept the reservation and initiate a call to the customer's phone number */
-		if (reservation.task.attributes.channel === 'phone' && reservation.task.attributes.type === 'callback_request') {
+		if (reservation.task.attributes.channel === 'callback') {
 
 			reservation.accept(
 
