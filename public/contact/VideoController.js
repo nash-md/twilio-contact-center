@@ -34,7 +34,7 @@ function VideoController ($scope, $http, $timeout, $log, $window) {
 
 		$http.post('/api/tasks/video', user)
 			.then(function onSuccess (response) {
-				$scope.setupLocalTracks(response.data.token, response.data.roomName);
+				$scope.setupLocalTracks(response.data.token, response.data.video.roomName);
 			}, function onError (response) {
 				$log.error('Connect to Room failed, %o', response);
 				$scope.UI.warning = 'Connect to Room failed, check JavaScript console';

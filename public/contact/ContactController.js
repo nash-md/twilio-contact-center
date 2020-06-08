@@ -18,18 +18,14 @@ app.controller('ContactController', function ($scope, $http, $timeout, $log) {
 	};
 
 	$scope.submit = function () {
-
-		var task = {
-			channel: 'phone',
-			type: 'callback_request',
+		const payload = {
 			phone: $scope.question.phone,
 			name: $scope.question.name,
 			text: $scope.question.text,
 			team: $scope.question.team,
-			title: 'Callback request'
 		};
 
-		$http.post('/api/tasks/callback', task)
+		$http.post('/api/tasks/callback', payload)
 
 			.then(function onSuccess (response) {
 

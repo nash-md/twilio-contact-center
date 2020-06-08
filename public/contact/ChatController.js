@@ -43,7 +43,7 @@ app.controller('ChatController', function ($scope, $http, $timeout, $log) {
 
 		var user = {
 			identity: $scope.user.identity,
-			endpoint: navigator.userAgent.toLowerCase() + Math.floor((Math.random() * 1000) + 1)
+			endpointId: navigator.userAgent.toLowerCase() + Math.floor((Math.random() * 1000) + 1)
 		};
 
 		$http.post('/api/tasks/chat', user)
@@ -52,7 +52,7 @@ app.controller('ChatController', function ($scope, $http, $timeout, $log) {
 
 				$scope.session.token = response.data.token;
 				$scope.session.identity = response.data.identity;
-				$scope.setupClient(response.data.channel.sid);
+				$scope.setupClient(response.data.chat.sid);
 
 			}, function onError (response) {
 

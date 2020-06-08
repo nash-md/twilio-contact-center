@@ -57,7 +57,7 @@ app.controller('ChatController', function ($scope, $rootScope, $http, $sce, $com
 		$log.log('ActivateChat event received');
 		$log.log(data);
 
-		$scope.session.channelSid = data.channelSid;
+		$scope.session.channelSid = data.chat.sid;
 
 		$scope.session.isLoading = true;
 		$scope.setupClient($scope.session.channelSid);
