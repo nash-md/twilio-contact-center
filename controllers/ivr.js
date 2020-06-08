@@ -92,7 +92,6 @@ module.exports.selectTeam = function (req, res) {
 			phone: req.query.From,
 			name: req.query.From,
 			title: 'Inbound call',
-			type: 'inbound_call',
 			team: team.id
 		}
 
@@ -105,28 +104,30 @@ module.exports.selectTeam = function (req, res) {
 	res.send(twiml.toString())
 }
 
-module.exports.createTask = function (req, res) {
+module.exports.createTask = async (req, res) => {
 	/* create task attributes */
 	const attributes = {
+		title: 'Callback request',
 		text: 'Caller answered IVR with option "' + req.query.teamFriendlyName + '"',
 		channel: 'phone',
-		phone: req.query.From,
-		name: req.query.From,
-		title: 'Callback request',
-		type: 'callback_request',
-		team: req.query.teamId
+		name: req.query.From,	
+		team: req.query.teamId,
+		phone: req.query.From
 	}
 
 	const twiml =  new twilio.twiml.VoiceResponse()
 
-	taskrouterHelper.createTask(req.configuration.twilio.workflowSid, attributes)
-		.then(task => {
-			twiml.say('Thanks for your callback request, an agent will call you back soon.')
-			twiml.hangup()
-		}).catch(error => {
-			twiml.say('An application error occured, the demo ends now')
-		}).then(() => {
-			res.send(twiml.toString())
-		})
+	try {
+    await taskrouterHelper.createTask(attributes);
+
+    twiml.say('Thanks for your callback request, an agent will call you back soon.')
+		twiml.hangup()
+
+    res.status(200).send(twiml.toString());
+  } catch (error) {
+		
+		twiml.say('An application error occured, the demo ends now')
+		res.status(200).send(twiml.toString());
+  }
 
 }
