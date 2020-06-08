@@ -109,7 +109,7 @@ module.exports.createTask = async (req, res) => {
 	const attributes = {
 		title: 'Callback request',
 		text: 'Caller answered IVR with option "' + req.query.teamFriendlyName + '"',
-		channel: 'phone',
+		channel: 'callback',
 		name: req.query.From,	
 		team: req.query.teamId,
 		phone: req.query.From

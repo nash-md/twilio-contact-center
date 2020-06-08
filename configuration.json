@@ -38,6 +38,14 @@
 			"taskQueueSid": null,
 			"expression": "channel == \"video\"",
 			"targetWorkerExpression": ""
+		},
+		{
+			"friendlyName": "Callback Queue",
+			"filterFriendlyName": "Callback",
+			"id": "callback",
+			"taskQueueSid": null,
+			"expression": "channel == \"callback\"",
+			"targetWorkerExpression": ""
 		}
 	],
 	"twilio": {
