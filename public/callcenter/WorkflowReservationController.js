@@ -85,7 +85,7 @@ function WorkflowReservationController ($scope, $rootScope, $timeout, $interval,
 					return;
 				}
 
-			}, { 'EndConferenceOnExit': true, 'EndConferenceOnCustomerExit': true, 'ConferenceRecord': $scope.configuration.twilio.voice.recording });
+			}, { 'EndConferenceOnExit': true, 'EndConferenceOnCustomerExit': true });
 
 		}
 

@@ -22,7 +22,7 @@ module.exports.createCallback = async (req, res) => {
 
     res.status(200).json(response);
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json(res.convertErrorToJSON(error));
   }
 };
 
@@ -60,7 +60,7 @@ module.exports.createChat = async (req, res) => {
 
     res.status(200).json(response);
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json(res.convertErrorToJSON(error));
   }
 };
 
@@ -91,6 +91,6 @@ module.exports.createVideo = async (req, res) => {
 
     res.status(200).json(response);
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json(res.convertErrorToJSON(error));
   }
 };
