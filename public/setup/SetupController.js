@@ -1,14 +1,13 @@
-var app = angular.module('setupApplication', ['ngMessages', 'phone-number']);
+var app = angular.module('setupApplication', ['ngMessages', 'phone-number', 'convert-to-boolean']);
 
 app.controller('SetupController', function ($scope, $http, $timeout, $q) {
 	$scope.phoneNumber    = { isValid: true, message: null, code: null};
 	$scope.configuration  = null;
 	$scope.workspace      = null;
 	$scope.activities     = [];
-	$scope.error 					= null;
 
 	/* UI */
-	$scope.UI = { warning: null, isSaving: false };
+	$scope.UI = { warning: null, isSaving: false, error: null, isSaved: false };
 
 	$scope.init = function () {
 
@@ -62,6 +61,8 @@ app.controller('SetupController', function ($scope, $http, $timeout, $q) {
 	$scope.saveConfig = function () {
 		$scope.phoneNumber.isValid = true;
 		$scope.UI.isSaving = true;
+		$scope.UI.isSaved = false;
+		$scope.UI.warning = null;
 
 		var verifyPhoneNumber = function () {
 			var deferred = $q.defer();
@@ -104,14 +105,17 @@ app.controller('SetupController', function ($scope, $http, $timeout, $q) {
 		verifyPhoneNumber().then(function (phoneNumber) {
 
 			return setupPhonenumber(phoneNumber.sid).then(function () {
+				return saveConfiguration(phoneNumber.sid, $scope.configuration);
+			}).then(function () {
+				$scope.UI.isSaving = false;
+				$scope.UI.isSaved = true;
 
-				return saveConfiguration(phoneNumber.sid, $scope.configuration).then(function () {
-					$scope.UI.isSaving = false;
-					$scope.phoneNumber = { isValid: true, message: null, code: null};
+				$timeout(function () {
+					$scope.$apply();
 				});
 
 			}).catch(function (error) {
-				$scope.error = error.data;
+				$scope.UI.warning = error.data;
 				$scope.UI.isSaving = false;
 				console.log(error);
 

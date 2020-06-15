@@ -13,7 +13,11 @@
 
 <body ng-app="setupApplication" ng-controller="SetupController"  data-ng-init="init()" >
 
-   <div ng-show="UI.warning" class="panel panel-default ui-warning" ng-cloak>{{UI.warning | json}}</div>
+   <div ng-show="UI.warning" class="panel panel-default ui-warning" ng-cloak>
+    
+    <strong>Oh snap!</strong><br />
+    
+    <span></span>{{UI.warning | json}}</div>
 
   <section style="margin: auto; width:750px;">
 
@@ -58,17 +62,32 @@
 
       <h4>Phone Number:</h4>
 
-      <span class="help-block">This phone number will be configured as your voice inbound and outbound number by this setup script. If you provide a message-capable phone number the demo provides a bridge from SMS to Twiio IP Chat and vice versa.</span>
+      <span class="help-block">This phone number will be configured as your voice inbound and outbound number by this setup script. If you provide a message-capable phone number the demo provides a bridge from SMS to Twiio Chat and vice versa.</span>
 
       <input style="width:350px" ng-model="configuration.twilio.callerId" data-ng-trim="false" name="callerId" type="text" class="form-control" placeholder="+..." required phone-number>
 
       <br />
 
+      <h4>Record Phone Calls:</h4>
+
+      <div class="btn-group" uib-dropdown>
+
+        <select ng-model="configuration.twilio.voice.recording" class="form-control" required convert-to-boolean>
+          <option value="true">yes</option>
+          <option value="false">no</option>
+        </select>
+
+      </div>
+
+      <br /><br />
+
       <h4>Facebook Page ID (optional):</h4>
 
-      <span class="help-block">Please enable Facebook Messaging in your Twilio account and forward messages to <span style="white-space: nowrap; font-weight:bold">http://&lt;your_application&gt;/api/messaging-adapter/inbound</span> (request method POST)</span>
+      <span class="help-block">Please enable Facebook Messaging in your Twilio account and forward messages to <span style="white-space: nowrap; font-weight:bold">http://&lt;your_application-url&gt;/api/messaging-adapter/inbound</span> (request method POST)</span>
 
-       <input style="width:350px" ng-model="configuration.twilio.facebookPageId" data-ng-trim="true" name="facebookPageId" type="text" class="form-control">
+      <input style="width:350px" ng-model="configuration.twilio.facebookPageId" data-ng-trim="true" name="facebookPageId" type="text" class="form-control">
+
+      <br />
 
       <div ng-messages="setupForm.callerId.$error" role="alert" style="margin-top: 10px; margin-bottom: 0px;">
           <div ng-message="required" class="error-message alert alert-danger">Phone number is required</div>
@@ -94,11 +113,8 @@
 
       </div>
 
-       <div style="margin-top:10px" ng-if="error != null" class="alert alert-dismissible alert-danger">
-          <strong>Oh snap!</strong><br />
-
-          <span>{{ error | json}}</span>
-
+      <div style="margin-top:10px" ng-if="UI.isSaved == true" class="alert alert-dismissible alert-success">
+        <strong>Configuration saved.</strong>
       </div>
 
       <br>
@@ -112,6 +128,7 @@
 <script src="/scripts/angular.min.js"></script>
 <script src="/scripts/angular-messages.min.js"></script>
 <script src="/scripts/directives/PhoneNumberDirective.js"></script>
+<script src="/scripts/directives/ConvertToBooleanDirective.js"></script>
 
 <script src="SetupController.js"></script>
 

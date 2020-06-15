@@ -55,6 +55,9 @@
 		"callerId": null,
 		"applicationSid": null,
 		"workflowSid": null,
-		"facebookPageId": null
+		"facebookPageId": null,
+		"voice": {
+			"recording": false
+		}
 	}
 }
