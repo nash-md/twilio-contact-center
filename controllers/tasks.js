@@ -37,7 +37,9 @@ module.exports.createChat = function (req, res) {
         text: 'Customer entered chat via support page',
         channel: 'chat',
         name: payload.identity,
-        channelSid: channel.sid
+        chat: {
+          sid: channel.sid
+        }
       };
 
       return taskrouterHelper
@@ -68,7 +70,9 @@ module.exports.createVideo = function (req, res) {
     text: 'Customer requested video support on web page',
     channel: 'video',
     name: payload.identity,
-    roomName: payload.video.name
+    video: {
+      roomName: uid
+    }
   };
 
   taskrouterHelper
