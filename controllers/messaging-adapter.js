@@ -1,260 +1,194 @@
-const twilio 	= require('twilio')
-const async = require('async')
+const twilio = require('twilio');
+const taskrouterHelper = require('./helpers/taskrouter-helper.js');
+const helper = require('./messaging-adapter-helper');
 
-const taskrouterHelper = require('./helpers/taskrouter-helper.js')
+const client = twilio(process.env.TWILIO_API_KEY_SID, process.env.TWILIO_API_KEY_SECRET, {
+	accountSid: process.env.TWILIO_ACCOUNT_SID
+});
 
-const client = twilio(
-	process.env.TWILIO_ACCOUNT_SID,
-	process.env.TWILIO_AUTH_TOKEN)
+module.exports.inbound = async (req, res) => {
+	req.direction = 'inbound:';
 
-module.exports.inbound = function (req, res) {
-	req.direction = 'inbound: '
-
-	console.log(req.direction + 'request received: %j', req.body)
+	console.log(`${req.direction} request received: ${JSON.stringify(req.body)}`);
 
 	/* basic request body validation */
 	if (!req.body.From) {
-		return res.status(500).json({ message: 'Invalid request body. "From" is required' })
+		return res.status(500).json({ message: 'Invalid request body. "From" is required' });
 	}
 
 	if (!req.body.Body) {
-		return res.status(500).json({ message: 'Invalid request body. "Body" is required' })
+		return res.status(500).json({ message: 'Invalid request body. "Body" is required' });
 	}
 
-	retrieveChannel(req).then(function (channel) {
-		console.log(req.direction + 'channel ' + channel.sid + ' received')
+	try {
+		const channel = await retrieveChannel(req);
 
-		return taskrouterHelper.getOngoingTasks(req.body.From).then(function (tasks) {
-			console.log(req.direction +  'user ' + req.body.From + ' has ' + tasks.length + ' ongoing task(s)')
+		console.log(`${req.direction} channel ${channel.sid} received`);
 
-			if (tasks.length === 0) {
-				return createTask(req, channel)
-			}
+		if (!await hasActiveTask(req.body.From)) {
+			await createTask(req, channel);
+		}
 
-		}).then(function () {
+		const message = await createMessage(channel, req.body.From, req.body.Body);
 
-			return client.chat.services(process.env.TWILIO_CHAT_SERVICE_SID).channels(channel.sid).messages.create({
-				from: req.body.From,
-				body: req.body.Body
-			}).then(function (message) {
-				console.log(req.direction + 'chat message for ' + message.from + ' on channel ' + channel.sid + ' created, body "' + message.body + '"')
-				res.setHeader('Content-Type', 'application/xml')
-				res.status(200).end()
-			})
+		console.log(
+			`${req.direction} chat message from ${message.from} on channel ${channel.sid} created, body ${message.body}`
+		);
 
-		})
+		res.setHeader('Content-Type', 'application/xml');
+		res.status(200).end();
+	} catch (error) {
+		console.log(
+			req.direction + 'create chat message failed: %s',
+			JSON.stringify(error, Object.getOwnPropertyNames(error))
+		);
+		res.setHeader('Content-Type', 'application/xml');
+		res.status(500).send(JSON.stringify(error, Object.getOwnPropertyNames(error)));
+	}
+};
 
-	}).catch(function (err) {
-		console.log(req.direction + 'create chat message failed: %s', JSON.stringify(err, Object.getOwnPropertyNames(err)))
-		res.setHeader('Content-Type', 'application/xml')
-		res.status(500).send(JSON.stringify(err, Object.getOwnPropertyNames(err)))
-	})
+const fetchChannel = async (sid) => {
+	const channel = await client.chat.services(process.env.TWILIO_CHAT_SERVICE_SID).channels(sid).fetch();
 
-}
+	return channel;
+};
 
-var retrieveChannel = function (req) {
-	return new Promise(function (resolve, reject) {
+const retrieveChannel = async (req) => {
+	console.log(`${req.direction} retrieve channel for user ${req.body.From}`);
 
-		console.log(req.direction + 'retrieve channel via API for user ', req.body.From)
+	const uniqueName = `support_channel_${req.body.From}`;
+	const friendlyName = `Support Chat with ${req.body.From}`;
 
-		return client.chat.services(process.env.TWILIO_CHAT_SERVICE_SID).channels('support_channel_' + req.body.From).fetch()
-			.then(function (channel) {
-				resolve(channel)
-			}).catch(function (err) {
-				console.error(req.direction + 'retrieve channel failed: %s', JSON.stringify(err, Object.getOwnPropertyNames(err)))
-				return createChannel(req).then(function (channel) {
-					resolve(channel)
-				}).catch(function (err) {
-					reject(err)
-				})
-			})
+	let channel;
 
-	})
+	try {
+		channel = await fetchChannel(uniqueName);
 
-}
+		return channel;
+	} catch (error) {
+		if (error.code === 20404) {
+			channel = await createChannel(uniqueName, friendlyName, req.body.From);
 
-var createChannel = function (req) {
-
-	return new Promise(function (resolve, reject) {
-
-		async.waterfall([
-
-			function (callback) {
-
-				client.chat.services(process.env.TWILIO_CHAT_SERVICE_SID).channels.create({
-					friendlyName: 'Support Chat with ' + req.body.From,
-					uniqueName: 'support_channel_' + req.body.From,
-					attributes: JSON.stringify({ forwarding: true})
-				}).then(function (channel) {
-					console.log(req.direction + 'channel ' + channel.sid + ' created')
-					callback(null, channel)
-				}).catch(function (err) {
-					console.error(req.direction + 'create channel failed: %s', JSON.stringify(err, Object.getOwnPropertyNames(err)))
-					callback(err)
-				})
-
-			}, function (channel, callback) {
-
-				client.chat.services(process.env.TWILIO_CHAT_SERVICE_SID).channels(channel.sid).members.create({
-					identity: req.body.From
-				}).then(function (identity) {
-					console.log(req.direction + 'added member ' + identity.sid  + '(' + req.body.From + ') to channel ' + channel.sid)
-					callback(null, channel)
-				}).catch(function (err) {
-					console.error(req.direction + 'added member ' + req.body.From + ' to channel ' + channel.sid + 'failed: %s', JSON.stringify(err, Object.getOwnPropertyNames(err)))
-					callback(err)
-				})
-
-			}, function (channel, callback) {
-
-				createTask(req, channel).then(function (task) {
-					callback(null, channel)
-				}).catch(function (error) {
-					callback(error)
-				})
-
-			}
-		], function (err, channel) {
-			if (err) {
-				reject(err)
-			} else {
-				resolve(channel)
-			}
-		})
-
-	})
-
-}
-
-var createTask = function (req, channel) {
-
-	return new Promise(function (resolve, reject) {
-		let title 		= null
-		let text 			= null
-		let endpoint	= null
-
-		if (req.body.From.includes('messenger')) {
-			title 		= 'Facebook Messenger request'
-			text 			= 'Customer requested support on Faceboook'
-			endpoint 	= 'messenger'
+			return channel;
 		} else {
-			title 		= 'SMS request'
-			text 			= 'Customer requested support by sending SMS'
-			endpoint 	= 'sms'
+			console.error(
+				`${req.direction} retrieve channel failed: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`
+			);
+			throw error;
 		}
+	}
+};
 
-		const attributes = {
-			title: title,
-			text: text,
-			channel: 'chat',
-			endpoint: endpoint,
-			team: 'support',
-			name: req.body.From,
-			channelSid: channel.sid
-		}
+const createChannel = async (uniqueName, friendlyName, from) => {
+	const payload = {
+		friendlyName: friendlyName,
+		uniqueName: uniqueName,
+		attributes: JSON.stringify({ forwarding: true })
+	};
 
-		taskrouterHelper.createTask(req.configuration.twilio.workflowSid, attributes).then(task => {
-			console.log(req.direction + 'task ' + task.sid + ' created with attributes %j', task.attributes)
-			resolve(task)
-		}).catch(error => {
-			console.error('create task failed: %s', JSON.stringify(error, Object.getOwnPropertyNames(error)))
-			reject(error)
-		})
+	const channel = await client.chat.services(process.env.TWILIO_CHAT_SERVICE_SID).channels.create(payload);
 
-	})
+	console.log(`channel ${channel.sid} created`);
 
-}
+	const member = await client.chat
+		.services(process.env.TWILIO_CHAT_SERVICE_SID)
+		.channels(channel.sid)
+		.members.create({
+			identity: from
+		});
 
-var forwardChannel = function (channel, req) {
+	console.log(`added member ${member.sid} (${from}) to channel ${channel.sid}`);
 
-	return client.chat.services(process.env.TWILIO_CHAT_SERVICE_SID).channels(channel.sid).members.list()
-		.then(function (members) {
+	return channel;
+};
 
-			return new Promise(function (resolve, reject) {
-				console.log(req.direction + 'channel ' + channel.sid + ' has ' + members.length + ' member(s)')
-
-				async.each(members, function (member, callback) {
-
-					/* never forward message the user who created it */
-					if (req.body.From === member.identity) {
-						return callback()
-					}
-
-					console.log(req.direction + 'forward message "' + req.body.Body + '" to identity ' + member.identity)
-
-					forwardMessage(member.identity, req.body.Body, req).then(function (message) {
-						callback()
-					}).catch(function (err) {
-						callback(err)
-					})
-
-				}, function (err) {
-					if (err) {
-						return reject(err)
-					}
-
-					resolve()
-				})
-
-			})
-
-		})
-}
-
-var forwardMessage = function (to, body, req) {
-
-	return new Promise(function (resolve, reject) {
-		let from
-
-		if (to.includes('messenger')) {
-			from = 'messenger:' + req.configuration.twilio.facebookPageId
-		} else {
-			from = req.configuration.twilio.callerId
-		}
-
-		client.messages.create({
-			to: to,
+const createMessage = async (channel, from, body) => {
+	const message = await client.chat
+		.services(process.env.TWILIO_CHAT_SERVICE_SID)
+		.channels(channel.sid)
+		.messages.create({
 			from: from,
 			body: body
-		})
-		.then(message => {
-			console.log(req.direction + 'message ' + message.sid + ' create, body is "' + body + '" sent to endpoint ' + to + ', sender is ' + from)
-			resolve(message)
-		}).catch(error => {
-			console.error(req.direction + ' sending message failed: %s', JSON.stringify(error, Object.getOwnPropertyNames(error)))
-			reject(error)
-		})
+		});
 
-	})
+	return message;
+};
 
-}
+const hasActiveTask = async (from) => {
+	const tasks = await taskrouterHelper.getOngoingTasks(from);
 
-module.exports.outbound = function (req, res) {
-	req.direction = 'outbound: '
+	console.log(`user ${from} has ${tasks.length} ongoing task(s)`);
 
-	console.log(req.direction + 'request received: %j', req.body.Body + ' - ' + new Date())
+	return tasks.length > 0;
+};
 
-	client.chat.services(process.env.TWILIO_CHAT_SERVICE_SID).channels(req.body.ChannelSid).fetch()
-		.then(function (channel) {
-			console.log(req.direction + 'channel ' + channel.sid + ' received')
+const createTask = async (req, channel) => {
+	const attributes = helper.createTaskAttributes(req.body.From, channel);
 
-			let attributes = JSON.parse(channel.attributes)
+	const task = await taskrouterHelper.createTask(attributes);
 
-			if (!attributes.forwarding) {
-				console.log(req.direction + 'channel ' + channel.sid + ' needs no forwarding')
-				res.status(200).end()
-			} else {
+	console.log(` ${req.direction} task ${task.sid} created with attributes ${JSON.stringify(task.attributes)}`);
 
-				forwardChannel(channel, req)
-					.then(function () {
-						console.log(req.direction + 'message forwarding for channel ' + channel.sid + ' done')
-						res.status(200).send('blah')
-					})
+	return task;
+};
 
+const forwardChannel = async (channel, req) => {
+	const members = await client.chat
+		.services(process.env.TWILIO_CHAT_SERVICE_SID)
+		.channels(channel.sid)
+		.members.list();
+
+	await Promise.all(
+		members.map(async (member) => {
+			if (req.body.From !== member.identity) {
+				console.log(`${req.direction} forward message "${req.body.Body}" to identity ${member.identity}`);
+
+				await forwardMessage(member.identity, req.body.Body, req);
 			}
-
-		}).catch(function (err) {
-			console.log(req.direction + 'forwarding chat message failed: %s', res.convertErrorToJSON(err))
-			res.status(500).send(res.convertErrorToJSON(err))
 		})
-}
+	);
+};
+
+const forwardMessage = async (to, body, req) => {
+	const message = await client.messages.create({
+		to: to,
+		from: helper.getFrom(to, req.configuration),
+		body: body
+	});
+
+	console.log(
+		`${req.direction} message ${message.sid} create, body "${body}" sent to endpoint ${to}, sender is ${helper.getFrom(
+			to,
+			req.configuration
+		)}`
+	);
+
+	return message;
+};
+
+module.exports.outbound = async (req, res) => {
+	req.direction = 'outbound: ';
+
+	console.log(`${req.direction} message received "${req.body.Body}", channel ${req.body.ChannelSid} - ${new Date()}`);
+
+	try {
+		const channel = await fetchChannel(req.body.ChannelSid);
+
+		console.log(`${req.direction} channel ${channel.sid} received`);
+
+		let attributes = JSON.parse(channel.attributes);
+
+		if (!attributes.forwarding) {
+			console.log(`${req.direction} channel ${channel.sid} needs no forwarding`);
+			res.status(200).end();
+		} else {
+			await forwardChannel(channel, req);
+
+			console.log(`${req.direction} message forwarding for channel ${channel.sid} done`);
+			res.status(200).end();
+		}
+	} catch (error) {
+		console.log(`${req.direction} forwarding chat message failed: ${res.convertErrorToJSON(error)}`);
+		res.status(500).send(res.convertErrorToJSON(error));
+	}
+};

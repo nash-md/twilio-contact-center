@@ -1,81 +1,84 @@
-const twilio 	= require('twilio')
-const context = require('../../context')
+const twilio = require('twilio');
 
-const TaskRouterCapability = twilio.jwt.taskrouter.TaskRouterCapability
+const TaskRouterCapability = twilio.jwt.taskrouter.TaskRouterCapability;
 
-const client = twilio(
-	process.env.TWILIO_ACCOUNT_SID,
-	process.env.TWILIO_AUTH_TOKEN)
-	
-module.exports.createTask = async (attributes = {}) => {
-	const configuration = context.get().configuration
+const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
-	const payload = {
-		workflowSid: configuration.twilio.workflowSid,
-		attributes: JSON.stringify(attributes),
-		timeout: 3600,
-		taskChannel: 'voice'
-	}
+module.exports.createTask = function (workflowSid, attributes) {
+  attributes = attributes || {};
 
-	return client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).tasks.create(payload)
-}
+  const data = {
+    workflowSid: workflowSid,
+    attributes: JSON.stringify(attributes),
+    timeout: 3600,
+    taskChannel: 'voice'
+  };
 
-module.exports.getOngoingTasks = (name) => {
-	let query = {}
-	query.assignmentStatus = 'pending,assigned,reserved'
-	query.evaluateTaskAttributes = 'name=\'' + name + '\''
+  return client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).tasks.create(data);
+};
 
-	return client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).tasks.list(query)
-}
+module.exports.getOngoingTasks = function (name) {
+  return new Promise(function (resolve, reject) {
+    let query = {};
+    query.assignmentStatus = 'pending,assigned,reserved';
+    query.evaluateTaskAttributes = "name='" + name + "'";
+
+    client.taskrouter
+      .workspaces(process.env.TWILIO_WORKSPACE_SID)
+      .tasks.list(query)
+      .then((tasks) => {
+        return resolve(tasks);
+      })
+      .catch((error) => {
+        return reject(error);
+      });
+  });
+};
 
 const buildWorkspacePolicy = (options) => {
-	options = options || {}
+  options = options || {};
 
-	const resources = options.resources || []
-	const urlComponents = ['https://taskrouter.twilio.com', 'v1', 'Workspaces', process.env.TWILIO_WORKSPACE_SID]
+  const resources = options.resources || [];
+  const urlComponents = [
+    'https://taskrouter.twilio.com',
+    'v1',
+    'Workspaces',
+    process.env.TWILIO_WORKSPACE_SID
+  ];
 
-	return new TaskRouterCapability.Policy({
-		url: urlComponents.concat(resources).join('/'),
-		method: options.method || 'GET',
-		allow: true
-	})
-}
+  return new TaskRouterCapability.Policy({
+    url: urlComponents.concat(resources).join('/'),
+    method: options.method || 'GET',
+    allow: true
+  });
+};
 
-module.exports.createWorkerCapabilityToken = (sid) => {
-	const workerCapability = new TaskRouterCapability({
-		accountSid: process.env.TWILIO_ACCOUNT_SID,
-		authToken: process.env.TWILIO_AUTH_TOKEN,
-		workspaceSid: process.env.TWILIO_WORKSPACE_SID,
-		channelId: sid,
-		ttl: 3600,
-	})
+module.exports.createWorkerCapabilityToken = function (sid) {
+  const workerCapability = new TaskRouterCapability({
+    accountSid: process.env.TWILIO_ACCOUNT_SID,
+    authToken: process.env.TWILIO_AUTH_TOKEN,
+    workspaceSid: process.env.TWILIO_WORKSPACE_SID,
+    channelId: sid,
+    ttl: 3600
+  });
 
-	const eventBridgePolicies = twilio.jwt.taskrouter.util.defaultEventBridgePolicies(process.env.TWILIO_ACCOUNT_SID, sid)
+  const eventBridgePolicies = twilio.jwt.taskrouter.util.defaultEventBridgePolicies(
+    process.env.TWILIO_ACCOUNT_SID,
+    sid
+  );
 
-	const workspacePolicies = [
-		// Workspace fetch Policy
-		buildWorkspacePolicy(),
-		// Workspace subresources fetch Policy
-		buildWorkspacePolicy({ resources: ['**'] }),
-		// Workspace resources update Policy
-		buildWorkspacePolicy({ resources: ['**'], method: 'POST' }),
-	]
+  const workspacePolicies = [
+    // Workspace fetch Policy
+    buildWorkspacePolicy(),
+    // Workspace subresources fetch Policy
+    buildWorkspacePolicy({ resources: ['**'] }),
+    // Workspace resources update Policy
+    buildWorkspacePolicy({ resources: ['**'], method: 'POST' })
+  ];
 
-	eventBridgePolicies.concat(workspacePolicies).forEach(policy => {
-		workerCapability.addPolicy(policy)
-	})
+  eventBridgePolicies.concat(workspacePolicies).forEach((policy) => {
+    workerCapability.addPolicy(policy);
+  });
 
-	return workerCapability
-}
-
-module.exports.findWorker = (friendlyName) => {
-	const filter = { friendlyName: friendlyName }
-
-	return client.taskrouter
-		.workspaces(process.env.TWILIO_WORKSPACE_SID)
-		.workers.list(filter)
-		.then(workers => {
-			return workers.find(worker => worker.friendlyName === friendlyName)
-		})
-
-}
+  return workerCapability;
+};
