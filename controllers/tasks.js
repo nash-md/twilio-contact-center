@@ -4,14 +4,26 @@ const chatHelper = require('./helpers/chat-helper.js');
 const videoHelper = require('./helpers/video-helper.js');
 
 module.exports.createCallback = function (req, res) {
-  taskrouterHelper
-    .createTask(req.configuration.twilio.workflowSid, req.body)
-    .then((task) => {
-      res.status(200).end();
-    })
-    .catch((error) => {
-      res.status(500).send(res.convertErrorToJSON(error));
-    });
+  const attributes = {
+    title: 'Callback request',
+    text: req.body.text,
+    channel: 'callback',
+    name: req.body.name,
+    team: req.body.team,
+    phone: req.body.phone
+  };
+  
+  try {
+    const task = await taskrouterHelper.createTask(attributes);
+  
+    const response = {
+      taskSid: task.sid
+    };
+  
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json(res.convertErrorToJSON(error));
+  }
 };
 
 module.exports.createChat = function (req, res) {
