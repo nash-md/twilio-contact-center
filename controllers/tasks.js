@@ -3,7 +3,7 @@ const taskrouterHelper = require('./helpers/taskrouter-helper.js');
 const chatHelper = require('./helpers/chat-helper.js');
 const videoHelper = require('./helpers/video-helper.js');
 
-module.exports.createCallback = function (req, res) {
+module.exports.createCallback = async (req, res) => {
   const attributes = {
     title: 'Callback request',
     text: req.body.text,
@@ -12,88 +12,85 @@ module.exports.createCallback = function (req, res) {
     team: req.body.team,
     phone: req.body.phone
   };
-  
+
   try {
     const task = await taskrouterHelper.createTask(attributes);
-  
+
     const response = {
       taskSid: task.sid
     };
-  
+
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json(res.convertErrorToJSON(error));
   }
 };
 
-module.exports.createChat = function (req, res) {
+module.exports.createChat = async (req, res) => {
   const friendlyName = 'Support Chat with ' + req.body.identity;
   const uniqueName = `chat_room_${Math.random().toString(36).substring(7)}`;
 
-  let payload = {
-    identity: req.body.identity,
-    token: chatHelper.createAccessToken(req.body.identity, req.body.endpoint).toJwt()
-  };
+  try {
+    const channel = await chatHelper.createChannel(friendlyName, uniqueName);
 
-  chatHelper
-    .createChannel(friendlyName, uniqueName)
-    .then((channel) => {
-      payload.chat = {
+    const attributes = {
+      title: 'Chat request',
+      text: 'Customer entered chat via support page',
+      channel: 'chat',
+      name: req.body.identity,
+      chat: {
         sid: channel.sid,
         friendlyName: channel.friendlyName,
         uniqueName: channel.uniqueName
-      };
+      }
+    };
 
-      const attributes = {
-        title: 'Chat request',
-        text: 'Customer entered chat via support page',
-        channel: 'chat',
-        name: payload.identity,
-        chat: {
-          sid: channel.sid
-        }
-      };
+    const task = await taskrouterHelper.createTask(attributes);
 
-      return taskrouterHelper
-        .createTask(req.configuration.twilio.workflowSid, attributes)
-        .then((task) => {
-          payload.task = task.sid;
-          res.status(200).json(payload);
-        });
-    })
-    .catch((error) => {
-      res.status(500).json(error);
-    });
+    const response = {
+      identity: req.body.identity,
+      token: chatHelper.createAccessToken(req.body.identity, req.body.endpointId).toJwt(),
+      chat: {
+        sid: channel.sid,
+        friendlyName: channel.friendlyName,
+        uniqueName: channel.uniqueName
+      },
+      taskSid: task.sid
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json(res.convertErrorToJSON(error));
+  }
 };
 
-module.exports.createVideo = function (req, res) {
-  const uid = Math.random().toString(36).substring(7);
-
-  let payload = {
-    identity: req.body.identity,
-    token: videoHelper.createAccessToken(req.body.identity, uid).toJwt(),
-    video: {
-      name: uid
-    }
-  };
+module.exports.createVideo = async (req, res) => {
+  const roomName = `video_room_${Math.random().toString(36).substring(7)}`;
 
   const attributes = {
     title: 'Video request',
     text: 'Customer requested video support on web page',
     channel: 'video',
-    name: payload.identity,
+    name: req.body.identity,
     video: {
-      roomName: uid
+      roomName: roomName
     }
   };
 
-  taskrouterHelper
-    .createTask(req.configuration.twilio.workflowSid, attributes)
-    .then((task) => {
-      payload.task = task.sid;
-      res.status(200).json(payload);
-    })
-    .catch((error) => {
-      res.status(500).send(res.convertErrorToJSON(error));
-    });
+  try {
+    const task = await taskrouterHelper.createTask(attributes);
+
+    const response = {
+      identity: req.body.identity,
+      token: videoHelper.createAccessToken(req.body.identity, roomName).toJwt(),
+      video: {
+        roomName: roomName
+      },
+      taskSid: task.sid
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json(res.convertErrorToJSON(error));
+  }
 };
