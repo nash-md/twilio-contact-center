@@ -26,7 +26,7 @@ module.exports.createChat = function (req, res) {
   chatHelper
     .createChannel(friendlyName, uniqueName)
     .then((channel) => {
-      payload.channel = {
+      payload.chat = {
         sid: channel.sid,
         friendlyName: channel.friendlyName,
         uniqueName: channel.uniqueName
@@ -58,7 +58,9 @@ module.exports.createVideo = function (req, res) {
   let payload = {
     identity: req.body.identity,
     token: videoHelper.createAccessToken(req.body.identity, uid).toJwt(),
-    roomName: uid
+    video: {
+      name: uid
+    }
   };
 
   const attributes = {
@@ -66,7 +68,7 @@ module.exports.createVideo = function (req, res) {
     text: 'Customer requested video support on web page',
     channel: 'video',
     name: payload.identity,
-    roomName: payload.roomName
+    roomName: payload.video.name
   };
 
   taskrouterHelper

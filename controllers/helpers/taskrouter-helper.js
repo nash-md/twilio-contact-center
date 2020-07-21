@@ -17,6 +17,15 @@ module.exports.createTask = function (workflowSid, attributes) {
   return client.taskrouter.workspaces(process.env.TWILIO_WORKSPACE_SID).tasks.create(data);
 };
 
+module.exports.findWorker = function (friendlyName) {
+  const filter = { friendlyName: friendlyName };
+
+  return client.taskrouter
+    .workspaces(process.env.TWILIO_WORKSPACE_SID)
+    .workers.list(filter)
+    .then((workers) => workers[0]);
+};
+
 module.exports.getOngoingTasks = function (name) {
   return new Promise(function (resolve, reject) {
     let query = {};
