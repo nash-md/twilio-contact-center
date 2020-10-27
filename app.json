@@ -1,7 +1,6 @@
 {
   "name": "Twilio Contact Center",
   "description": "A web-based contact center utilizing Twilio Client, Chat, Video, SMS and TaskRouter",
-  "repository": "",
   "logo": "http://node-js-sample.herokuapp.com/node.svg",
   "keywords": ["node", "express", "twilio"],
   "image": "heroku/nodejs",
