@@ -89,6 +89,15 @@
 
       <br />
 
+      <h4>WhatsApp Phone Number (optional):</h4>
+
+      <span class="help-block">Please enable WhatsApp in your Twilio account and forward messages to <span style="white-space: nowrap; font-weight:bold">http://&lt;your_application-url&gt;/api/messaging-adapter/inbound</span> (request method POST). If you are using the 
+    Twilio WhatsApp Sandbox add the sandbox phone number here.</span>
+
+      <input style="width:350px" ng-model="configuration.twilio.whatsAppPhoneNumber" data-ng-trim="true" name="whatsAppPhoneNumber" type="text" class="form-control">
+
+      <br />
+
       <div ng-messages="setupForm.callerId.$error" role="alert" style="margin-top: 10px; margin-bottom: 0px;">
           <div ng-message="required" class="error-message alert alert-danger">Phone number is required</div>
           <div ng-message="invalidPhone"  class="error-message alert alert-danger">Invalid phone number</div>
